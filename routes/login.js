@@ -38,5 +38,23 @@ router.post('/', function (req, res, next) {
 
   })(req, res, next);
 });
+router.get('/isAuthenticated', function (req, res, next) {
+  if (req.isAuthenticated()) {
+    res.json({
+      "username": req.user.username,
+      "isAuthenticated": true,
+      "jobRole": req.user.jobRole,
+      "empId": req.user.empId,
+      "empName": req.user.empName
+    });
+    res.end();
+  } else {
+    res.json({
+      isAuthenticated: false
+    });
+    res.end();
+  }
+
+});
 
 module.exports = router;

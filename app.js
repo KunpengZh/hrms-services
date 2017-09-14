@@ -24,6 +24,7 @@ var sessionStore = new MySQLStore(options);;
 
 var login = require('./routes/login');
 var empController = require('./routes/employee');
+var appconfig=require('./routes/appconfig');
 
 var app = express();
 
@@ -59,6 +60,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/login', login);
+
+app.use('/AppConfig', appconfig);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {
