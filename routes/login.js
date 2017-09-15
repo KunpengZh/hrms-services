@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passport = require('../services/passport/passport');
 var log4js = require("log4js");
-var logger = log4js.getLogger('HRMS-Services-App');
+var logger = log4js.getLogger('HRMS-LOGIN-Controller');
 logger.level = 'All';
 
 /* GET users listing. */

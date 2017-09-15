@@ -1,9 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var ConfigDoc = require('../services/mysql/ConfigDoc');
+var log4js = require("log4js");
+var logger = log4js.getLogger('HRMS-AppConfig-Controller');
+logger.level = 'All';
 
 router.get('/', function (req, res, next) {
+
     if (!req.query.configKey || req.query.configKey === "") {
+        logger.error("configKey is mandatory requried")
         res.json({
             status: 500,
             message: "configKey is mandatory requried"
@@ -27,16 +32,31 @@ router.get('/', function (req, res, next) {
                     JobRole: [],
                     WorkerCategory: []
                 },
-                message: ''
+                message: 'Do not have Config Data'
             });
             res.end();
         } else {
-            res.json({
-                status: 200,
-                data: qres,
-                message: ''
-            });
-            res.end();
+            try {
+                res.json({
+                    status: 200,
+                    data: JSON.parse(qres.get('configDoc')),
+                    message: ''
+                });
+                res.end();
+            } catch (e) {
+                logger.error(e);
+                res.json({
+                    status: 500,
+                    data: {
+                        Department: [],
+                        JobRole: [],
+                        WorkerCategory: []
+                    },
+                    message: 'Error when parse JSON: ' + qres
+                });
+                res.end();
+            }
+
         }
     })
 });

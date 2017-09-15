@@ -2,7 +2,7 @@ var Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('AppUsers', {
         empId: {
-            type: Sequelize.STRING,
+            type: Sequelize.INTEGER,
             unique: true,
             allowNull: false,
             get() {

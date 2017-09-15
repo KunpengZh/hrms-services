@@ -24,7 +24,8 @@ var sessionStore = new MySQLStore(options);;
 
 var login = require('./routes/login');
 var empController = require('./routes/employee');
-var appconfig=require('./routes/appconfig');
+var appconfig = require('./routes/appconfig');
+var unicKey = require('./routes/unicIDServices');
 
 var app = express();
 
@@ -58,10 +59,12 @@ app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use('/login', login);
 
+
 app.use('/AppConfig', appconfig);
+app.use('/getUnicKey', unicKey);
+app.use('/emp', empController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {
@@ -73,7 +76,7 @@ app.use(function (req, res, next) {
   }
 })
 
-app.use('/emp', empController);
+
 
 app.get('/logout', function (req, res) {
   req.logout();

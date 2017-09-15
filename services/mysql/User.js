@@ -12,7 +12,7 @@ User.findOrCreate({
         username: 'HRMSAdmin'
     },
     defaults: {
-        empId: 'HRMSAdmin',
+        empId: 10000,
         empName: 'HRMS System Administrator',
         username: 'HRMSAdmin',
         password: bcrypt.hashSync("zaq12wsx", bcrypt.genSaltSync(5), null),
