@@ -126,7 +126,7 @@ EmpBasicService.delete = function (empIds) {
 
             }).then(() => {
                 logger.info("To delete Sensitive Employee Info......")
-                sequelize.query("DELETE FROM SensitiveEmpInfo WHERE empId IN(:empIds) ", { replacements: { empIds: empIds }, type: sequelize.QueryTypes.DELETE })
+                sequelize.query("DELETE FROM SensitiveEmpInfos WHERE empId IN(:empIds) ", { replacements: { empIds: empIds }, type: sequelize.QueryTypes.DELETE })
             }).then((delres) => {
                 logger.info("Sensitive Emp Info deleted for :" + JSON.stringify(empIds));
                 logger.info("Deletion Response: " + delres);

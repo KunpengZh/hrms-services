@@ -13,6 +13,45 @@ var empInfo = require('../mysql/EmpInfo');
 
 var SensitiveEmpService = {};
 
+var DeleteEmpSenWithoutBasicEmpInfo = function () {
+    return new Promise(function (rel, rej) {
+        logger.info("Start to Clean Sensitive Employee Info table for records without an associated Basic Emp Info record");
+        EmpSensitiveTable.findAll().then((employees) => {
+            let processed = 0;
+            employees.forEach(function (employee) {
+                let empId = employee.empId;
+                empInfo.findOne({
+                    where: {
+                        empId: empId
+                    }
+                }).then((emp) => {
+
+                    if (emp === null) {
+                        SensitiveEmpService.delete([empId]).then(() => {
+                            processed++;
+                            if (processed === employees.length) {
+                                logger.info("Clean Sensitive Emp Info without basic employee info completed");
+                                rel(true);
+                            }
+                        })
+                    } else {
+                        processed++;
+                        if (processed === employees.length) {
+                            logger.info("Clean Sensitive Emp Info without basic employee info completed");
+                            rel(true);
+                        }
+                    }
+                })
+            })
+        }, (err) => {
+            logger.error("Error Location SensitiveEmpService091")
+            throw err;
+        }).catch((err) => {
+            logger.error("Error Location SensitiveEmpService092")
+            throw err;
+        })
+    })
+}
 
 SensitiveEmpService.SyncEmpSensitiveInfo = function () {
     return new Promise(function (rel, rej) {
@@ -33,7 +72,12 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
                             processed++;
                             if (processed === basicemps.length) {
                                 logger.info("SyncEmpSensitiveInfo running completed");
-                                rel(true)
+                                DeleteEmpSenWithoutBasicEmpInfo().then(() => {
+                                    rel(true)
+                                }).catch((err) => {
+                                    logger.error("Error Location SensitiveEmpService058")
+                                    throw err;
+                                })
                             }
                         }).catch((err) => {
                             logger.error("Error Location SensitiveEmpService051")
@@ -53,7 +97,12 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
                                 processed++;
                                 if (processed === basicemps.length) {
                                     logger.info("SyncEmpSensitiveInfo running completed");
-                                    rel(true)
+                                    DeleteEmpSenWithoutBasicEmpInfo().then(() => {
+                                        rel(true)
+                                    }).catch((err) => {
+                                        logger.error("Error Location SensitiveEmpService058")
+                                        throw err;
+                                    })
                                 }
                             }, (err) => {
                                 logger.error("Error Location SensitiveEmpService052")
@@ -92,9 +141,9 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
 SensitiveEmpService.getAllSensitiveEmpInfo = function () {
     return new Promise(function (rel, rej) {
         EmpSensitiveTable.findAll().then((employees) => {
-            
+
             rel(CoryptoEnpSen.DeEncrypteEmps(employees));
-            
+
         }, (err) => {
             logger.error("Error Location SensitiveEmpService001")
             throw err;

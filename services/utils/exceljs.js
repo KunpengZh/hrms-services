@@ -189,7 +189,7 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                     if (rowNumber === 1) return;
                     let [, empId, name, idCard, birthday, bankAccount, jinengGongzi, gangweiGongzi, jichuButie, xilifei, gonglingGongzi, zhiwuJintie, gongliBuzhu,
                         kaoheJiangjin, tongxunButie, qitaJiangjin, xiaxiangBuzhu, yingyetingBuzhu, preAnnuallyIncom, nianjin, qiyeNianjin, yanglaobaoxian,
-                        shiyebaoxian, hufanggongjijin, yiliaobaoxian, buchongyiliaobaoxian] = row.values;
+                        shiyebaoxian, zhufanggongjijin, yiliaobaoxian, buchongyiliaobaoxian] = row.values;
                     // if (null === name || name === undefined || name === '') {
                     //     logger.error("Employee is not provided from the excel, will skip row: " + rowNumber);
                     //     return;
