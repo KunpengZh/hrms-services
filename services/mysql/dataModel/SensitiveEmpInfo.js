@@ -2,8 +2,12 @@ var Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('SensitiveEmpInfo', {
         empId: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             unique: true,
+            allowNull: false,
+        },
+        name:{
+            type: Sequelize.STRING,
             allowNull: false,
         },
         idCard: {
@@ -63,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
         yanglaobaoxian:{
             type: Sequelize.STRING,
         },
-        sheyebaoxian:{
+        shiyebaoxian:{
             type: Sequelize.STRING,
         },
         zhufanggongjijin: {

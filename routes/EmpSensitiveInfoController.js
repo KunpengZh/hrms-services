@@ -1,22 +1,48 @@
 var express = require('express');
 var router = express.Router();
 var log4js = require("log4js");
-var logger = log4js.getLogger('HRMS-Employee-Controller');
+var logger = log4js.getLogger('HRMS-Employee-SensitiveInfo-Controller');
 logger.level = 'All';
 
 var fs = require('fs');
 var multiparty = require('multiparty');
 var path = require('path');
 
-var EmpServices = require("../services/empInfoServices/EmpBasicServices");
+var EmpServices = require("../services/empInfoServices/SensitiveEmpInfoServices");
 
 var excelJS = require('../services/utils/exceljs');
 
 
+router.get('/syncempsensitive', function (req, res, next) {
+  EmpServices.SyncEmpSensitiveInfo().then((syncres) => {
+    EmpServices.getAllSensitiveEmpInfo().then((emps) => {
+      res.json({
+        status: 200,
+        data: emps,
+        message: '同步完成'
+      })
+      res.end();
+    }).catch((err) => {
+      logger.error("Err when get all emp sensitive info: " + err);
+      res.json({
+        status: 500,
+        data: [],
+        message: "Err when get all emp sensitive info: " + err
+      });
+      res.end()
+    })
+  }).catch((err) => {
+    logger.error(err);
+    res.json({
+      status: 500,
+      message: err
+    })
+    res.end();
+  })
+})
 
-/* GET home page. */
 router.get('/', function (req, res, next) {
-  EmpServices.getAllBasicEmpInfo().then((emps) => {
+  EmpServices.getAllSensitiveEmpInfo().then((emps) => {
     res.json({
       status: 200,
       data: emps,
@@ -24,11 +50,11 @@ router.get('/', function (req, res, next) {
     })
     res.end();
   }).catch((err) => {
-    logger.error("Err when get all emp info: " + err);
+    logger.error("Err when get all emp sensitive info: " + err);
     res.json({
       status: 500,
       data: [],
-      message: "Err when get all emp info: " + err
+      message: "Err when get all emp sensitive info: " + err
     });
     res.end()
   })
@@ -49,7 +75,7 @@ router.post('/update', function (req, res, next) {
 
   var emps = req.body.data;
 
-  EmpServices.updatedBasicEmpInfo(emps).then((employees) => {
+  EmpServices.updatedSensitiveEmpInfo(emps).then((employees) => {
     res.json({
       status: 200,
       data: employees,
@@ -57,61 +83,28 @@ router.post('/update', function (req, res, next) {
     });
     res.end();
   }).catch((err) => {
-    logger.error("Err update or create employee basic information: " + err);
+    logger.error("Err update or create employee sensitive information: " + err);
     res.json({
       status: 500,
       data: [],
-      message: "Err update or create employee basic information: " + err
+      message: "Err update or create employee sensitive information: " + err
     })
   });
 })
 
-router.post('/delete', function (req, res, next) {
-
-  if (!req.body.data || !(req.body.data instanceof Array)) {
-    logger.error("The posted data format is incorrect,  Arrap expected");
-    res.json({
-      status: 500,
-      message: "The posted data format is incorrect,  Arrap expected",
-      data: ''
-    })
-    res.end()
-    return
-  }
-
-  var empIds = req.body.data;
-  logger.warn("to Delete Empyees for :" + JSON.stringify(empIds));
-
-  EmpServices.delete(empIds).then((result) => {
-    res.json({
-      status: 200,
-      message: "删除成功",
-      data: []
-    });
-    res.end();
-  }).catch((err) => {
-    logger.error("Err when delete employee basic information: " + err);
-    res.json({
-      status: 500,
-      data: [],
-      message: "Err uwhen delete employee basic information: " + err
-    })
-  });
 
 
-});
+router.get('/downloadempsensitiveinfo', function (req, res, next) {
 
-router.get('/downloadempbasicinfo', function (req, res, next) {
-
-  EmpServices.getAllBasicEmpInfo().then((emps) => {
+  EmpServices.getAllSensitiveEmpInfo().then((emps) => {
 
     var currDir = path.normalize('files/download'),
-      fileName = 'EmployeeBasicInfo_' + Date.parse(new Date()) + '.xlsx',
+      fileName = 'EmployeeSensitiveInfo_' + Date.parse(new Date()) + '.xlsx',
       currFile = path.join(currDir, fileName),
       fReadStream;
 
 
-    excelJS.EmpBasicInfoToExcel(emps, currFile).then((excelFilename) => {
+    excelJS.EmpSensitiveInfoToExcel(emps, currFile).then((excelFilename) => {
       fs.exists(excelFilename, function (exist) {
         if (exist) {
           res.set({
@@ -131,7 +124,7 @@ router.get('/downloadempbasicinfo', function (req, res, next) {
         }
       });
     }).catch((err) => {
-      logger.error("Transfer Employee Information to Excel file failed")
+      logger.error("Transfer sensitive Employee Information to Excel file failed")
       logger.error(err);
       res.set("Content-type", "text/html");
       res.send("生成excel文件失败");
@@ -139,18 +132,18 @@ router.get('/downloadempbasicinfo', function (req, res, next) {
     })
 
   }).catch((err) => {
-    logger.error("Err when get all emp info: " + err);
+    logger.error("Err when get all emp sensitive info: " + err);
     res.set("Content-type", "text/html");
-    res.send("不能从数据库获取基本员工信息!");
+    res.send("不能从数据库获取敏感员工信息!");
     res.end();
     return;
   })
 
 })
 
-router.post('/uploadempbasicinfo', function (req, res, next) {
+router.post('/uploadempsensitiveinfo', function (req, res, next) {
 
-  logger.info('uploading Employee Basic Information');
+  logger.info('uploading Employee sensitive Information');
 
   logger.info("To Parse Form.....")
   var form = new multiparty.Form({
@@ -185,8 +178,8 @@ router.post('/uploadempbasicinfo', function (req, res, next) {
           fs.exists(dstPath, function (isFileExist) {
             if (isFileExist) {
               logger.info("To transfer excel to JSON .......")
-              excelJS.EmpInfoToJSON(dstPath).then((emps) => {
-                EmpServices.uploadEmpInfoFromExcel(emps).then(function (ures) {
+              excelJS.EmpSensitiveInfoToJSON(dstPath).then((emps) => {
+                EmpServices.updatedSensitiveEmpInfo(emps).then(function (ures) {
                   res.json({
                     status: 200,
                     message: "上传成功"

@@ -8,8 +8,7 @@ var log4js = require("log4js");
 var logger = log4js.getLogger('HRMS-Excel-Util');
 logger.level = 'All';
 var Excel = require('exceljs');
-var UnicID = require('../mysql/UnicID');
-var EmpServices = require("../empInfoServices/empBasicServices");
+
 
 /**
  * Transfer Employee Basic Information Table to Excel 
@@ -83,10 +82,18 @@ exports.EmpInfoToJSON = function (filename) {
 
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
+
                     let [, empId, name, department, jobRole, workAge, age, gender, workerCategory, comment] = row.values;
+                    // if (null === name || name === undefined || name === '') {
+                    //     logger.error("Employee is not provided from the excel, will skip row: " + rowNumber);
+                    //     return;
+                    // }
+                    if ((null === name || name === undefined || name === '') && (null === empId || empId === undefined || empId === '')) {
+                        logger.error("New Employee(without empID) name is not provided from the excel, will skip row: " + rowNumber);
+                        return;
+                    }
                     let emp = {
                         empId: empId ? empId : '',
-                        name: name ? name : '',
                         department: department ? department : '',
                         jobRole: jobRole ? jobRole : '',
                         workAge: workAge ? workAge : '',
@@ -98,58 +105,137 @@ exports.EmpInfoToJSON = function (filename) {
                     emps.push(emp);
                 });
 
-                UnicID.findOne({
-                    where: {
-                        configKey: 'EmpID'
-                    }
-                }).then((EmpUnicIDDoc) => {
-                    let oriEmpUnicKey = EmpUnicIDDoc.get("unicID");
-                    let EmpUnicKey = oriEmpUnicKey;
-                    for (let i = 0; i < emps.length; i++) {
-                        if (!emps[i].empId || emps[i].empId.trim() === "") {
-                            EmpUnicKey = EmpUnicKey + 1;
-                            emps[i].empId = EmpUnicKey;
-                        }
-                    }
-                    if (EmpUnicKey !== oriEmpUnicKey) {
-                        UnicID.update({
-                            unicID: EmpUnicKey
-                        }, {
-                                where: {
-                                    configKey: 'EmpID'
-                                }
-                            }).then((ures) => {
-                                logger.info("Employee Unic ID updated back to database : " + EmpUnicKey);
-                            }, (err) => {
-                                logger.error("Error Location EXCELJS004")
-                                throw err;
-                            }).catch(function (err) {
-                                logger.error("Error Location EXCELJS005")
-                                throw err;
-                            })
-                    }
-                    EmpServices.updatedBasicEmpInfo(emps).then((employees) => {
-                        rel({
-                            status: 200,
-                            message: "上传保存到数据库成功"
-                        })
-                    }).catch((err) => {
-                        logger.error("Error Location EXCELJS006")
-                        throw err;
-                    });
-                }, (err) => {
-                    logger.error("Error Location EXCELJS001")
-                    throw err;
-                }).catch(function (err) {
-                    logger.error("Error Location EXCELJS002")
-                    throw err;
-                })
+                rel(emps);
             }).catch(function (err) {
                 logger.error("Error Location EXCELJS003")
                 throw err;
             })
     })
 };
+
+
+var setEmpSensitiveColumns = function () {
+    var columns = [
+        { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
+        { header: '姓名', key: 'name', width: 15, style: { bold: true } },
+        { header: '身份证', key: 'idCard', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '出生日期', key: 'birthday', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '银行帐号', key: 'bankAccount', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '技能工资', key: 'jinengGongzi', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '岗位工资', key: 'gangweiGongzi', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '基础补贴', key: 'jichuButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '洗理费', key: 'xilifei', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工龄工资', key: 'gonglingGongzi', width: 15, style: { bold: true } },
+        { header: '职务津贴', key: 'zhiwuJintie', width: 15, style: { bold: true } },
+        { header: '公里补助', key: 'gongliBuzhu', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '考核奖金', key: 'kaoheJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '其他津贴', key: 'qitaJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '上年收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年金', key: 'nianjin', width: 15, style: { bold: true } },
+        { header: '企业年金', key: 'naqiyeNianjinme', width: 15, style: { bold: true } },
+        { header: '养老保险', key: 'yanglaobaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '失业保险', key: 'shiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '医疗报销', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } }
+    ];
+    return columns;
+}
+
+exports.EmpSensitiveInfoToExcel = function (emps, filename) {
+    return new Promise(function (resolve, reject) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('EmpSensitiveInfo', { views: [{ state: 'frozen', xSplit: 0, ySplit: 1 }] });
+        worksheet.columns = setEmpSensitiveColumns();
+
+        worksheet.addRows(emps);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                resolve(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJS028")
+                throw err;
+            });
+    })
+};
+
+/**
+ * function to uplaod Sensitive Employee Information
+ */
+
+exports.EmpSensitiveInfoToJSON = function (filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook.xlsx.readFile(filename)
+            .then(function (excelDoc) {
+                var worksheet = excelDoc.getWorksheet(1);
+                rowCount = worksheet.rowCount;
+                if (rowCount < 1) {
+                    logger.error("Do not find excel data");
+                    logger.error("Error Location EXCELJS027")
+                    throw new Error("Do not find excel data");
+                    return;
+                }
+
+                let emps = [];
+
+                worksheet.eachRow(function (row, rowNumber) {
+                    if (rowNumber === 1) return;
+                    let [, empId, name, idCard, birthday, bankAccount, jinengGongzi, gangweiGongzi, jichuButie, xilifei, gonglingGongzi, zhiwuJintie, gongliBuzhu,
+                        kaoheJiangjin, tongxunButie, qitaJiangjin, xiaxiangBuzhu, yingyetingBuzhu, preAnnuallyIncom, nianjin, qiyeNianjin, yanglaobaoxian,
+                        shiyebaoxian, hufanggongjijin, yiliaobaoxian, buchongyiliaobaoxian] = row.values;
+                    // if (null === name || name === undefined || name === '') {
+                    //     logger.error("Employee is not provided from the excel, will skip row: " + rowNumber);
+                    //     return;
+                    // };
+                    if (null === empId || empId === undefined || empId === '') {
+                        logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
+                        return;
+                    };
+                    let emp = {
+                        empId: empId ? empId : '',
+                        idCard: idCard ? idCard : '',
+                        birthday: birthday ? birthday : '',
+                        bankAccount: bankAccount ? bankAccount : '',
+                        jinengGongzi: jinengGongzi ? jinengGongzi : '',
+                        gangweiGongzi: gangweiGongzi ? gangweiGongzi : '',
+                        jichuButie: jichuButie ? jichuButie : '',
+                        xilifei: xilifei ? xilifei : '',
+                        gonglingGongzi: gonglingGongzi ? gonglingGongzi : '',
+                        zhiwuJintie: zhiwuJintie ? zhiwuJintie : '',
+                        gongliBuzhu: gongliBuzhu ? gongliBuzhu : '',
+                        kaoheJiangjin: kaoheJiangjin ? kaoheJiangjin : '',
+                        tongxunButie: tongxunButie ? tongxunButie : '',
+                        qitaJiangjin: qitaJiangjin ? qitaJiangjin : '',
+                        xiaxiangBuzhu: xiaxiangBuzhu ? xiaxiangBuzhu : '',
+                        yingyetingBuzhu: yingyetingBuzhu ? yingyetingBuzhu : '',
+                        preAnnuallyIncom: preAnnuallyIncom ? preAnnuallyIncom : '',
+                        nianjin: nianjin ? nianjin : '',
+                        qiyeNianjin: qiyeNianjin ? qiyeNianjin : '',
+                        yanglaobaoxian: yanglaobaoxian ? yanglaobaoxian : '',
+                        shiyebaoxian: shiyebaoxian ? shiyebaoxian : '',
+                        zhufanggongjijin: zhufanggongjijin ? zhufanggongjijin : '',
+                        yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '',
+                        buchongyiliaobaoxian: buchongyiliaobaoxian ? buchongyiliaobaoxian : '',
+                    }
+                    emps.push(emp);
+                });
+
+                rel(emps);
+            }).catch(function (err) {
+                logger.error("Error Location EXCELJS026")
+                throw err;
+            })
+    })
+};
+
+
 
 
 

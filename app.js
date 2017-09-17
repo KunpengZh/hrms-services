@@ -26,6 +26,7 @@ var login = require('./routes/login');
 var empController = require('./routes/employee');
 var appconfig = require('./routes/appconfig');
 var unicKey = require('./routes/unicIDServices');
+var SensitiveEmployeeInfoController=require('./routes/EmpSensitiveInfoController');
 
 var app = express();
 
@@ -65,6 +66,7 @@ app.use('/login', login);
 app.use('/AppConfig', appconfig);
 app.use('/getUnicKey', unicKey);
 app.use('/emp', empController);
+app.use('/empsen',SensitiveEmployeeInfoController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {
