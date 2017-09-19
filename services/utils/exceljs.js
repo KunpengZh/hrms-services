@@ -134,16 +134,17 @@ var setEmpSensitiveColumns = function () {
         { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '上年收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '年金', key: 'nianjin', width: 15, style: { bold: true } },
-        { header: '企业年金', key: 'naqiyeNianjinme', width: 15, style: { bold: true } },
-        { header: '养老保险', key: 'yanglaobaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
-        { header: '失业保险', key: 'shiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '医疗报销', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } }
     ];
     return columns;
 }
+
+// { header: '年金', key: 'nianjin', width: 15, style: { bold: true } },
+// { header: '企业年金', key: 'naqiyeNianjinme', width: 15, style: { bold: true } },
+// { header: '养老保险', key: 'yanglaobaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+// { header: '失业保险', key: 'shiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+// { header: '住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+// { header: '医疗报销', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
 
 exports.EmpSensitiveInfoToExcel = function (emps, filename) {
     return new Promise(function (resolve, reject) {
@@ -188,8 +189,8 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, idCard, birthday, bankAccount, jinengGongzi, gangweiGongzi, jichuButie, xilifei, gonglingGongzi, zhiwuJintie, gongliBuzhu,
-                        kaoheJiangjin, tongxunButie, qitaJiangjin, xiaxiangBuzhu, yingyetingBuzhu, preAnnuallyIncom, nianjin, qiyeNianjin, yanglaobaoxian,
-                        shiyebaoxian, zhufanggongjijin, yiliaobaoxian, buchongyiliaobaoxian] = row.values;
+                        kaoheJiangjin, tongxunButie, qitaJiangjin, xiaxiangBuzhu, yingyetingBuzhu, preAnnuallyIncom, buchongyiliaobaoxian] = row.values;
+                    //nianjin, qiyeNianjin, yanglaobaoxian, shiyebaoxian, zhufanggongjijin, yiliaobaoxian,
                     // if (null === name || name === undefined || name === '') {
                     //     logger.error("Employee is not provided from the excel, will skip row: " + rowNumber);
                     //     return;
@@ -216,14 +217,14 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                         xiaxiangBuzhu: xiaxiangBuzhu ? xiaxiangBuzhu : '',
                         yingyetingBuzhu: yingyetingBuzhu ? yingyetingBuzhu : '',
                         preAnnuallyIncom: preAnnuallyIncom ? preAnnuallyIncom : '',
-                        nianjin: nianjin ? nianjin : '',
-                        qiyeNianjin: qiyeNianjin ? qiyeNianjin : '',
-                        yanglaobaoxian: yanglaobaoxian ? yanglaobaoxian : '',
-                        shiyebaoxian: shiyebaoxian ? shiyebaoxian : '',
-                        zhufanggongjijin: zhufanggongjijin ? zhufanggongjijin : '',
-                        yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '',
                         buchongyiliaobaoxian: buchongyiliaobaoxian ? buchongyiliaobaoxian : '',
                     }
+                    // nianjin: nianjin ? nianjin : '',
+                    // qiyeNianjin: qiyeNianjin ? qiyeNianjin : '',
+                    // yanglaobaoxian: yanglaobaoxian ? yanglaobaoxian : '',
+                    // shiyebaoxian: shiyebaoxian ? shiyebaoxian : '',
+                    // zhufanggongjijin: zhufanggongjijin ? zhufanggongjijin : '',
+                    // yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '',
                     emps.push(emp);
                 });
 

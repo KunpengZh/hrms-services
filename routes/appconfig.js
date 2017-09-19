@@ -30,7 +30,8 @@ router.get('/', function (req, res, next) {
                 data: {
                     Department: [],
                     JobRole: [],
-                    WorkerCategory: []
+                    WorkerCategory: [],
+                    ConfigPercentage:[]
                 },
                 message: 'Do not have Config Data'
             });
@@ -50,7 +51,8 @@ router.get('/', function (req, res, next) {
                     data: {
                         Department: [],
                         JobRole: [],
-                        WorkerCategory: []
+                        WorkerCategory: [],
+                        ConfigPercentage:[]
                     },
                     message: 'Error when parse JSON: ' + qres
                 });

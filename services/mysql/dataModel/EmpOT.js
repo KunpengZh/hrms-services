@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('EmpOT', {
         empId: {
             type: Sequelize.STRING,
-            unique: true,
             allowNull: false,
         },
         name: {
@@ -12,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         department: {
             type: Sequelize.STRING,
-            allowNull: false,
         },
         jobRole: {
             type: Sequelize.STRING,
@@ -22,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         OTCycle: {
             type: Sequelize.STRING,
+            allowNull: false,
         },
         NormalOT:{
             type: Sequelize.STRING,
