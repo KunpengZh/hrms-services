@@ -33,6 +33,7 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
             let empId = emps[i]["empId"];
             if (empId === null || empId === undefined || empId === '') {
                 logger.error("Employee ID is not provided , will skip emp: " + JSON.stringify(emps[i]));
+                processed++;
                 continue;
             }
             empInfo.findOne({
@@ -44,6 +45,7 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                     logger.info("To Create new Employee : " + JSON.stringify(emps[i]));
                     if (emps[i].name === null || emps[i].name === undefined || emps[i].name === '') {
                         logger.error("New Employee(without empID) name is not provided, will skip emp: " + empId);
+                        processed++;
                     } else {
                         empInfo.create(emps[i]).then((nemp) => {
                             logger.info("new Employee Created :" + empId);
@@ -55,6 +57,15 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                             SenEmpServices.createNewSensitiveEmpInfo(empId, emps[i].name).then((cres) => {
                                 logger.info("Sensitive Emp Info created: " + empId);
                                 logger.info("Sensitive Emp Info response: " + cres);
+                                processed++;
+                                if (processed === emps.length) {
+                                    EmpBasicService.getAllBasicEmpInfo().then((employees) => {
+                                        rel(employees);
+                                    }).catch((err) => {
+                                        logger.error("Error Location EmpBasicService003")
+                                        throw err;
+                                    })
+                                }
                             }).catch(function (err) {
                                 logger.error("Error Location EmpBasicService032")
                                 logger.error("failed to create Sensitive EmpInfo, will delete the exist employee basic info");
@@ -66,15 +77,7 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                                 })
                                 throw (err);
                             })
-                            processed++;
-                            if (processed === emps.length) {
-                                EmpBasicService.getAllBasicEmpInfo().then((employees) => {
-                                    rel(employees);
-                                }).catch((err) => {
-                                    logger.error("Error Location EmpBasicService003")
-                                    throw err;
-                                })
-                            }
+                            
                         }).catch(function (err) {
                             logger.error("Error Location EmpBasicService005")
                             throw err;

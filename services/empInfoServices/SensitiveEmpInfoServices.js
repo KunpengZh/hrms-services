@@ -213,6 +213,7 @@ updatedSensitiveEmpInfo = function (emps) {
             logger.info("To Update Employee : " + empId);
             if (empId === null || empId === undefined || empId === '') {
                 logger.error("The give empID is null,will skip");
+                processed++;
                 continue;
             }
             EmpSensitiveTable.update(emps[i], {

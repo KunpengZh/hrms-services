@@ -29,6 +29,7 @@ CategoryConfigServices.updatedCategoryConfig = function (categoryConfigs) {
             let WorkerCategory = categoryConfigs[i]["WorkerCategory"];
             if (WorkerCategory === null || WorkerCategory === undefined || WorkerCategory === '') {
                 logger.error("WorkerCategory is not provided , will skip categoryConfig: " + JSON.stringify(categoryConfigs[i]));
+                processed++;
                 continue;
             }
             CategoryConfig.findOne({

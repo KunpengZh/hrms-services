@@ -28,6 +28,7 @@ var appconfig = require('./routes/appconfig');
 var unicKey = require('./routes/unicIDServices');
 var SensitiveEmployeeInfoController = require('./routes/EmpSensitiveInfoController');
 var CategoryConfigController = require('./routes/CategoryConfigController');
+var OTController = require('./routes/EmpOTController');
 
 
 var app = express();
@@ -70,6 +71,7 @@ app.use('/getUnicKey', unicKey);
 app.use('/emp', empController);
 app.use('/empsen', SensitiveEmployeeInfoController);
 app.use('/categoryConfig', CategoryConfigController);
+app.use('/ot', OTController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {

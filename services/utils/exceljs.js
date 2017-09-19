@@ -236,6 +236,88 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
 };
 
 
+var setOTDataColumns = function () {
+    var columns = [
+        { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
+        { header: '姓名', key: 'name', width: 15, style: { bold: true } },
+        { header: '工作部门', key: 'department', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '工作岗位', key: 'jobRole', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '加班周期', key: 'OTCycle', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '平时加班', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '周末加班', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '节假日加班', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+exports.OTDataToExcel = function (OTDataLists, filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('OTData', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
+        worksheet.columns = setOTDataColumns();
+
+        worksheet.addRows(OTDataLists);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSOT001")
+                throw err;
+            });
+    })
+}
+
+exports.OTExcelToJSON = function (filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook.xlsx.readFile(filename)
+            .then(function (excelDoc) {
+                var worksheet = excelDoc.getWorksheet(1);
+                rowCount = worksheet.rowCount;
+                if (rowCount < 1) {
+                    logger.error("Do not find excel data");
+                    logger.error("Error Location EXCELJSOT002")
+                    throw new Error("Do not find excel data");
+                    return;
+                }
+
+                let OTLists = [];
+
+                worksheet.eachRow(function (row, rowNumber) {
+                    if (rowNumber === 1) return;
+                    let [, empId, name, department, jobRole, workerCategory, OTCycle, NormalOT, WeekendOT, HolidayOT] = row.values;
+
+                    if (null === empId || empId === undefined || empId === '') {
+                        logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
+                        return;
+                    };
+                    if (null === OTCycle || OTCycle === undefined || OTCycle === '') {
+                        logger.error("OTCycle is not provided from the excel, will skip row: " + rowNumber);
+                        return;
+                    };
+                    let OT = {
+                        empId: empId ? empId : '',
+                        OTCycle: OTCycle ? OTCycle : '',
+                        NormalOT: NormalOT ? NormalOT : '0',
+                        WeekendOT: WeekendOT ? WeekendOT : '0',
+                        HolidayOT: HolidayOT ? HolidayOT : '0'
+                    }
+                    OTLists.push(OT);
+                });
+
+                rel(OTLists);
+            }).catch(function (err) {
+                logger.error("Error Location EXCELJSOT003")
+                throw err;
+            })
+    })
+};
+
+
+
 
 
 
