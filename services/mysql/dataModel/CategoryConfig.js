@@ -63,16 +63,10 @@ module.exports = (sequelize, DataTypes) => {
         buchongyiliaobaoxian:{
             type: Sequelize.STRING,
         },
-        jiabanFei:{
-            type: Sequelize.STRING,
-        },
-        kouchuGongzi:{
-            type: Sequelize.STRING,
-        },
         tax:{
             type: Sequelize.STRING,
         },
-        taxBaseline:{
+        yicixingJiangjin:{
             type: Sequelize.STRING,
         }
     })

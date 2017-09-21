@@ -18,12 +18,6 @@ module.exports = function (empId, empName) {
         xiaxiangBuzhu: '',
         yingyetingBuzhu: '',
         preAnnuallyIncom: '',
-        nianjin: '',
-        qiyeNianjin: '',
-        yanglaobaoxian: '',
-        shiyebaoxian: '',
-        zhufanggongjijin: '',
-        yiliaobaoxian: '',
         buchongyiliaobaoxian: '',
     }
 }

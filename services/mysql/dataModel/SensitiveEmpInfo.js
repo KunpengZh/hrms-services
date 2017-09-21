@@ -55,29 +55,31 @@ module.exports = (sequelize, DataTypes) => {
         yingyetingBuzhu:{
             type: Sequelize.STRING,
         },
+        buchongyiliaobaoxian:{
+            type: Sequelize.STRING,
+        },
         preAnnuallyIncom:{
             type: Sequelize.STRING,
         },
-        nianjin:{
-            type: Sequelize.STRING,
-        },
-        qiyeNianjin: {
-            type: Sequelize.STRING,
-        },
-        yanglaobaoxian:{
-            type: Sequelize.STRING,
-        },
-        shiyebaoxian:{
-            type: Sequelize.STRING,
-        },
-        zhufanggongjijin: {
-            type: Sequelize.STRING,
-        },
-        yiliaobaoxian:{
-            type: Sequelize.STRING,
-        },
-        buchongyiliaobaoxian:{
-            type: Sequelize.STRING,
-        }
     })
 }
+
+
+// nianjin:{
+//     type: Sequelize.STRING,
+// },
+// qiyeNianjin: {
+//     type: Sequelize.STRING,
+// },
+// yanglaobaoxian:{
+//     type: Sequelize.STRING,
+// },
+// shiyebaoxian:{
+//     type: Sequelize.STRING,
+// },
+// zhufanggongjijin: {
+//     type: Sequelize.STRING,
+// },
+// yiliaobaoxian:{
+//     type: Sequelize.STRING,
+// },

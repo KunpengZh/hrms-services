@@ -1,0 +1,166 @@
+var Sequelize = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+    return sequelize.define('SalaryDetail', {
+        empId: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        name: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        department: {
+            type: Sequelize.STRING,
+        },
+        jobRole: {
+            type: Sequelize.STRING,
+        },
+        workerCategory: {
+            type: Sequelize.STRING,
+        },
+        salaryCycle: {
+            type: Sequelize.STRING,
+        },
+        jinengGongzi: {
+            type: Sequelize.STRING,
+        },
+        gangweiGongzi: {
+            type: Sequelize.STRING,
+        },
+        jichuButie: {
+            type: Sequelize.STRING,
+        },
+        xilifei: {
+            type: Sequelize.STRING,
+        },
+        gonglingGongzi: {
+            type: Sequelize.STRING,
+        },
+        jibengongzi: {
+            type: Sequelize.STRING,
+        },
+        jibengongziComments: {
+            type: Sequelize.STRING,
+        },
+        zhiwuJintie: {
+            type: Sequelize.STRING,
+        },
+        gongliBuzhu: {
+            type: Sequelize.STRING,
+        },
+        kaoheJiangjin: {
+            type: Sequelize.STRING,
+        },
+        tongxunButie: {
+            type: Sequelize.STRING,
+        },
+        qitaJiangjin: {
+            type: Sequelize.STRING,
+        },
+        xiaxiangBuzhu: {
+            type: Sequelize.STRING,
+        },
+        yingyetingBuzhu: {
+            type: Sequelize.STRING,
+        },
+        NormalOT: {
+            type: Sequelize.STRING,
+        },
+        NormalOTComments: {
+            type: Sequelize.TEXT,
+        },
+        WeekendOT: {
+            type: Sequelize.STRING,
+        },
+        WeekendOTComments: {
+            type: Sequelize.TEXT,
+        },
+        HolidayOT: {
+            type: Sequelize.STRING,
+        },
+        HolidayOTComments: {
+            type: Sequelize.TEXT,
+        },
+        kouchu: {
+            type: Sequelize.STRING,
+        },
+        kaohekoukuan: {
+            type: Sequelize.STRING,
+        },
+        yingfagongzi: {
+            type: Sequelize.STRING,
+        },
+        yingfagongziComments: {
+            type: Sequelize.STRING,
+        },
+        preAnnuallyIncom: {
+            type: Sequelize.STRING,
+        },
+        nianjin: {
+            type: Sequelize.STRING,
+        },
+        nianjinComments: {
+            type: Sequelize.TEXT,
+        },
+        qiyeNianjin: {
+            type: Sequelize.STRING,
+        },
+        qiyeNianJinComments: {
+            type: Sequelize.TEXT,
+        },
+        yanglaobaoxian: {
+            type: Sequelize.STRING,
+        },
+        yanglaobaoxianComments: {
+            type: Sequelize.TEXT,
+        },
+        shiyebaoxian: {
+            type: Sequelize.STRING,
+        },
+        shiyebaoxianComments: {
+            type: Sequelize.TEXT,
+        },
+        zhufanggongjijin: {
+            type: Sequelize.STRING,
+        },
+        zhufanggongjijinComments: {
+            type: Sequelize.TEXT,
+        },
+        yiliaobaoxian: {
+            type: Sequelize.STRING,
+        },
+        yiliaobaoxianComments: {
+            type: Sequelize.TEXT,
+        },
+        yingshuigongzi: {
+            type: Sequelize.STRING,
+        },
+        yingshuigongziComments: {
+            type: Sequelize.STRING,
+        },
+        tax: {
+            type: Sequelize.STRING,
+        },
+        taxComments: {
+            type: Sequelize.TEXT,
+        },
+        yicixingjiangjin: {
+            type: Sequelize.STRING,
+        },
+        yicixingjiangjinTax: {
+            type: Sequelize.STRING,
+        },
+        yicixingjiangjinTaxComments: {
+            type: Sequelize.TEXT,
+        },
+        buchongyiliaobaoxian: {
+            type: Sequelize.STRING,
+        },
+        netIncome: {
+            type: Sequelize.STRING,
+        },
+        netIncomeComments: {
+            type: Sequelize.STRING,
+        }
+    })
+}

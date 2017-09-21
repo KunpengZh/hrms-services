@@ -29,6 +29,7 @@ var unicKey = require('./routes/unicIDServices');
 var SensitiveEmployeeInfoController = require('./routes/EmpSensitiveInfoController');
 var CategoryConfigController = require('./routes/CategoryConfigController');
 var OTController = require('./routes/EmpOTController');
+var SalaryDetailsController = require('./routes/SalaryDetailsController');
 
 
 var app = express();
@@ -72,6 +73,7 @@ app.use('/emp', empController);
 app.use('/empsen', SensitiveEmployeeInfoController);
 app.use('/categoryConfig', CategoryConfigController);
 app.use('/ot', OTController);
+app.use('/sdd', SalaryDetailsController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {
