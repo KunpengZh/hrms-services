@@ -30,6 +30,7 @@ var SensitiveEmployeeInfoController = require('./routes/EmpSensitiveInfoControll
 var CategoryConfigController = require('./routes/CategoryConfigController');
 var OTController = require('./routes/EmpOTController');
 var SalaryDetailsController = require('./routes/SalaryDetailsController');
+var GongziDanController = require("./routes/GongZidanController");
 
 
 var app = express();
@@ -74,6 +75,7 @@ app.use('/empsen', SensitiveEmployeeInfoController);
 app.use('/categoryConfig', CategoryConfigController);
 app.use('/ot', OTController);
 app.use('/sdd', SalaryDetailsController);
+app.use('/gongzidan', GongziDanController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {

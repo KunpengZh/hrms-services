@@ -60,13 +60,24 @@ SalaryCalculation.fillGongZiXinXi = function (emps, senEmpData, categoryConfig) 
                 }
             }
         }
-
-        emp.jibengongzi = parseFloat(emp.jinengGongzi).toFixed(2) + parseFloat(emp.gangweiGongzi).toFixed(2) + parseFloat(emp.jichuButie).toFixed(2) + parseFloat(emp.xilifei).toFixed(2) + parseFloat(emp.gonglingGongzi).toFixed(2) + '';
-        emp.jibengongziComments = "技能工资(" + emp.jinengGongzi + ")+岗位工资(" + emp.gangweiGongzi + ")+基础补贴(" + emp.jichuButie + ")+洗理费(" + emp.xilifei + ")+工龄工资(" + emp.gonglingGongzi + ")=" + emp.jibengongzi;
         return emp;
     })
     return newemps;
 }
+
+SalaryCalculation.calculateJibengongzi = function (emps) {
+    let newemps = [];
+    for (let i = 0; i < emps.length; i++) {
+        let emp = emps[i];
+        emp.jibengongzi = (parseFloat(emp.jinengGongzi) + parseFloat(emp.gangweiGongzi) + parseFloat(emp.jichuButie) + parseFloat(emp.xilifei) + parseFloat(emp.gonglingGongzi)).toFixed(2) + '';
+        emp.jibengongziComments = "技能工资(" + emp.jinengGongzi + ")+岗位工资(" + emp.gangweiGongzi + ")+基础补贴(" + emp.jichuButie + ")+洗理费(" + emp.xilifei + ")+工龄工资(" + emp.gonglingGongzi + ")=" + emp.jibengongzi;
+        newemps.push(emp);
+    }
+
+    return newemps;
+
+}
+
 
 SalaryCalculation.categoryOT = function (emps, OTdata) {
     let newemps = emps.map(function (emp) {

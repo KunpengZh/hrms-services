@@ -61,6 +61,7 @@ SDServices.InitialWithEmps = function (salaryCycle) {
             try {
                 emps = SalaryCalculation.GenerateSalaryDetails(empbasics, salaryCycle);
                 emps = SalaryCalculation.fillGongZiXinXi(emps, empsendata, configCategory);
+                emps=SalaryCalculation.calculateJibengongzi(emps);
                 emps = SalaryCalculation.categoryOT(emps, empOTs);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
@@ -176,6 +177,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
 
         let calculateSalaryDetails = function () {
             try {
+                emps=SalaryCalculation.calculateJibengongzi(emps)
                 emps = SalaryCalculation.categoryOT(emps, empOTs);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
