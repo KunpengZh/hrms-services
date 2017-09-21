@@ -9,7 +9,7 @@ const YILIAOBAOXIANXISHU = 'YILIAOBAOXIANXISHU';
 const ZHUFANGGONGJIJINXISHU = 'ZHUFANGGONGJIJINXISHU';
 const QIYENIANJINXISHU = 'QIYENIANJINXISHU';
 const GERENSUODESHUISHUIJI = 'GERENSUODESHUISHUIJI';
-
+const SHANGNIANQUANSHIZHIGONGGONGZI = 'SHANGNIANQUANSHIZHIGONGGONGZI';
 var SalaryCalculation = {};
 
 var SalaryDetailsModel = require('./Model/SalaryDetails');
@@ -129,6 +129,8 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
         let haveyiliaobaoxianxishu = false;
         let qiyenianjinxishu = 0;
         let haveqiyenianjinxishu = false;
+        let shangnianquanshizhigonggongzi = 0;
+        let haveshangnianquanshizhigonggongzi = false;
 
 
         for (let i = 0; i < ConfigPercentage.length; i++) {
@@ -157,9 +159,14 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
                 case QIYENIANJINXISHU:
                     qiyenianjinxishu = parseFloat(ConfigPercentage[i].value);
                     haveqiyenianjinxishu = true;
+                    break;
+                case SHANGNIANQUANSHIZHIGONGGONGZI:
+                    shangnianquanshizhigonggongzi = parseFloat(ConfigPercentage[i].value);
+                    haveshangnianquanshizhigonggongzi = true;
+                    break;
             }
         }
-        if (!havenianjinxushu || !haveyanglaobaoxianxishu || !haveyiliaobaoxianxishu || !haveshiyebaoxianxishu || !havezhufanggongjijinxishu || !haveqiyenianjinxishu) {
+        if (!havenianjinxushu || !haveyanglaobaoxianxishu || !haveyiliaobaoxianxishu || !haveshiyebaoxianxishu || !havezhufanggongjijinxishu || !haveqiyenianjinxishu || !haveshangnianquanshizhigonggongzi) {
             logger.error("没有找到相对的系数配置，请核查配置信息");
             logger.error("Error Location SalaryCalculation302")
             throw new Error("没有找到相对的系数配置，请核查配置信息");
@@ -167,6 +174,19 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
         }
 
         let preAnnuallyIncom = parseFloat(emp.preAnnuallyIncom);
+        let preComments = '';
+        /**
+         * 如果上年度收入大于当地职工平均工资的300%，按上年度平均工资的300%计
+         * 如果小于当地职工平均工资的60%，按上年度平均工资的60%计
+         */
+        if (preAnnuallyIncom > shangnianquanshizhigonggongzi * 3) {
+            preAnnuallyIncom = shangnianquanshizhigonggongzi * 3;
+            preComments = "上年度收入大于上年度职工月平均工资300%,调整为(" + preAnnuallyIncom + "),";
+        } else if (preAnnuallyIncom < shangnianquanshizhigonggongzi * 0.6) {
+            preAnnuallyIncom = shangnianquanshizhigonggongzi * 0.6;
+            preComments = "上年度收入小于上年度职工月平均工资60%,调整为(" + preAnnuallyIncom + "),";
+        }
+
         emp.nianjin = (preAnnuallyIncom * nianjinxishu).toFixed(2) + '';
         emp.qiyeNianjin = (preAnnuallyIncom * qiyenianjinxishu).toFixed(2) + '';
         emp.yanglaobaoxian = (preAnnuallyIncom * yanglaobaoxianxishu).toFixed(2) + '';
@@ -174,12 +194,12 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
         emp.zhufanggongjijin = (preAnnuallyIncom * zhufanggongjijinxishu).toFixed(2) + '';
         emp.yiliaobaoxian = (preAnnuallyIncom * yiliaobaoxianxishu).toFixed(2) + '';
 
-        emp.nianjinComments = '上一年度总收入(' + preAnnuallyIncom + ')*年金系数(' + nianjinxishu + ')=' + emp.nianjin;
-        emp.qiyeNianJinComments = '上一年度总收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
-        emp.yanglaobaoxianComments = '上一年度总收入(' + preAnnuallyIncom + ')*养老保险系数(' + yanglaobaoxianxishu + ')=' + emp.yanglaobaoxian;
-        emp.shiyebaoxianComments = '上一年度总收入(' + preAnnuallyIncom + ')*失业保险系数(' + shiyebaoxianxishu + ')=' + emp.shiyebaoxian;
-        emp.zhufanggongjijinComments = '上一年度总收入(' + preAnnuallyIncom + ')*住房公积金系数(' + zhufanggongjijinxishu + ')=' + emp.zhufanggongjijin;
-        emp.yiliaobaoxianComments = '上一年度总收入(' + preAnnuallyIncom + ')*医疗保险系数(' + yiliaobaoxianxishu + ')=' + emp.yiliaobaoxian;
+        emp.nianjinComments = preComments + '上一年度总收入(' + preAnnuallyIncom + ')*年金系数(' + nianjinxishu + ')=' + emp.nianjin;
+        emp.qiyeNianJinComments = preComments + '上一年度总收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
+        emp.yanglaobaoxianComments = preComments + '上一年度总收入(' + preAnnuallyIncom + ')*养老保险系数(' + yanglaobaoxianxishu + ')=' + emp.yanglaobaoxian;
+        emp.shiyebaoxianComments = preComments + '上一年度总收入(' + preAnnuallyIncom + ')*失业保险系数(' + shiyebaoxianxishu + ')=' + emp.shiyebaoxian;
+        emp.zhufanggongjijinComments = preComments + '上一年度总收入(' + preAnnuallyIncom + ')*住房公积金系数(' + zhufanggongjijinxishu + ')=' + emp.zhufanggongjijin;
+        emp.yiliaobaoxianComments = preComments + '上一年度总收入(' + preAnnuallyIncom + ')*医疗保险系数(' + yiliaobaoxianxishu + ')=' + emp.yiliaobaoxian;
         return emp;
     });
 
@@ -304,31 +324,31 @@ SalaryCalculation.calculateYicixingjiangjinTax = function (emps, configDoc) {
                 yicixingjiangjin = newyicixingjiangjin;
             }
 
-            let yingshuigongzi = parseFloat(yicixingjiangjin / 12) - gerensuodeshuishuiji;
+            let yingshuigongzi = parseFloat(yicixingjiangjin / 12);
             yingshuigongzi = yingshuigongzi < 0 ? 0 : yingshuigongzi;
             let tax = 0;
             let taxComments = '';
             if (yingshuigongzi <= 1500) {
-                tax = yingshuigongzi * 0.03;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 3%";
+                tax = yicixingjiangjin * 0.03;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 3%";
             } else if (yingshuigongzi < 4500) {
-                tax = yingshuigongzi * 0.1 - 105;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 10%-105";
+                tax = yicixingjiangjin * 0.1 - 105;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 10%-105";
             } else if (yingshuigongzi < 9000) {
-                tax = yingshuigongzi * 0.2 - 555;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 20%-555";
+                tax = yicixingjiangjin * 0.2 - 555;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 20%-555";
             } else if (yingshuigongzi < 35000) {
-                tax = yingshuigongzi * 0.25 - 1005;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 25%-1005";
+                tax = yicixingjiangjin * 0.25 - 1005;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 25%-1005";
             } else if (yingshuigongzi < 55000) {
-                tax = yingshuigongzi * 0.3 - 2755;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 30%-2755";
+                tax = yicixingjiangjin * 0.3 - 2755;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 30%-2755";
             } else if (yingshuigongzi < 80000) {
-                tax = yingshuigongzi * 0.35 - 5505;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 35%-5505";
+                tax = yicixingjiangjin * 0.35 - 5505;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 35%-5505";
             } else if (yingshuigongzi > 80000) {
-                tax = yingshuigongzi * 0.45 - 13505;
-                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ")/12-个人所得税税基(" + gerensuodeshuishuiji + ") * 45%-13505";
+                tax = yicixingjiangjin * 0.45 - 13505;
+                taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 45%-13505";
             }
 
             emp.yicixingjiangjinTax = '' + tax.toFixed(2);
