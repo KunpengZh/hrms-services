@@ -60,6 +60,10 @@ SalaryCalculation.fillGongZiXinXi = function (emps, senEmpData, categoryConfig) 
                 }
             }
         }
+
+        emp.idCard = seEmp.idCard;
+        emp.bankAccount = seEmp.bankAccount;
+        emp.birthday = seEmp.birthday;
         return emp;
     })
     return newemps;

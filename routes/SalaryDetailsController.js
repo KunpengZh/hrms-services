@@ -12,6 +12,64 @@ var SDServices = require("../services/SalaryDetails/SalaryDetails");
 
 var excelJS = require('../services/utils/exceljs');
 
+var deleteSenData = function (obj) {
+    if (!(obj instanceof Array)) {
+        delete obj.idCard;
+        delete obj.bankAccount;
+        delete obj.birthday;
+    } else {
+
+        for (let i = 0; i < obj.length; i++) {
+            delete obj[i].idCard;
+            delete obj[i].bankAccount;
+            delete obj[i].birthday;
+        }
+    }
+
+    return obj;
+}
+
+router.get('/syncdata', function (req, res, next) {
+    if (!req.query.salaryCycle || req.query.salaryCycle === "") {
+        logger.error("salaryCycle is mandatory required");
+        res.json({
+            status: 500,
+            message: "salaryCycle is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    let salaryCycle = req.query.salaryCycle;
+
+    SDServices.SyncWithEmps(salaryCycle).then((SDData) => {
+        SDData = deleteSenData(SDData);
+        res.json({
+            status: 200,
+            data: SDData,
+            message: '同步化完成'
+        })
+        res.end();
+
+    }, (err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    }).catch((err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    })
+})
 
 router.get('/initialSD', function (req, res, next) {
     if (!req.query.salaryCycle || req.query.salaryCycle === "") {
@@ -28,6 +86,7 @@ router.get('/initialSD', function (req, res, next) {
     let salaryCycle = req.query.salaryCycle;
 
     SDServices.InitialWithEmps(salaryCycle).then((SDData) => {
+        SDData = deleteSenData(SDData);
         res.json({
             status: 200,
             data: SDData,
@@ -68,6 +127,7 @@ router.get('/recalculate', function (req, res, next) {
     let salaryCycle = req.query.salaryCycle;
 
     SDServices.ReCalculateSalaryDetails(salaryCycle).then((SDData) => {
+        SDData = deleteSenData(SDData);
         res.json({
             status: 200,
             data: SDData,
@@ -109,6 +169,7 @@ router.get('/', function (req, res, next) {
     let salaryCycle = req.query.salaryCycle;
 
     SDServices.getDataByCycle(salaryCycle).then((SDData) => {
+        SDData = deleteSenData(SDData);
         res.json({
             status: 200,
             data: SDData,
@@ -153,6 +214,7 @@ router.post('/update', function (req, res, next) {
     SDServices.update(salaryCycle, SDDataList).then((updateres) => {
         if (updateres) {
             SDServices.getDataByCycle(salaryCycle).then((SDData) => {
+                SDData = deleteSenData(SDData);
                 res.json({
                     status: 200,
                     data: SDData,

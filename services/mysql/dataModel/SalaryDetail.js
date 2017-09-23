@@ -18,6 +18,24 @@ module.exports = (sequelize, DataTypes) => {
         workerCategory: {
             type: Sequelize.STRING,
         },
+        gender: {
+            type: Sequelize.STRING,
+        },
+        idCard: {
+            type: Sequelize.STRING,
+        },
+        bankAccount: {
+            type: Sequelize.STRING,
+        },
+        birthday: {
+            type: Sequelize.STRING,
+        },
+        workAge: {
+            type: Sequelize.STRING,
+        },
+        comment: {
+            type: Sequelize.STRING,
+        },
         salaryCycle: {
             type: Sequelize.STRING,
         },

@@ -10,7 +10,7 @@ var logger = log4js.getLogger('HRMS-SalaryDetails-Services');
 logger.level = 'All';
 var SalaryCalculation = require('./SalaryCalculation');
 var ConfigDoc = require('../mysql/ConfigDoc');
-
+var CoryptoEnpSen = require('../empInfoServices/CryptoEnpSen');
 
 var SDServices = {};
 
@@ -26,7 +26,7 @@ SDServices.getDataByCycle = function (salaryCycle) {
                 salaryCycle: salaryCycle
             }
         }).then((SDData) => {
-            rel(SDData);
+            rel(CoryptoEnpSen.DeEncrypteEmps(JSON.parse(JSON.stringify(SDData))));
         }, (err) => {
             logger.error("Error Location SalaryDetails001")
             throw err;
@@ -37,7 +37,60 @@ SDServices.getDataByCycle = function (salaryCycle) {
     })
 }
 
+SDServices.SyncWithEmps = function (salaryCycle) {
+    return new Promise(function (rel, rej) {
+        let EmpBasics = [];
+        let processed = 0;
+        let WorkFlowControll = function () {
+            processed++;
+            if (processed === 2) {
+                CreateSalaryDetails(salaryCycle, EmpBasics).then(returnVals => {
+                    rel(returnVals);
+                }).catch((err) => {
+                    logger.error("Error Location SalaryDetails2002")
+                    throw err;
+                })
+            }
+        }
+
+        sequelize.query('DELETE from SalaryDetails where salaryCycle=:salaryCycle and empId not in (select EmpInfos.empId from EmpInfos)', { replacements: { salaryCycle: salaryCycle }, type: sequelize.QueryTypes.DELETE })
+            .then((delres) => {
+                logger.info("SyncWithEmps deletion result:" + delres);
+                WorkFlowControll();
+            }).catch((err) => {
+                logger.error("Error Location SalaryDetails5001")
+                throw err;
+            });
+
+        sequelize.query('SELECT * FROM EmpInfos where empId not in (SELECT empId from SalaryDetails)', { type: sequelize.QueryTypes.SELECT })
+            .then(emps => {
+                EmpBasics = emps;
+                WorkFlowControll();
+            })
+    })
+}
+
 SDServices.InitialWithEmps = function (salaryCycle) {
+    return new Promise(function (rel, rej) {
+        SalaryDetails.destroy({
+            where: {
+                salaryCycle: salaryCycle
+            }
+        }).then(() => {
+            CreateSalaryDetails(salaryCycle).then(returnVals => {
+                rel(returnVals);
+            }).catch((err) => {
+                logger.error("Error Location SalaryDetails2002")
+                throw err;
+            })
+        }).catch((err) => {
+            logger.error("Error Location SalaryDetails2003")
+            throw err;
+        })
+    })
+}
+
+let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
     return new Promise(function (rel, rej) {
         let emps = [];
         let empbasics = [];
@@ -52,16 +105,13 @@ SDServices.InitialWithEmps = function (salaryCycle) {
             rej(new Error("The give salaryCycle is null,will return"));
             return;
         }
-
-
-
         let functionsprocessed = 0;
 
         let InitialSalaryDetails = function () {
             try {
                 emps = SalaryCalculation.GenerateSalaryDetails(empbasics, salaryCycle);
                 emps = SalaryCalculation.fillGongZiXinXi(emps, empsendata, configCategory);
-                emps=SalaryCalculation.calculateJibengongzi(emps);
+                emps = SalaryCalculation.calculateJibengongzi(emps);
                 emps = SalaryCalculation.categoryOT(emps, empOTs);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
@@ -69,27 +119,19 @@ SDServices.InitialWithEmps = function (salaryCycle) {
                 emps = SalaryCalculation.calculateGerensuodeshui(emps, configDoc);
                 emps = SalaryCalculation.calculateYicixingjiangjinTax(emps, configDoc)
                 emps = SalaryCalculation.calculateNetIncome(emps);
-                SalaryDetails.destroy({
-                    where: {
-                        salaryCycle: salaryCycle
-                    },
-                    truncate: true /* this will ignore where and truncate the table instead */
-                }).then(() => {
-                    SalaryDetails.bulkCreate(emps).then(() => {
-                        SDServices.getDataByCycle(salaryCycle).then(returnval => {
-                            rel(returnval);
-                        }).catch(err => {
-                            logger.error("Error Location SalaryDetails202")
-                            rej(err);
-                        })
+
+                SalaryDetails.bulkCreate(CoryptoEnpSen.EncrypteEmps(emps)).then(() => {
+                    SDServices.getDataByCycle(salaryCycle).then(returnval => {
+                        rel(returnval);
                     }).catch(err => {
-                        logger.error("Error Location SalaryDetails203")
+                        logger.error("Error Location SalaryDetails202")
                         rej(err);
                     })
                 }).catch(err => {
-                    logger.error("Error Location SalaryDetails211")
+                    logger.error("Error Location SalaryDetails203")
                     rej(err);
                 })
+
             } catch (err) {
                 logger.error("Error Location SalaryDetails204")
                 rej(err);
@@ -102,13 +144,20 @@ SDServices.InitialWithEmps = function (salaryCycle) {
                 InitialSalaryDetails();
             }
         }
-        EmpBasicServices.getAllBasicEmpInfo().then(empbasicinfo => {
-            empbasics = JSON.parse(JSON.stringify(empbasicinfo));
+
+        if (parEmpBasics) {
+            empbasics = JSON.parse(JSON.stringify(parEmpBasics));
             WorkFlowControl();
-        }).catch(err => {
-            logger.error("Error Location SalaryDetails205")
-            rej(err);
-        })
+        } else {
+            EmpBasicServices.getAllBasicEmpInfo().then(empbasicinfo => {
+                empbasics = JSON.parse(JSON.stringify(empbasicinfo));
+                WorkFlowControl();
+            }).catch(err => {
+                logger.error("Error Location SalaryDetails205")
+                rej(err);
+            })
+        }
+
 
         EmpSenServices.getAllSensitiveEmpInfo().then(sendata => {
             empsendata = JSON.parse(JSON.stringify(sendata));
@@ -177,7 +226,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
 
         let calculateSalaryDetails = function () {
             try {
-                emps=SalaryCalculation.calculateJibengongzi(emps)
+                emps = SalaryCalculation.calculateJibengongzi(emps)
                 emps = SalaryCalculation.categoryOT(emps, empOTs);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
@@ -189,7 +238,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
                 let processed = 0;
 
                 emps.forEach(function (emp) {
-                    SalaryDetails.update(emp, {
+                    SalaryDetails.update(CoryptoEnpSen.EncrypteEmps(emp), {
                         where: {
                             id: emp.id
                         }
@@ -201,6 +250,10 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
                         rej(err);
                     })
                 });
+                /**
+                 * to reutrn in case emps is a []
+                 */
+                updateWorkFlowControl(processed, emps.length);
             } catch (err) {
                 logger.error("Error Location SalaryDetails303")
                 rej(err);
@@ -210,7 +263,6 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
         let updateWorkFlowControl = function (processed, reqlength) {
             if (processed === reqlength) {
                 SDServices.getDataByCycle(salaryCycle).then(sdemps => {
-                    emps = JSON.parse(JSON.stringify(sdemps));
                     rel(emps)
                 }).catch(err => {
                     logger.error("Error Location SalaryDetails304")
@@ -227,7 +279,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
         }
 
         SDServices.getDataByCycle(salaryCycle).then(sdemps => {
-            emps = JSON.parse(JSON.stringify(sdemps));
+            emps = sdemps;
             WorkFlowControl();
         }).catch(err => {
             logger.error("Error Location SalaryDetails305")
@@ -284,6 +336,9 @@ SDServices.update = function (salaryCycle, salaryDataList) {
                 throw new Error("The give salaryCycle is null")
             }
 
+            delete emp.idCard;
+            delete emp.bankAccount;
+            delete emp.birthday;
 
             SalaryDetails.update(emp, {
                 where: {
@@ -353,5 +408,7 @@ SDServices.upload = function (salaryDataList) {
         }
     })
 }
+
+
 
 module.exports = SDServices;

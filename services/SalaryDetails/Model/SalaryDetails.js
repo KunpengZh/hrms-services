@@ -1,10 +1,16 @@
-module.exports = function (emp, salaryCycle) {
+module.exports = function (emp,salaryCycle) {
     return {
         empId: emp.empId,
         name: emp.name,
         department: emp.department,
         jobRole: emp.jobRole,
         workerCategory: emp.workerCategory,
+        gender: emp.gender,
+        idCard: '',
+        bankAccount: '',
+        birthday:'',
+        workAge: emp.workAge,
+        comment: emp.comment,
         salaryCycle: salaryCycle,
         jinengGongzi: '0',
         gangweiGongzi: '0',

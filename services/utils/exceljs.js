@@ -434,4 +434,58 @@ exports.SDExcelToJSON = function (filename) {
 };
 
 
+/**
+ * Funcitons for Salary report
+ */
+
+var setGZDColumns = function () {
+    var columns = [
+        { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
+        { header: '姓名', key: 'name', width: 15, style: { bold: true } },
+        { header: '身份证', key: 'idCard', width: 15, style: { bold: true } },
+        { header: '银行帐号', key: 'bankAccount', width: 15, style: { bold: true } },
+        { header: '性别', key: 'gender', width: 15, style: { bold: true } },
+        { header: '工作部门', key: 'department', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '工作岗位', key: 'jobRole', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工资周期', key: 'salaryCycle', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工资', key: 'jibengongzi', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年金', key: 'nianjin', width: 15, style: { bold: true } },
+        { header: '养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
+        { header: '失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣除', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '个人所得税', key: 'tax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年终奖', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年终奖金税', key: 'yicixingjiangjinTax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '实发工资', key: 'netIncome', width: 10, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+exports.GZDDataToExcel = function (GZData, filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('SalaryData', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
+        worksheet.columns = setGZDColumns();
+
+        worksheet.addRows(GZData);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSGZDDataToExcelL001")
+                throw err;
+            });
+    })
+}
+
+
 
