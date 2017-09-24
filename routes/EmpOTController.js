@@ -316,11 +316,11 @@ router.post('/delete', function (req, res, next) {
             res.end()
         }
     }).catch((err) => {
-        logger.error("Err when delete employee basic information: " + err);
+        logger.error("Err when delete OT Data: " + err);
         res.json({
             status: 500,
             data: [],
-            message: "Err uwhen delete employee basic information: " + err
+            message: "Err uwhen delete Ot data: " + err
         })
     });
 

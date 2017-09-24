@@ -31,6 +31,7 @@ var CategoryConfigController = require('./routes/CategoryConfigController');
 var OTController = require('./routes/EmpOTController');
 var SalaryDetailsController = require('./routes/SalaryDetailsController');
 var GongziDanController = require("./routes/GongZidanController");
+var UserManagementController = require('./routes/UserManagementController');
 
 
 var app = express();
@@ -76,6 +77,7 @@ app.use('/categoryConfig', CategoryConfigController);
 app.use('/ot', OTController);
 app.use('/sdd', SalaryDetailsController);
 app.use('/gongzidan', GongziDanController);
+app.use('/appuser', UserManagementController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {

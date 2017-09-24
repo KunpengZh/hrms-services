@@ -3,15 +3,12 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('AppUsers', {
         empId: {
             type: Sequelize.INTEGER,
-            unique: true,
-            allowNull: false,
             get() {
                 return this.getDataValue('empId');
             }
         },
         empName: {
             type: Sequelize.STRING,
-            allowNull: false,
             get() {
                 return this.getDataValue('empName');
             }
@@ -32,9 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         jobRole: {
-            type: Sequelize.ENUM,
-            values: ['SysAdmin', 'PayrollAdmin', 'HRAdmin', 'EmpAdmin', 'User'],
-            allowNull: false,
+            type: Sequelize.STRING,
             get() {
                 return this.getDataValue('jobRole');
             }

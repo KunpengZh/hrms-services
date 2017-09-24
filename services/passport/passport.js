@@ -35,7 +35,7 @@ passport.use('local.signup', new localStategy({
         where: { username: username },
     }).then(user => {
         if (user) {
-            return done(null, false, "此邮件已经被注册");
+            return done(null, false, "此用户名已经被注册");
         }
 
         UserModel.User.create(
