@@ -69,25 +69,41 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/login', login);
 
 
-app.use('/AppConfig', appconfig);
-app.use('/getUnicKey', unicKey);
-app.use('/emp', empController);
-app.use('/empsen', SensitiveEmployeeInfoController);
-app.use('/categoryConfig', CategoryConfigController);
-app.use('/ot', OTController);
-app.use('/sdd', SalaryDetailsController);
-app.use('/gongzidan', GongziDanController);
-app.use('/appuser', UserManagementController);
 
 app.use(function (req, res, next) {
   if (req.isAuthenticated()) {
     next();
-    return;
   } else {
     res.json({ "message": "Please Login first", status: 401 });
     res.end();
+    return;
   }
 })
+
+app.use('/emp', empController);
+app.use('/getUnicKey', unicKey);
+
+app.use('/empsen', checkIsHRAdmin)
+app.use('/empsen', SensitiveEmployeeInfoController);
+
+app.use('/AppConfig', checkIsHRAdmin);
+app.use('/AppConfig', appconfig);
+
+app.use('/ot', checkIsHRAdmin);
+app.use('/ot', OTController);
+
+
+app.use('/categoryConfig', checkIsPayrollAdmin);
+app.use('/categoryConfig', CategoryConfigController);
+
+app.use('/sdd', checkIsPayrollAdmin);
+app.use('/sdd', SalaryDetailsController);
+
+app.use('/gongzidan', checkIsPayrollAdmin);
+app.use('/gongzidan', GongziDanController);
+
+app.use('/appuser', checkIsSysAdmin);
+app.use('/appuser', UserManagementController);
 
 
 
@@ -95,6 +111,43 @@ app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
 });
+
+
+function checkIsHRAdmin(req, res, next) {
+  if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "HRAdmin") {
+    return next()
+  } else {
+    res.json({
+      status: 401,
+      message: "你没有权限访问此模块",
+      data: []
+    })
+  }
+}
+
+function checkIsPayrollAdmin(req, res, next) {
+  if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "PayrollAdmin") {
+    return next()
+  } else {
+    res.json({
+      status: 401,
+      message: "你没有权限访问此模块",
+      data: []
+    })
+  }
+}
+
+function checkIsSysAdmin(req, res, next) {
+  if (req.user.jobRole === 'SysAdmin') {
+    return next()
+  } else {
+    res.json({
+      status: 401,
+      message: "你没有权限访问此模块",
+      data: []
+    })
+  }
+}
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
