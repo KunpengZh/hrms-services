@@ -117,6 +117,7 @@ function checkIsHRAdmin(req, res, next) {
   if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "HRAdmin") {
     return next()
   } else {
+    logger.error("你没有权限访问此模块, HRAdmin")
     res.json({
       status: 401,
       message: "你没有权限访问此模块",
@@ -129,6 +130,7 @@ function checkIsPayrollAdmin(req, res, next) {
   if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "PayrollAdmin") {
     return next()
   } else {
+    logger.error("你没有权限访问此模块, PayrollAdmin")
     res.json({
       status: 401,
       message: "你没有权限访问此模块",
@@ -141,6 +143,7 @@ function checkIsSysAdmin(req, res, next) {
   if (req.user.jobRole === 'SysAdmin') {
     return next()
   } else {
+    logger.error("你没有权限访问此模块, SysAdmin")
     res.json({
       status: 401,
       message: "你没有权限访问此模块",
