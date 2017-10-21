@@ -6,10 +6,16 @@ logger.level = 'All';
 var EmpBasicService = {};
 var UnicID = require('../mysql/UnicID');
 var SenEmpServices = require('./SensitiveEmpInfoServices');
+const ActiveEmpStatus = 'Active';
+var utils = require('../utils/utils');
 
 EmpBasicService.getAllBasicEmpInfo = function () {
     return new Promise(function (rel, rej) {
-        empInfo.findAll().then((employees) => {
+        empInfo.findAll({
+            where: {
+                empStatus: ActiveEmpStatus
+            }
+        }).then((employees) => {
             rel(employees);
         }, (err) => {
             logger.error("Error Location EmpBasicService001")
@@ -19,6 +25,16 @@ EmpBasicService.getAllBasicEmpInfo = function () {
             throw err;
         })
     })
+}
+
+var updateWorkAge = function (emp) {
+    if (emp.entryTime && emp.entryTime.length >= 8) {
+        var workAge = utils.getWorkAge(emp.entryTime);
+        if (workAge) {
+            emp.workAge = workAge;
+        }
+    }
+    return emp;
 }
 
 /**
@@ -36,6 +52,10 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                 processed++;
                 continue;
             }
+
+            //To setup default to Active Employee
+            if (!emps[i].empStatus || emps[i].empStatus === "") emps[i].empStatus = ActiveEmpStatus;
+
             empInfo.findOne({
                 where: {
                     empId: empId
@@ -47,6 +67,7 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                         logger.error("New Employee(without empID) name is not provided, will skip emp: " + empId);
                         processed++;
                     } else {
+                        emps[i] = updateWorkAge(emps[i]);
                         empInfo.create(emps[i]).then((nemp) => {
                             logger.info("new Employee Created :" + empId);
                         }, (err) => {
@@ -54,7 +75,7 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                             throw err;
                         }).then(() => {
                             logger.info("To create new Sensitive Emp Info for :" + emps[i].empId);
-                            SenEmpServices.createNewSensitiveEmpInfo(empId, emps[i].name).then((cres) => {
+                            SenEmpServices.createNewSensitiveEmpInfo(empId, emps[i].name, emps[i].department, emps[i].jobRole, emps[i].workerCategory, emps[i].empStatus, emps[i].unEmpDate).then((cres) => {
                                 logger.info("Sensitive Emp Info created: " + empId);
                                 logger.info("Sensitive Emp Info response: " + cres);
                                 processed++;
@@ -77,30 +98,37 @@ EmpBasicService.updatedBasicEmpInfo = function (emps) {
                                 })
                                 throw (err);
                             })
-                            
+
                         }).catch(function (err) {
                             logger.error("Error Location EmpBasicService005")
                             throw err;
                         })
                     }
                 } else {
+
+                    emps[i] = updateWorkAge(emps[i]);
+
                     logger.info("To Update Employee : " + JSON.stringify(emps[i]));
-                    
+
                     empInfo.update(emps[i], {
                         where: {
                             empId: empId
                         }
                     }).then((nemp) => {
-                        processed++;
-                        if (processed === emps.length) {
-                            EmpBasicService.getAllBasicEmpInfo().then((employees) => {
-                                rel(employees);
-                            }).catch((err) => {
-                                logger.error("Error Location EmpBasicService006")
-                                throw err;
-                            })
-                        }
-
+                        SenEmpServices.updateBasicEmpData(empId, emps[i].name, emps[i].department, emps[i].jobRole, emps[i].workerCategory, emps[i].empStatus, emps[i].unEmpDate).then(updateRes => {
+                            processed++;
+                            if (processed === emps.length) {
+                                EmpBasicService.getAllBasicEmpInfo().then((employees) => {
+                                    rel(employees);
+                                }).catch((err) => {
+                                    logger.error("Error Location EmpBasicService006")
+                                    throw err;
+                                })
+                            }
+                        }, err => {
+                            ogger.error("Error Location EmpBasicService007, Update Sensitive Employee Data failed");
+                            throw err;
+                        })
                     }, (err) => {
                         logger.error("Error Location EmpBasicService007")
                         throw err;
@@ -205,5 +233,93 @@ EmpBasicService.uploadEmpInfoFromExcel = function (emps) {
     })
 }
 
+EmpBasicService.queryByCriteria = function (criteria) {
+    return new Promise(function (rel, rej) {
+
+        if (criteria === null) criteria = {};
+
+        let wherecase = buildWhereCase(criteria);
+        let employees = [];
+        sequelize.query("select * from EmpInfos" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                employees = JSON.parse(JSON.stringify(sdata));
+                rel(employees);
+            }, err => {
+                logger.error("Error Location EmpBasicService018")
+                rej(err);
+            }).catch(err => {
+                logger.error("Error Location EmpBasicService019")
+                rej(err);
+            });
+    })
+}
+
+EmpBasicService.queryActiveByCriteria = function (criteria) {
+    return new Promise(function (rel, rej) {
+
+        if (criteria === null) criteria = {};
+        criteria.empStatus = ActiveEmpStatus;
+
+        let wherecase = buildWhereCase(criteria);
+        let employees = [];
+        sequelize.query("select * from EmpInfos" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                employees = JSON.parse(JSON.stringify(sdata));
+                rel(employees);
+            }, err => {
+                logger.error("Error Location EmpBasicService020")
+                rej(err);
+            }).catch(err => {
+                logger.error("Error Location EmpBasicService021")
+                rej(err);
+            });
+    })
+}
+
+
+var buildWhereCase = function (criteria) {
+    
+    let wherecase = '';
+    if (criteria.workerCategory) {
+        if (wherecase === '') {
+            wherecase = " where workerCategory ='" + criteria.workerCategory + "'";
+        } else {
+            wherecase += " and workerCategory ='" + criteria.workerCategory + "'";
+        }
+    }
+
+    if (criteria.NonWorkerCategory) {
+        if (wherecase === '') {
+            wherecase = " where workerCategory <>'" + criteria.NonWorkerCategory + "'";
+        } else {
+            wherecase += " and workerCategory <>'" + criteria.NonWorkerCategory + "'";
+        }
+    }
+
+    if (criteria.department) {
+        if (wherecase === '') {
+            wherecase = " where department ='" + criteria.department + "'";
+        } else {
+            wherecase += " and department ='" + criteria.department + "'";
+        }
+    }
+    if (criteria.jobRole) {
+        if (wherecase === '') {
+            wherecase = " where jobRole ='" + criteria.jobRole + "'";
+        } else {
+            wherecase += " and jobRole ='" + criteria.jobRole + "'";
+        }
+    }
+    if (criteria.empStatus) {
+        if (wherecase === '') {
+            wherecase = " where empStatus ='" + criteria.empStatus + "'";
+        } else {
+            wherecase += " and empStatus ='" + criteria.empStatus + "'";
+        }
+    }
+
+   
+    return wherecase;
+}
 
 module.exports = EmpBasicService;

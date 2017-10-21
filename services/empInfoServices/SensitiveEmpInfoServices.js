@@ -6,9 +6,25 @@ logger.level = 'All';
 
 var CoryptoEnpSen = require('./CryptoEnpSen');
 var SensitiveEmpInfoModel = require('./Model/SensitiveEmpInfo');
-
+var utils = require('../utils/utils');
 var empInfo = require('../mysql/EmpInfo');
 
+const ActiveEmpStatus = 'Active';
+const NonRegularEmployeeCategory = "非全日制人员";
+const ColumnsNotEditableForNonRegularEmp = [
+    "jinengGongzi",
+    "gangweiGongzi",
+    "jichuButie",
+    "xilifei",
+    "gonglingGongzi",
+    "zhiwuJintie",
+    "gongliBuzhu",
+    "kaoheJiangjin",
+    "tongxunButie",
+    "qitaJiangjin",
+    "xiaxiangBuzhu",
+    "yingyetingBuzhu",
+    "buchongyiliaobaoxian"];
 
 
 var SensitiveEmpService = {};
@@ -53,13 +69,55 @@ var DeleteEmpSenWithoutBasicEmpInfo = function () {
     })
 }
 
+var buildUpdateSql = function () {
+    let sql = "update SensitiveEmpInfos set ";
+
+    ColumnsNotEditableForNonRegularEmp.forEach(function (propName, index) {
+        if (index === 0) {
+            sql += propName + "=''";
+        } else {
+            sql += " , " + propName + "=''";
+        }
+
+    })
+
+    sql += "where workerCategory='" + NonRegularEmployeeCategory + "'";
+
+    return sql;
+}
+
+var updateForNonRegularEmp = function () {
+    return new Promise(function (rel, rej) {
+        logger.info("Start to update employee Sensitive Table for non-regular employees");
+        let sql = buildUpdateSql();
+
+        sequelize.query(sql, { type: sequelize.QueryTypes.UPDATE })
+            .then(sdata => {
+                logger.info(JSON.stringify(sdata));
+                rel(true);
+            }, err => {
+                logger.error("Error Location SensitiveEmpService013")
+                rej(err);
+            }).catch(err => {
+                logger.error("Error Location SensitiveEmpService014")
+                rej(err);
+            });
+
+    })
+}
+
 SensitiveEmpService.SyncEmpSensitiveInfo = function () {
     return new Promise(function (rel, rej) {
         empInfo.findAll().then((basicemps) => {
             let processed = 0;
             basicemps.forEach(function (basicemp) {
-                let empId = basicemp.empId, name = basicemp.name;
-
+                let empId = basicemp.empId,
+                    name = basicemp.name,
+                    department = basicemp.department,
+                    jobRole = basicemp.jobRole,
+                    workerCategory = basicemp.workerCategory,
+                    empStatus = basicemp.empStatus,
+                    unEmpDate = basicemp.unEmpDate;
                 EmpSensitiveTable.findOne({
                     where: {
                         empId: empId
@@ -67,13 +125,18 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
                 }).then((emp) => {
                     if (emp === null) {
                         logger.info("Sync Sensitive Employe: to create new sensitive info for :" + empId + " , name:" + name);
-                        SensitiveEmpService.createNewSensitiveEmpInfo(empId, name).then(() => {
+                        SensitiveEmpService.createNewSensitiveEmpInfo(empId, name, department, jobRole, workerCategory, empStatus, unEmpDate).then(() => {
                             logger.info("Sensitive Emp Info created: " + empId + " , name: " + name);
                             processed++;
                             if (processed === basicemps.length) {
                                 logger.info("SyncEmpSensitiveInfo running completed");
                                 DeleteEmpSenWithoutBasicEmpInfo().then(() => {
-                                    rel(true)
+                                    updateForNonRegularEmp().then(() => {
+                                        rel(true)
+                                    }, err => {
+                                        logger.error("Error Location SensitiveEmpService058, Failed update Non-Regular Employee");
+                                        throw err;
+                                    })
                                 }).catch((err) => {
                                     logger.error("Error Location SensitiveEmpService058")
                                     throw err;
@@ -86,8 +149,14 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
                         })
                     } else {
                         logger.info("Sync Sensitive Employe: to Update new sensitive info for :" + empId + " , name:" + name);
+
                         EmpSensitiveTable.update({
-                            name: name
+                            name: name,
+                            department: department,
+                            jobRole: jobRole,
+                            workerCategory: workerCategory,
+                            empStatus:empStatus,
+                            unEmpDate:unEmpDate
                         }, {
                                 where: {
                                     empId: empId
@@ -98,7 +167,12 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
                                 if (processed === basicemps.length) {
                                     logger.info("SyncEmpSensitiveInfo running completed");
                                     DeleteEmpSenWithoutBasicEmpInfo().then(() => {
-                                        rel(true)
+                                        updateForNonRegularEmp().then(() => {
+                                            rel(true)
+                                        }, err => {
+                                            logger.error("Error Location SensitiveEmpService058, Failed update Non-Regular Employee");
+                                            throw err;
+                                        })
                                     }).catch((err) => {
                                         logger.error("Error Location SensitiveEmpService058")
                                         throw err;
@@ -140,7 +214,11 @@ SensitiveEmpService.SyncEmpSensitiveInfo = function () {
 
 SensitiveEmpService.getAllSensitiveEmpInfo = function () {
     return new Promise(function (rel, rej) {
-        EmpSensitiveTable.findAll().then((employees) => {
+        EmpSensitiveTable.findAll({
+            where: {
+                empStatus: ActiveEmpStatus
+            }
+        }).then((employees) => {
 
             rel(CoryptoEnpSen.DeEncrypteEmps(employees));
 
@@ -153,13 +231,15 @@ SensitiveEmpService.getAllSensitiveEmpInfo = function () {
         })
     })
 }
-SensitiveEmpService.createNewSensitiveEmpInfo = function (empId, name) {
+SensitiveEmpService.createNewSensitiveEmpInfo = function (empId, name, department, jobRole, workerCategory, empStatus, unEmpDate) {
     return new Promise(function (rel, rej) {
 
         if (null === empId || empId === undefined || empId === '' || null === name || name === undefined || name === '') {
             logger.error("Employee ID and Employee Name is mandatory required");
             rel(false);
         }
+        empStatus = empStatus ? empStatus : ActiveEmpStatus;
+        unEmpDate = unEmpDate ? unEmpDate : '';
 
         EmpSensitiveTable.findOne({
             where: {
@@ -168,7 +248,7 @@ SensitiveEmpService.createNewSensitiveEmpInfo = function (empId, name) {
         }).then((emp) => {
             if (emp === null) {
                 logger.info("To Create new Sensitive Employee : " + empId);
-                let newEmp = CoryptoEnpSen.EncrypteEmps(SensitiveEmpInfoModel(empId, name));
+                let newEmp = CoryptoEnpSen.EncrypteEmps(SensitiveEmpInfoModel(empId, name, department, jobRole, workerCategory, empStatus, unEmpDate));
                 EmpSensitiveTable.create(newEmp).then((nemp) => {
                     logger.info("new Sensitive Emp Info be created");
                     rel(true);
@@ -197,11 +277,25 @@ SensitiveEmpService.createNewSensitiveEmpInfo = function (empId, name) {
 
 SensitiveEmpService.updatedSensitiveEmpInfo = function (emps) {
     return new Promise(function (rel, rej) {
+        emps = emps.map(function (emp, index) {
+            emp = updateBirthdayAndAge(emp);
+            return emp;
+        })
         rel(updatedSensitiveEmpInfo(CoryptoEnpSen.EncrypteEmps(emps)));
     }).catch(function (err) {
         logger.error("Error Location SensitiveEmpService012")
         throw err;
     })
+}
+
+var updateBirthdayAndAge = function (emp) {
+    if (emp.idCard && emp.idCard.length >= 15) {
+        var birthday = utils.getBrithdayFromUUID(emp.idCard);
+        var age = utils.getAgeFromUUID(emp.idCard);
+        if (birthday) emp.birthday = birthday;
+        if (age) emp.age = age;
+    }
+    return emp;
 }
 
 updatedSensitiveEmpInfo = function (emps) {
@@ -224,7 +318,12 @@ updatedSensitiveEmpInfo = function (emps) {
                 processed++;
                 if (processed === emps.length) {
                     logger.info("Update Sensitive Employee Info running completed");
-                    rel(true)
+                    updateForNonRegularEmp().then(() => {
+                        rel(true)
+                    }, err => {
+                        logger.error("Error Location SensitiveEmpService007, Failed update Non-Regular Employee");
+                        throw err;
+                    })
                 }
             }, (err) => {
                 logger.error("Error Location SensitiveEmpService007")
@@ -249,8 +348,90 @@ SensitiveEmpService.delete = function (empIds) {
     })
 }
 
+SensitiveEmpService.queryByCriteria = function (criteria) {
+    return new Promise(function (rel, rej) {
+        // if (!criteria || JSON.stringify(criteria) === '{}') {
+        //     logger.error("Error Location SensitiveEmpService012")
+        //     rej(new Error("Please provide criteria"));
+        //     return;
+        // }
+        if (criteria === null) criteria = {};
+        let wherecase = buildWhereCase(criteria);
+        let employees = [];
+        sequelize.query("select * from SensitiveEmpInfos" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                employees = JSON.parse(JSON.stringify(CoryptoEnpSen.DeEncrypteEmps(sdata)));
+                rel(employees);
+            }, err => {
+                logger.error("Error Location SensitiveEmpService013")
+                rej(err);
+            }).catch(err => {
+                logger.error("Error Location SensitiveEmpService014")
+                rej(err);
+            });
+    })
+}
 
 
+var buildWhereCase = function (criteria) {
+    let wherecase = '';
+    if (criteria.workerCategory) {
+        if (wherecase === '') {
+            wherecase = " where workerCategory ='" + criteria.workerCategory + "'";
+        } else {
+            wherecase += " and workerCategory ='" + criteria.workerCategory + "'";
+        }
+    }
+    if (criteria.department) {
+        if (wherecase === '') {
+            wherecase = " where department ='" + criteria.department + "'";
+        } else {
+            wherecase += " and department ='" + criteria.department + "'";
+        }
+    }
+    if (criteria.jobRole) {
+        if (wherecase === '') {
+            wherecase = " where jobRole ='" + criteria.jobRole + "'";
+        } else {
+            wherecase += " and jobRole ='" + criteria.jobRole + "'";
+        }
+    }
+    if(criteria.empStatus){
+        if (wherecase === '') {
+            wherecase = " where empStatus ='" + criteria.empStatus + "'";
+        } else {
+            wherecase += " and empStatus ='" + criteria.empStatus + "'";
+        }
+    }
+    return wherecase;
+}
+
+
+SensitiveEmpService.updateBasicEmpData = function (empId, empName, department, jobRole, workerCategory, empStatus, unEmpDate) {
+    return new Promise(function (rel, rej) {
+        let emp = {
+            empName: empName ? empName : '',
+            department: department ? department : '',
+            jobRole: jobRole ? jobRole : '',
+            workerCategory: workerCategory ? workerCategory : '',
+            empStatus: empStatus ? empStatus : ActiveEmpStatus,
+            unEmpDate: unEmpDate ? unEmpDate : ''
+        }
+        EmpSensitiveTable.update(emp, {
+            where: {
+                empId: empId
+            }
+        }).then((nemp) => {
+            rel(true)
+        }, (err) => {
+            logger.error("Error Location SensitiveEmpService007")
+            rej(err)
+        }).catch(function (err) {
+            logger.error("Error Location SensitiveEmpService008")
+            rej(err)
+        })
+    })
+}
 
 // SensitiveEmpService.xxx = function () {
 //     return new Promise(function (rel, rej) {

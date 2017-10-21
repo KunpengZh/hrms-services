@@ -1,8 +1,9 @@
 var Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('EmpOT', {
+    return sequelize.define('NonRegularSalary', {
         empId: {
             type: Sequelize.STRING,
+            unique: true,
             allowNull: false,
         },
         name: {
@@ -11,37 +12,40 @@ module.exports = (sequelize, DataTypes) => {
         },
         department: {
             type: Sequelize.STRING,
+            allowNull: false,
         },
         jobRole: {
+            type: Sequelize.STRING,
+        },
+        workAge: {
+            type: Sequelize.STRING,
+        },
+        entryTime: {
+            type: Sequelize.STRING,
+        },
+        gender: {
             type: Sequelize.STRING,
         },
         workerCategory: {
             type: Sequelize.STRING,
         },
-        OTCycle: {
-            type: Sequelize.STRING,
-            allowNull: false,
-        },
-        NormalOT:{
+        salaryCycle: {
             type: Sequelize.STRING,
         },
-        WeekendOT:{
+        daySalary: {
             type: Sequelize.STRING,
         },
-        HolidayOT:{
+        workDays: {
             type: Sequelize.STRING,
         },
-        kouchu: {
+        anquanJiangli: {
             type: Sequelize.STRING,
         },
-        kaohekoukuan: {
+        wuweizhangJiangli: {
             type: Sequelize.STRING,
         },
-        yiliaobaoxian: {
+        OTJiangjin: {
             type: Sequelize.STRING,
-        },
-        yicixingjiangjin: {
-            type: Sequelize.STRING,
-        },
+        }
     })
 }

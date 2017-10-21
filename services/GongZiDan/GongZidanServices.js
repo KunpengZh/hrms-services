@@ -5,9 +5,10 @@ var EmpSenServices = require('../empInfoServices/SensitiveEmpInfoServices');
 var SalaryDetailServices = require("../SalaryDetails/SalaryDetails");
 var EmpBasicServices = require('../empInfoServices/EmpBasicServices');
 let SalaryModel = require("./Model/GongziDan");
+let NonRegularEmpSalaryModel = require('./Model/NonRegularModel');
 var sequelize = require('../mysql/hrmsdb');
 var CoryptoEnpSen = require('../empInfoServices/CryptoEnpSen');
-
+const NonRegularEmployeeCategory = "非全日制人员";
 var GZDServices = {};
 
 GZDServices.getDataByCycle = function (salaryCycle) {
@@ -41,10 +42,13 @@ getGongZiDanData = function (salaryCycle, criteria) {
         let startGenerationData = function () {
             for (let i = 0; i < empsalarys.length; i++) {
                 let empsalary = empsalarys[i];
-
-                let newgongzidan = SalaryModel(empsalary);
-
-                salarylist.push(newgongzidan);
+                if (empsalary.workerCategory === NonRegularEmployeeCategory) {
+                    let newgongzidan = NonRegularEmpSalaryModel(empsalary);
+                    salarylist.push(newgongzidan);
+                } else {
+                    let newgongzidan = SalaryModel(empsalary);
+                    salarylist.push(newgongzidan);
+                }
             }
             rel(salarylist);
         }

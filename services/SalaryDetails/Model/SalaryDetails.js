@@ -1,4 +1,4 @@
-module.exports = function (emp,salaryCycle) {
+module.exports = function (emp, salaryCycle) {
     return {
         empId: emp.empId,
         name: emp.name,
@@ -8,7 +8,7 @@ module.exports = function (emp,salaryCycle) {
         gender: emp.gender,
         idCard: '',
         bankAccount: '',
-        birthday:'',
+        birthday: '',
         workAge: emp.workAge,
         comment: emp.comment,
         salaryCycle: salaryCycle,
@@ -44,7 +44,7 @@ module.exports = function (emp,salaryCycle) {
         yanglaobaoxian: '0',
         yanglaobaoxianComments: '',
         shiyebaoxian: '0',
-        sheyebaoxianComments: '',
+        shiyebaoxianComments: '',
         zhufanggongjijin: '0',
         zhufanggongjijinComments: '',
         yiliaobaoxian: '0',
@@ -58,6 +58,11 @@ module.exports = function (emp,salaryCycle) {
         yicixingjiangjinTaxComments: '',
         buchongyiliaobaoxian: '0',
         netIncome: '0',
-        netIncomeComments: ''
+        netIncomeComments: '',
+        daySalary: '0',
+        workDays: '0',
+        anquanJiangli: '0',
+        wuweizhangJiangli: '0',
+        OTJiangjin: '0',
     }
 };

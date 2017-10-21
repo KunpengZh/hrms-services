@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         workAge: {
             type: Sequelize.STRING,
         },
-        age: {
+        entryTime:{
             type: Sequelize.STRING,
         },
         gender: {
@@ -30,6 +30,12 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING,
         },
         comment: {
+            type: Sequelize.STRING,
+        },
+        empStatus:{
+            type: Sequelize.STRING,
+        },
+        unEmpDate:{
             type: Sequelize.STRING,
         }
     })

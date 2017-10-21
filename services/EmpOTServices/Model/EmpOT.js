@@ -8,6 +8,10 @@ module.exports = function (Emp, OTCycle) {
         OTCycle: OTCycle,
         NormalOT: '0',
         WeekendOT: "0",
-        HolidayOT: '0'
+        HolidayOT: '0',
+        kouchu: '0',
+        kaohekoukuan: '0',
+        yiliaobaoxian: '0',
+        yicixingjiangjin: '0',
     }
 }

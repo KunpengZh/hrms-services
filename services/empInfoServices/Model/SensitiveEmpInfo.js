@@ -1,9 +1,13 @@
-module.exports = function (empId, empName) {
+module.exports = function (empId, empName, department, jobRole, workerCategory, empStatus, unEmpDate) {
     return {
         empId: empId,
         name: empName,
+        department: department,
+        jobRole: jobRole,
+        workerCategory: workerCategory,
         idCard: '',
         birthday: '',
+        age: '',
         bankAccount: '',
         jinengGongzi: '',
         gangweiGongzi: '',
@@ -19,5 +23,7 @@ module.exports = function (empId, empName) {
         yingyetingBuzhu: '',
         preAnnuallyIncom: '',
         buchongyiliaobaoxian: '',
+        empStatus: empStatus ? empStatus : '',
+        unEmpDate: unEmpDate ? unEmpDate : ''
     }
 }

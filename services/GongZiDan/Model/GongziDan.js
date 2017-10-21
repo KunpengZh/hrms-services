@@ -25,6 +25,7 @@ module.exports = function (empsa) {
         yicixingjiangjin: empsa.yicixingjiangjin,
         yicixingjiangjinTax: empsa.yicixingjiangjinTax,
         buchongyiliaobaoxian: empsa.buchongyiliaobaoxian,
-        netIncome: empsa.netIncome
+        netIncome: empsa.netIncome,
+        gongziDesc:'工资+奖金+值班费+通讯补贴-扣款-养老保险-医疗保险-失业保险-住房公积金-个人所得税-补充医疗保险+一次性奖金-奖金税=实发工资'
     }
 };

@@ -32,6 +32,7 @@ var OTController = require('./routes/EmpOTController');
 var SalaryDetailsController = require('./routes/SalaryDetailsController');
 var GongziDanController = require("./routes/GongZidanController");
 var UserManagementController = require('./routes/UserManagementController');
+var NonRegularSalayController = require('./routes/NonRegularSalaryController');
 
 
 var app = express();
@@ -82,15 +83,17 @@ app.use(function (req, res, next) {
 
 app.use('/emp', empController);
 app.use('/getUnicKey', unicKey);
+app.use('/AppConfig', appconfig);
+app.use('/nonregular', NonRegularSalayController);
+
 
 app.use('/empsen', checkIsHRAdmin)
 app.use('/empsen', SensitiveEmployeeInfoController);
 
-app.use('/AppConfig', checkIsHRAdmin);
-app.use('/AppConfig', appconfig);
 
 app.use('/ot', checkIsHRAdmin);
 app.use('/ot', OTController);
+
 
 
 app.use('/categoryConfig', checkIsPayrollAdmin);

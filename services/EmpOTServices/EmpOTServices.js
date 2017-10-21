@@ -6,6 +6,7 @@ var sequelize = require('../mysql/hrmsdb');
 var log4js = require("log4js");
 var logger = log4js.getLogger('HRMS-EmpOT-Services');
 logger.level = 'All';
+const NonRegularEmployeeCategory = "非全日制人员";
 //var CategoryConfigModel = require('./Model/CategoryConfigModel')
 var EmpOTServices = {};
 
@@ -83,7 +84,16 @@ EmpOTServices.InitialWithEmps = function (OTCycle) {
             rel([]);
             return;
         }
-        EmpBasicServices.getAllBasicEmpInfo().then(emps => {
+        EmpBasicServices.queryActiveByCriteria({
+            NonWorkerCategory: NonRegularEmployeeCategory
+        }).then(emps => {
+            if(emps.length<=0){
+                rel({
+                    status: 500,
+                    data: [],
+                    message: "没有符合条件的数据"
+                });
+            }
             let processed = 0;
             emps.forEach(function (emp) {
                 let empId = emp.empId;

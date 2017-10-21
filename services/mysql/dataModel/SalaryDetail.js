@@ -179,6 +179,21 @@ module.exports = (sequelize, DataTypes) => {
         },
         netIncomeComments: {
             type: Sequelize.STRING,
+        },
+        daySalary: {
+            type: Sequelize.STRING,
+        },
+        workDays: {
+            type: Sequelize.STRING,
+        },
+        anquanJiangli: {
+            type: Sequelize.STRING,
+        },
+        wuweizhangJiangli: {
+            type: Sequelize.STRING,
+        },
+        OTJiangjin: {
+            type: Sequelize.STRING,
         }
     })
 }

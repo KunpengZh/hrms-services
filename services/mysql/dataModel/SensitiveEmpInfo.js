@@ -10,10 +10,23 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING,
             allowNull: false,
         },
+        department: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        jobRole: {
+            type: Sequelize.STRING,
+        },
+        workerCategory: {
+            type: Sequelize.STRING,
+        },
         idCard: {
             type: Sequelize.STRING,
         },
         birthday: {
+            type: Sequelize.STRING,
+        },
+        age: {
             type: Sequelize.STRING,
         },
         bankAccount: {
@@ -61,6 +74,12 @@ module.exports = (sequelize, DataTypes) => {
         preAnnuallyIncom:{
             type: Sequelize.STRING,
         },
+        empStatus:{
+            type: Sequelize.STRING,
+        },
+        unEmpDate:{
+            type: Sequelize.STRING,
+        }
     })
 }
 

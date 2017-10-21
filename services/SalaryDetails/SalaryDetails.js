@@ -11,6 +11,7 @@ logger.level = 'All';
 var SalaryCalculation = require('./SalaryCalculation');
 var ConfigDoc = require('../mysql/ConfigDoc');
 var CoryptoEnpSen = require('../empInfoServices/CryptoEnpSen');
+var NonRegularServices = require('../NonRegularSalary/NonRegularSalaryService');
 
 var SDServices = {};
 
@@ -53,7 +54,7 @@ SDServices.SyncWithEmps = function (salaryCycle) {
             }
         }
 
-        sequelize.query('DELETE from SalaryDetails where salaryCycle=:salaryCycle and empId not in (select EmpInfos.empId from EmpInfos)', { replacements: { salaryCycle: salaryCycle }, type: sequelize.QueryTypes.DELETE })
+        sequelize.query("DELETE from SalaryDetails where salaryCycle=:salaryCycle and empId not in (select EmpInfos.empId from EmpInfos where empStatus='Active')", { replacements: { salaryCycle: salaryCycle }, type: sequelize.QueryTypes.DELETE })
             .then((delres) => {
                 logger.info("SyncWithEmps deletion result:" + delres);
                 WorkFlowControll();
@@ -62,7 +63,7 @@ SDServices.SyncWithEmps = function (salaryCycle) {
                 throw err;
             });
 
-        sequelize.query('SELECT * FROM EmpInfos where empId not in (SELECT empId from SalaryDetails)', { type: sequelize.QueryTypes.SELECT })
+        sequelize.query("SELECT * FROM EmpInfos where empStatus='Active' and empId not in (SELECT empId from SalaryDetails)", { type: sequelize.QueryTypes.SELECT })
             .then(emps => {
                 EmpBasics = emps;
                 WorkFlowControll();
@@ -95,9 +96,10 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
         let emps = [];
         let empbasics = [];
         let empsendata = [];
-        let configCategory = [];
+        //let configCategory = [];
         let configDoc = {};
         let empOTs = [];
+        let nonRegularData = [];
 
         if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
             logger.error("The give salaryCycle is null,will return");
@@ -110,9 +112,10 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
         let InitialSalaryDetails = function () {
             try {
                 emps = SalaryCalculation.GenerateSalaryDetails(empbasics, salaryCycle);
-                emps = SalaryCalculation.fillGongZiXinXi(emps, empsendata, configCategory);
+                emps = SalaryCalculation.fillRegularEmployeeGongZiXinXi(emps, empsendata, empOTs);
+                emps = SalaryCalculation.fillNonRegularEmployeeGongZiXinXi(emps, nonRegularData);
                 emps = SalaryCalculation.calculateJibengongzi(emps);
-                emps = SalaryCalculation.categoryOT(emps, empOTs);
+                emps = SalaryCalculation.categoryOT(emps,configDoc);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
                 emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)
@@ -167,13 +170,13 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
             rej(err);
         })
 
-        CategoryConfigServices.getAllCategoryConfig().then(config => {
-            configCategory = JSON.parse(JSON.stringify(config));
-            WorkFlowControl();
-        }).catch(err => {
-            logger.error("Error Location SalaryDetails207")
-            rej(err);
-        })
+        // CategoryConfigServices.getAllCategoryConfig().then(config => {
+        //     configCategory = JSON.parse(JSON.stringify(config));
+        //     WorkFlowControl();
+        // }).catch(err => {
+        //     logger.error("Error Location SalaryDetails207")
+        //     rej(err);
+        // })
 
         ConfigDoc.findOne({
             where: {
@@ -196,7 +199,6 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
             rej(err);
         })
 
-
         EmpOTServices.getOTByCycle(salaryCycle).then(ots => {
             empOTs = JSON.parse(JSON.stringify(ots));
             WorkFlowControl();
@@ -204,6 +206,18 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
             logger.error("Error Location SalaryDetails210")
             rej(err);
         })
+
+        NonRegularServices.getNRSSByCycle(salaryCycle).then(data => {
+            if (data.status === 200) {
+                nonRegularData = JSON.parse(JSON.stringify(data.data));
+                WorkFlowControl();
+            } else {
+                logger.error("Error Location SalaryDetails211")
+                logger.error("Error when query non regular salary data");
+                rej(new Error("未能获取非全日制人员的工资数据"));
+            }
+        })
+
     })
 }
 
@@ -213,7 +227,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
     return new Promise(function (rel, rej) {
         let emps = [];
         let configDoc = {};
-        let empOTs = [];
+        
 
         if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
             logger.error("The give salaryCycle is null,will return");
@@ -226,8 +240,8 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
 
         let calculateSalaryDetails = function () {
             try {
-                emps = SalaryCalculation.calculateJibengongzi(emps)
-                emps = SalaryCalculation.categoryOT(emps, empOTs);
+                emps = SalaryCalculation.calculateJibengongzi(emps);
+                emps = SalaryCalculation.categoryOT(emps,configDoc);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
                 emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)
@@ -273,7 +287,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
 
         let WorkFlowControl = function () {
             functionsprocessed++;
-            if (functionsprocessed >= 3) {
+            if (functionsprocessed >= 2) {
                 calculateSalaryDetails();
             }
         }
@@ -308,13 +322,13 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
         })
 
 
-        EmpOTServices.getOTByCycle(salaryCycle).then(ots => {
-            empOTs = JSON.parse(JSON.stringify(ots));
-            WorkFlowControl();
-        }).catch(err => {
-            logger.error("Error Location SalaryDetails308")
-            rej(err);
-        })
+        // EmpOTServices.getOTByCycle(salaryCycle).then(ots => {
+        //     empOTs = JSON.parse(JSON.stringify(ots));
+        //     WorkFlowControl();
+        // }).catch(err => {
+        //     logger.error("Error Location SalaryDetails308")
+        //     rej(err);
+        // })
     })
 }
 
