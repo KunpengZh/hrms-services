@@ -327,6 +327,35 @@ router.post('/delete', function (req, res, next) {
 
 });
 
+router.post('/querybycriteria',function(req,res,next){
+    
+    if (!req.body.data || req.body.data === "") {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+  
+    let criteria = req.body.data;
+
+    EmpOTServices.queryByCriteria(criteria).then((data) => {
+        res.json(data)
+        res.end();
+    }, (err) => {
+        logger.error(err);
+        res.json(err)
+        res.end();
+    }).catch((err) => {
+        logger.error(err);
+        res.json(err)
+        res.end();
+    })
+})
+
 
 
 

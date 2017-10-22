@@ -38,6 +38,73 @@ SDServices.getDataByCycle = function (salaryCycle) {
     })
 }
 
+SDServices.queryByCriteria = function (criteria) {
+    return new Promise(function (rel, rej) {
+        if (criteria === null) criteria = {};
+
+        let wherecase = buildWhereCase(criteria);
+        let data = [];
+        sequelize.query("select * from SalaryDetails" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                data = CoryptoEnpSen.DeEncrypteEmps(JSON.parse(JSON.stringify(sdata)));
+                rel({
+                    status: 200,
+                    data: data,
+                    message: ''
+                });
+            }, err => {
+                logger.error("Error Location SalaryDetailsQuery01")
+                rej({
+                    status: 500,
+                    data: [],
+                    message: err
+                });
+            }).catch(err => {
+                logger.error("Error Location SalaryDetailsQuery02")
+                rej({
+                    status: 500,
+                    data: [],
+                    message: err
+                });
+            });
+    })
+}
+var buildWhereCase = function (criteria) {
+    
+    let wherecase = '';
+    if (criteria.workerCategory) {
+        if (wherecase === '') {
+            wherecase = " where workerCategory ='" + criteria.workerCategory + "'";
+        } else {
+            wherecase += " and workerCategory ='" + criteria.workerCategory + "'";
+        }
+    }
+
+    if (criteria.department) {
+        if (wherecase === '') {
+            wherecase = " where department ='" + criteria.department + "'";
+        } else {
+            wherecase += " and department ='" + criteria.department + "'";
+        }
+    }
+    if (criteria.jobRole) {
+        if (wherecase === '') {
+            wherecase = " where jobRole ='" + criteria.jobRole + "'";
+        } else {
+            wherecase += " and jobRole ='" + criteria.jobRole + "'";
+        }
+    }
+    if (criteria.salaryCycle) {
+        if (wherecase === '') {
+            wherecase = " where salaryCycle ='" + criteria.salaryCycle + "'";
+        } else {
+            wherecase += " and salaryCycle ='" + criteria.salaryCycle + "'";
+        }
+    }
+
+    return wherecase;
+}
+
 SDServices.SyncWithEmps = function (salaryCycle) {
     return new Promise(function (rel, rej) {
         let EmpBasics = [];
@@ -115,7 +182,7 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
                 emps = SalaryCalculation.fillRegularEmployeeGongZiXinXi(emps, empsendata, empOTs);
                 emps = SalaryCalculation.fillNonRegularEmployeeGongZiXinXi(emps, nonRegularData);
                 emps = SalaryCalculation.calculateJibengongzi(emps);
-                emps = SalaryCalculation.categoryOT(emps,configDoc);
+                emps = SalaryCalculation.categoryOT(emps, configDoc);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
                 emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)
@@ -227,7 +294,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
     return new Promise(function (rel, rej) {
         let emps = [];
         let configDoc = {};
-        
+
 
         if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
             logger.error("The give salaryCycle is null,will return");
@@ -241,7 +308,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
         let calculateSalaryDetails = function () {
             try {
                 emps = SalaryCalculation.calculateJibengongzi(emps);
-                emps = SalaryCalculation.categoryOT(emps,configDoc);
+                emps = SalaryCalculation.categoryOT(emps, configDoc);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
                 emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)

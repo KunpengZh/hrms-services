@@ -49,6 +49,73 @@ NRSS.getNRSSByCycle = function (salaryCycle) {
     })
 }
 
+NRSS.queryByCriteria = function (criteria) {
+    return new Promise(function (rel, rej) {
+        if (criteria === null) criteria = {};
+
+        let wherecase = buildWhereCase(criteria);
+        let data = [];
+        sequelize.query("select * from NonRegularSalaries" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                data = JSON.parse(JSON.stringify(sdata));
+                rel({
+                    status: 200,
+                    data: data,
+                    message: ''
+                });
+            }, err => {
+                logger.error("Error Location NonRegularQuery003")
+                rej({
+                    status: 500,
+                    data: [],
+                    message: err
+                });
+            }).catch(err => {
+                logger.error("Error Location NonRegularQuery004")
+                rej({
+                    status: 500,
+                    data: [],
+                    message: err
+                });
+            });
+    })
+}
+var buildWhereCase = function (criteria) {
+    
+    let wherecase = '';
+    if (criteria.workerCategory) {
+        if (wherecase === '') {
+            wherecase = " where workerCategory ='" + criteria.workerCategory + "'";
+        } else {
+            wherecase += " and workerCategory ='" + criteria.workerCategory + "'";
+        }
+    }
+
+    if (criteria.department) {
+        if (wherecase === '') {
+            wherecase = " where department ='" + criteria.department + "'";
+        } else {
+            wherecase += " and department ='" + criteria.department + "'";
+        }
+    }
+    if (criteria.jobRole) {
+        if (wherecase === '') {
+            wherecase = " where jobRole ='" + criteria.jobRole + "'";
+        } else {
+            wherecase += " and jobRole ='" + criteria.jobRole + "'";
+        }
+    }
+    if (criteria.salaryCycle) {
+        if (wherecase === '') {
+            wherecase = " where salaryCycle ='" + criteria.salaryCycle + "'";
+        } else {
+            wherecase += " and salaryCycle ='" + criteria.salaryCycle + "'";
+        }
+    }
+
+    return wherecase;
+}
+
 NRSS.InitialWithEmps = function (salaryCycle) {
     return new Promise(function (rel, rej) {
         if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {

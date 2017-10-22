@@ -33,6 +33,73 @@ EmpOTServices.getOTByCycle = function (OTCycle) {
     })
 }
 
+EmpOTServices.queryByCriteria = function (criteria) {
+    return new Promise(function (rel, rej) {
+        if (criteria === null) criteria = {};
+
+        let wherecase = buildWhereCase(criteria);
+        let data = [];
+        sequelize.query("select * from EmpOTs" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                data = JSON.parse(JSON.stringify(sdata));
+                rel({
+                    status: 200,
+                    data: data,
+                    message: ''
+                });
+            }, err => {
+                logger.error("Error Location EmpOTServicesQuery002")
+                rej({
+                    status: 500,
+                    data: [],
+                    message: err
+                });
+            }).catch(err => {
+                logger.error("Error Location EmpOTServicesQuery003")
+                rej({
+                    status: 500,
+                    data: [],
+                    message: err
+                });
+            });
+    })
+}
+var buildWhereCase = function (criteria) {
+  
+    let wherecase = '';
+    if (criteria.workerCategory) {
+        if (wherecase === '') {
+            wherecase = " where workerCategory ='" + criteria.workerCategory + "'";
+        } else {
+            wherecase += " and workerCategory ='" + criteria.workerCategory + "'";
+        }
+    }
+
+    if (criteria.department) {
+        if (wherecase === '') {
+            wherecase = " where department ='" + criteria.department + "'";
+        } else {
+            wherecase += " and department ='" + criteria.department + "'";
+        }
+    }
+    if (criteria.jobRole) {
+        if (wherecase === '') {
+            wherecase = " where jobRole ='" + criteria.jobRole + "'";
+        } else {
+            wherecase += " and jobRole ='" + criteria.jobRole + "'";
+        }
+    }
+    if (criteria.salaryCycle) {
+        if (wherecase === '') {
+            wherecase = " where OTCycle ='" + criteria.salaryCycle + "'";
+        } else {
+            wherecase += " and OTCycle ='" + criteria.salaryCycle + "'";
+        }
+    }
+
+    return wherecase;
+}
+
 
 // var DeleteOTDataWithoutBasicEmpInfo = function (OTCycle) {
 //     return new Promise(function (rel, rej) {
@@ -87,7 +154,7 @@ EmpOTServices.InitialWithEmps = function (OTCycle) {
         EmpBasicServices.queryActiveByCriteria({
             NonWorkerCategory: NonRegularEmployeeCategory
         }).then(emps => {
-            if(emps.length<=0){
+            if (emps.length <= 0) {
                 rel({
                     status: 500,
                     data: [],
