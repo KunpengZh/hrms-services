@@ -81,7 +81,7 @@ router.get('/download', function (req, res, next) {
         return
     }
 
-    let criteria = req.query.criteria;
+    let criteria = JSON.parse(req.query.criteria);
 
     if (JSON.stringify(criteria) === '{}') {
         logger.error("Query Criteria is mandatory required");
@@ -93,8 +93,6 @@ router.get('/download', function (req, res, next) {
         res.end()
         return
     }
-
-    console.log(criteria)
 
     GongZidanServices.getDataByCriteria(criteria).then((GongZiData) => {
 
@@ -181,5 +179,108 @@ router.post('/query', function (req, res, next) {
         })
         res.end();
     })
+})
+
+router.get("/gatherByWorkerCategory", function (req, res, next) {
+    if (!req.query.criteria || req.query.criteria === "") {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    let criteria = JSON.parse(req.query.criteria);
+    
+    if (JSON.stringify(criteria) === '{}') {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+    GongZidanServices.calculateByWorkerCategory(criteria).then((GongZiData) => {
+        res.json({
+            status: 200,
+            data: GongZiData,
+            message: '成功'
+        })
+        res.end();
+
+    }, (err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    }).catch((err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    })
+
+})
+router.get("/gatherByDepartment", function (req, res, next) {
+    if (!req.query.criteria || req.query.criteria === "") {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    let criteria = JSON.parse(req.query.criteria);
+
+    if (JSON.stringify(criteria) === '{}') {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+    GongZidanServices.calculateByDepartment(criteria).then((GongZiData) => {
+        res.json({
+            status: 200,
+            data: GongZiData,
+            message: '成功'
+        })
+        res.end();
+
+    }, (err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    }).catch((err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    })
+
 })
 module.exports = router;

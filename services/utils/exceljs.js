@@ -524,9 +524,9 @@ exports.SDExcelToJSON = function (filename) {
                         yingyetingBuzhu: yingyetingBuzhu ? yingyetingBuzhu : '0',
                         buchongyiliaobaoxian: buchongyiliaobaoxian ? buchongyiliaobaoxian : '0',
                         NormalOT: NormalOT ? NormalOT : "0",
-                        WeekendOT:WeekendOT?WeekendOT:'0',
-                        HolidayOT:HolidayOT?HolidayOT:'0',
-                        yiliaobaoxian:yiliaobaoxian?yiliaobaoxian:'0',
+                        WeekendOT: WeekendOT ? WeekendOT : '0',
+                        HolidayOT: HolidayOT ? HolidayOT : '0',
+                        yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '0',
                         kouchu: kouchu ? kouchu : '0',
                         kaohekoukuan: kaohekoukuan ? kaohekoukuan : '0',
                         yicixingjiangjin: yicixingjiangjin ? yicixingjiangjin : '0',
@@ -637,13 +637,14 @@ exports.SDTableDataToExcel = function (SDDataLists, filename) {
  * Funcitons for Salary report
  */
 
+// { header: '身份证', key: 'idCard', width: 15, style: { bold: true } },
+// { header: '银行帐号', key: 'bankAccount', width: 15, style: { bold: true } },
+// { header: '性别', key: 'gender', width: 15, style: { bold: true } },
+
 var setGZDColumns = function () {
     var columns = [
         { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
         { header: '姓名', key: 'name', width: 15, style: { bold: true } },
-        { header: '身份证', key: 'idCard', width: 15, style: { bold: true } },
-        { header: '银行帐号', key: 'bankAccount', width: 15, style: { bold: true } },
-        { header: '性别', key: 'gender', width: 15, style: { bold: true } },
         { header: '工作部门', key: 'department', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '工作岗位', key: 'jobRole', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -652,16 +653,16 @@ var setGZDColumns = function () {
         { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '年金', key: 'nianjin', width: 15, style: { bold: true } },
-        { header: '养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
-        { header: '失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
-        { header: '住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '扣除', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '个人所得税', key: 'tax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年金', key: 'nianjin', width: 15, style: { bold: true } },
+        { header: '扣养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
+        { header: '扣失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣个人所得税', key: 'tax', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '年终奖', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '年终奖金税', key: 'yicixingjiangjinTax', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年终奖金税', key: 'yicixingjiangjinTax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '实发工资', key: 'netIncome', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;

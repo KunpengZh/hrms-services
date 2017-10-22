@@ -10,6 +10,8 @@ var sequelize = require('../mysql/hrmsdb');
 var CoryptoEnpSen = require('../empInfoServices/CryptoEnpSen');
 const NonRegularEmployeeCategory = "非全日制人员";
 var GZDServices = {};
+var ReportModel = require("./Model/ReportModel");
+var NonRegularReportModel = require("./Model/NonRegularReportModel");
 
 GZDServices.getDataByCycle = function (salaryCycle) {
     return new Promise(function (rel, rej) {
@@ -40,16 +42,89 @@ getGongZiDanData = function (salaryCycle, criteria) {
         let empsalarys = [];
 
         let startGenerationData = function () {
+            let jibengongzi = 0,
+                totalJiangjin = 0,
+                totalOT = 0,
+                tongxunButie = 0,
+                nianjin = 0,
+                yanglaobaoxian = 0,
+                shiyebaoxian = 0,
+                zhufanggongjijin = 0,
+                yiliaobaoxian = 0,
+                totalKouchu = 0,
+                tax = 0,
+                yicixingjiangjin = 0,
+                yicixingjiangjinTax = 0,
+                buchongyiliaobaoxian = 0,
+                netIncome = 0;
+
             for (let i = 0; i < empsalarys.length; i++) {
                 let empsalary = empsalarys[i];
                 if (empsalary.workerCategory === NonRegularEmployeeCategory) {
                     let newgongzidan = NonRegularEmpSalaryModel(empsalary);
+
+                    jibengongzi += newgongzidan.jibengongzi ? parseFloat(newgongzidan.jibengongzi) : 0;
+                    totalJiangjin += newgongzidan.totalJiangjin ? parseFloat(newgongzidan.totalJiangjin) : 0;
+                    totalOT += newgongzidan.totalOT ? parseFloat(newgongzidan.totalOT) : 0;
+                    tax += newgongzidan.tax ? parseFloat(newgongzidan.tax) : 0;
+                    netIncome += newgongzidan.netIncome ? parseFloat(newgongzidan.netIncome) : 0;
+
                     salarylist.push(newgongzidan);
                 } else {
                     let newgongzidan = SalaryModel(empsalary);
+
+                    jibengongzi += newgongzidan.jibengongzi ? parseFloat(newgongzidan.jibengongzi) : 0;
+                    totalJiangjin += newgongzidan.totalJiangjin ? parseFloat(newgongzidan.totalJiangjin) : 0;
+                    totalOT += newgongzidan.totalOT ? parseFloat(newgongzidan.totalOT) : 0;
+                    tongxunButie += newgongzidan.tongxunButie ? parseFloat(newgongzidan.tongxunButie) : 0;
+                    nianjin += newgongzidan.nianjin ? parseFloat(newgongzidan.nianjin) : 0;
+                    yanglaobaoxian += newgongzidan.yanglaobaoxian ? parseFloat(newgongzidan.yanglaobaoxian) : 0;
+                    shiyebaoxian += newgongzidan.shiyebaoxian ? parseFloat(newgongzidan.shiyebaoxian) : 0;
+                    zhufanggongjijin += newgongzidan.zhufanggongjijin ? parseFloat(newgongzidan.zhufanggongjijin) : 0;
+                    yiliaobaoxian += newgongzidan.yiliaobaoxian ? parseFloat(newgongzidan.yiliaobaoxian) : 0;
+                    totalKouchu += newgongzidan.totalKouchu ? parseFloat(newgongzidan.totalKouchu) : 0;
+                    tax += newgongzidan.tax ? parseFloat(newgongzidan.tax) : 0;
+                    yicixingjiangjin += newgongzidan.yicixingjiangjin ? parseFloat(newgongzidan.yicixingjiangjin) : 0;
+                    yicixingjiangjinTax += newgongzidan.yicixingjiangjinTax ? parseFloat(newgongzidan.yicixingjiangjinTax) : 0;
+                    buchongyiliaobaoxian += newgongzidan.buchongyiliaobaoxian ? parseFloat(newgongzidan.buchongyiliaobaoxian) : 0;
+                    netIncome += newgongzidan.netIncome ? parseFloat(newgongzidan.netIncome) : 0;
+
                     salarylist.push(newgongzidan);
+
                 }
             }
+
+            let newEmpSA = {
+                empId: '统计汇总',
+                name: '',
+                gender: '',
+                idCard: '',
+                bankAccount: '',
+                workAge: '',
+                comment: '',
+                department: '',
+                jobRole: '',
+                workerCategory: '',
+                salaryCycle: '',
+                jibengongzi: jibengongzi + '',
+                totalJiangjin: totalJiangjin + '',
+                totalOT: totalOT + '',
+                tongxunButie: tongxunButie + '',
+                nianjin: nianjin + '',
+                yanglaobaoxian: yanglaobaoxian + '',
+                shiyebaoxian: shiyebaoxian + '',
+                zhufanggongjijin: zhufanggongjijin + '',
+                yiliaobaoxian: yiliaobaoxian + '',
+                totalKouchu: totalKouchu + '',
+                tax: tax + '',
+                yicixingjiangjin: yicixingjiangjin + '',
+                yicixingjiangjinTax: yicixingjiangjinTax + '',
+                buchongyiliaobaoxian: buchongyiliaobaoxian + '',
+                netIncome: netIncome + '',
+                gongziDesc: ''
+            }
+
+            salarylist.push(newEmpSA);
             rel(salarylist);
         }
 
@@ -163,6 +238,7 @@ GZDServices.getAllAvailableSalaryCycle = function () {
 }
 
 var buildWhereCase = function (criteria) {
+
     let wherecase = '';
     if (criteria.startSalaryCycle) {
         if (wherecase === '') {
@@ -206,7 +282,163 @@ var buildWhereCase = function (criteria) {
             wherecase += " and jobRole ='" + criteria.jobRole + "'";
         }
     }
+
     return wherecase;
+}
+
+let calculateReportingData = function (empsa, reportDataModel) {
+    if (empsa.workerCategory === NonRegularEmployeeCategory) {
+        reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
+        reportDataModel.totalJiangjin += parseFloat(empsa.anquanJiangli) + parseFloat(empsa.wuweizhangJiangli);
+        reportDataModel.totalOT += parseFloat(empsa.OTJiangjin);
+        reportDataModel.tax += parseFloat(empsa.tax);
+        reportDataModel.netIncome += parseFloat(empsa.netIncome);
+    } else {
+
+        reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
+        reportDataModel.totalJiangjin += parseFloat(empsa.zhiwuJintie) + parseFloat(empsa.gongliBuzhu) + parseFloat(empsa.kaoheJiangjin) + parseFloat(empsa.qitaJiangjin) + parseFloat(empsa.xiaxiangBuzhu) + parseFloat(empsa.yingyetingBuzhu);
+        reportDataModel.totalOT += parseFloat(empsa.NormalOT) + parseFloat(empsa.WeekendOT) + parseFloat(empsa.HolidayOT);
+        reportDataModel.tongxunButie += parseFloat(empsa.tongxunButie);
+        reportDataModel.nianjin += parseFloat(empsa.nianjin);
+        reportDataModel.yanglaobaoxian += parseFloat(empsa.yanglaobaoxian);
+        reportDataModel.shiyebaoxian += parseFloat(empsa.shiyebaoxian);
+        reportDataModel.zhufanggongjijin += parseFloat(empsa.zhufanggongjijin);
+        reportDataModel.yiliaobaoxian += parseFloat(empsa.tongxunyiliaobaoxianButie);
+        reportDataModel.totalKouchu += parseFloat(empsa.kouchu) + parseFloat(empsa.kaohekoukuan);
+        reportDataModel.tax += parseFloat(empsa.tax);
+        reportDataModel.yicixingjiangjin += parseFloat(empsa.yicixingjiangjin);
+        reportDataModel.yicixingjiangjinTax += parseFloat(empsa.yicixingjiangjinTax);
+        reportDataModel.buchongyiliaobaoxian += parseFloat(empsa.buchongyiliaobaoxian);
+        reportDataModel.netIncome += parseFloat(empsa.netIncome);
+
+    }
+    return reportDataModel;
+}
+
+let gatherReportData = function (reportDataModel, gatherObj) {
+    if (reportDataModel.workerCategory === NonRegularEmployeeCategory) {
+        gatherObj.jibengongzi += reportDataModel.jibengongzi
+        gatherObj.totalJiangjin += reportDataModel.totalJiangjin
+        gatherObj.totalOT += reportDataModel.totalOT
+        gatherObj.tax += reportDataModel.tax;
+        gatherObj.netIncome += reportDataModel.netIncome;
+    } else {
+        gatherObj.jibengongzi += reportDataModel.jibengongzi;
+        gatherObj.totalJiangjin += reportDataModel.totalJiangjin
+        gatherObj.totalOT += reportDataModel.totalOT
+        gatherObj.tongxunButie += reportDataModel.tongxunButie;
+        gatherObj.nianjin += reportDataModel.nianjin;
+        gatherObj.yanglaobaoxian += reportDataModel.yanglaobaoxian;
+        gatherObj.shiyebaoxian += reportDataModel.shiyebaoxian;
+        gatherObj.zhufanggongjijin += reportDataModel.zhufanggongjijin;
+        gatherObj.yiliaobaoxian += reportDataModel.tongxunyiliaobaoxianButie;
+        gatherObj.totalKouchu += reportDataModel.totalKouchu
+        gatherObj.tax += reportDataModel.tax;
+        gatherObj.yicixingjiangjin += reportDataModel.yicixingjiangjin;
+        gatherObj.yicixingjiangjinTax += reportDataModel.yicixingjiangjinTax;
+        gatherObj.buchongyiliaobaoxian += reportDataModel.buchongyiliaobaoxian;
+        gatherObj.netIncome += reportDataModel.netIncome;
+    }
+    return gatherObj;
+}
+
+GZDServices.calculateByWorkerCategory = function (criteria) {
+    return new Promise(function (rel, rej) {
+        let salarylist = [];
+        let empsalarys = [];
+        let wherecase = buildWhereCase(criteria);
+        let gatherDataObject = {};
+        let startGenerationData = function () {
+            empsalarys.forEach(function (emp) {
+                let workerCategory = emp.workerCategory;
+                if (gatherDataObject[workerCategory]) {
+                    gatherDataObject[workerCategory] = calculateReportingData(emp, gatherDataObject[workerCategory]);
+                } else {
+                    let x = ReportModel(workerCategory, '');
+                    if (workerCategory === NonRegularEmployeeCategory) {
+
+                        gatherDataObject[workerCategory] = calculateReportingData(emp, NonRegularReportModel(workerCategory, ''));
+                    } else {
+                        gatherDataObject[workerCategory] = calculateReportingData(emp, ReportModel(workerCategory, ''));
+                    }
+
+                }
+            })
+
+            let gatherObj = ReportModel("统计汇总", '');
+            for (var key in gatherDataObject) {
+                gatherObj = gatherReportData(gatherDataObject[key], gatherObj);
+                salarylist.push(gatherDataObject[key]);
+            }
+            salarylist.push(gatherObj);
+
+            rel(salarylist);
+        }
+        sequelize.query("select * from SalaryDetails" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                empsalarys = JSON.parse(JSON.stringify(CoryptoEnpSen.DeEncrypteEmps(sdata)));
+                startGenerationData();
+            }, err => {
+                logger.error("Error Location GongZiDanServices005");
+                rej(err);
+            }).catch(err => {
+                logger.error("Error Location GongZiDanServices006");
+                rej(err);
+            });
+
+
+    })
+
+}
+
+GZDServices.calculateByDepartment = function (criteria) {
+    return new Promise(function (rel, rej) {
+        let salarylist = [];
+        let empsalarys = [];
+        let wherecase = buildWhereCase(criteria);
+        let gatherDataObject = {};
+        let startGenerationData = function () {
+            empsalarys.forEach(function (emp) {
+                let workerCategory = emp.workerCategory;
+                let department = emp.department;
+                
+                if (gatherDataObject[department]) {
+                    
+                    gatherDataObject[department] = calculateReportingData(emp, gatherDataObject[department]);
+                } else {
+                    if (workerCategory === NonRegularEmployeeCategory) {
+                        gatherDataObject[department] = calculateReportingData(emp, NonRegularReportModel('', department));
+                    } else {
+                        gatherDataObject[department] = calculateReportingData(emp, ReportModel('', department));
+                    }
+                   
+                }
+            })
+
+            let gatherObj = ReportModel('', "统计汇总");
+            for (var key in gatherDataObject) {
+                gatherObj = gatherReportData(gatherDataObject[key], gatherObj);
+                salarylist.push(gatherDataObject[key]);
+            }
+            salarylist.push(gatherObj);
+
+            rel(salarylist);
+        }
+        sequelize.query("select * from SalaryDetails" + wherecase, { type: sequelize.QueryTypes.SELECT })
+            .then(sdata => {
+                empsalarys = JSON.parse(JSON.stringify(CoryptoEnpSen.DeEncrypteEmps(sdata)));
+                startGenerationData();
+            }, err => {
+                logger.error("Error Location GongZiDanServices005");
+                rej(err);
+            }).catch(err => {
+                logger.error("Error Location GongZiDanServices006");
+                rej(err);
+            });
+
+
+    })
+
 }
 
 
