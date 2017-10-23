@@ -132,10 +132,22 @@ module.exports = (sequelize, DataTypes) => {
         yanglaobaoxianComments: {
             type: Sequelize.TEXT,
         },
+        qiyeYanglaobaoxian: {
+            type: Sequelize.STRING,
+        },
+        qiyeYanglaobaoxianComments: {
+            type: Sequelize.TEXT,
+        },
         shiyebaoxian: {
             type: Sequelize.STRING,
         },
         shiyebaoxianComments: {
+            type: Sequelize.TEXT,
+        },
+        qiyeShiyebaoxian: {
+            type: Sequelize.STRING,
+        },
+        qiyeShiyebaoxianComments: {
             type: Sequelize.TEXT,
         },
         zhufanggongjijin: {
@@ -144,10 +156,22 @@ module.exports = (sequelize, DataTypes) => {
         zhufanggongjijinComments: {
             type: Sequelize.TEXT,
         },
+        qiyeZhufanggongjijin: {
+            type: Sequelize.STRING,
+        },
+        qiyeZhufanggongjijinComments: {
+            type: Sequelize.TEXT,
+        },
         yiliaobaoxian: {
             type: Sequelize.STRING,
         },
         yiliaobaoxianComments: {
+            type: Sequelize.TEXT,
+        },
+        qiyeYiliaobaoxian: {
+            type: Sequelize.STRING,
+        },
+        qiyeYiliaobaoxianComments: {
             type: Sequelize.TEXT,
         },
         yingshuigongzi: {

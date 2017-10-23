@@ -102,6 +102,21 @@ var buildWhereCase = function (criteria) {
         }
     }
 
+    if (criteria.startSalaryCycle) {
+        if (wherecase === '') {
+            wherecase = "  where salaryCycle >='" + criteria.startSalaryCycle + "'";
+        } else {
+            wherecase += " and salaryCycle >='" + criteria.startSalaryCycle + "'";
+        }
+    }
+    if (criteria.endSalaryCycle) {
+        if (wherecase === '') {
+            wherecase = " where salaryCycle <='" + criteria.startSalaryCycle + "'";
+        } else {
+            wherecase += " and salaryCycle <='" + criteria.startSalaryCycle + "'";
+        }
+    }
+
     return wherecase;
 }
 

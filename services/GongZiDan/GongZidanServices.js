@@ -15,7 +15,7 @@ var NonRegularReportModel = require("./Model/NonRegularReportModel");
 
 GZDServices.getDataByCycle = function (salaryCycle) {
     return new Promise(function (rel, rej) {
-        getGongZiDanData(salaryCycle, null).then(gzds => {
+        getGongZiDanData(salaryCycle, null, false).then(gzds => {
             rel(gzds);
         }).catch(err => {
             logger.error("Error Location GongZiDanServices001");
@@ -26,7 +26,7 @@ GZDServices.getDataByCycle = function (salaryCycle) {
 }
 GZDServices.getDataByCriteria = function (criteria) {
     return new Promise(function (rel, rej) {
-        getGongZiDanData(null, criteria).then(gzds => {
+        getGongZiDanData(null, criteria, true).then(gzds => {
             rel(gzds);
         }).catch(err => {
             logger.error("Error Location GongZiDanServices002");
@@ -36,7 +36,7 @@ GZDServices.getDataByCriteria = function (criteria) {
     })
 }
 
-getGongZiDanData = function (salaryCycle, criteria) {
+getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
     return new Promise(function (rel, rej) {
         let salarylist = [];
         let empsalarys = [];
@@ -94,37 +94,40 @@ getGongZiDanData = function (salaryCycle, criteria) {
                 }
             }
 
-            let newEmpSA = {
-                empId: '统计汇总',
-                name: '',
-                gender: '',
-                idCard: '',
-                bankAccount: '',
-                workAge: '',
-                comment: '',
-                department: '',
-                jobRole: '',
-                workerCategory: '',
-                salaryCycle: '',
-                jibengongzi: jibengongzi + '',
-                totalJiangjin: totalJiangjin + '',
-                totalOT: totalOT + '',
-                tongxunButie: tongxunButie + '',
-                nianjin: nianjin + '',
-                yanglaobaoxian: yanglaobaoxian + '',
-                shiyebaoxian: shiyebaoxian + '',
-                zhufanggongjijin: zhufanggongjijin + '',
-                yiliaobaoxian: yiliaobaoxian + '',
-                totalKouchu: totalKouchu + '',
-                tax: tax + '',
-                yicixingjiangjin: yicixingjiangjin + '',
-                yicixingjiangjinTax: yicixingjiangjinTax + '',
-                buchongyiliaobaoxian: buchongyiliaobaoxian + '',
-                netIncome: netIncome + '',
-                gongziDesc: ''
+            if (needGatherData) {
+                let newEmpSA = {
+                    empId: '统计汇总',
+                    name: '',
+                    gender: '',
+                    idCard: '',
+                    bankAccount: '',
+                    workAge: '',
+                    comment: '',
+                    department: '',
+                    jobRole: '',
+                    workerCategory: '',
+                    salaryCycle: '',
+                    jibengongzi: jibengongzi + '',
+                    totalJiangjin: totalJiangjin + '',
+                    totalOT: totalOT + '',
+                    tongxunButie: tongxunButie + '',
+                    nianjin: nianjin + '',
+                    yanglaobaoxian: yanglaobaoxian + '',
+                    shiyebaoxian: shiyebaoxian + '',
+                    zhufanggongjijin: zhufanggongjijin + '',
+                    yiliaobaoxian: yiliaobaoxian + '',
+                    totalKouchu: totalKouchu + '',
+                    tax: tax + '',
+                    yicixingjiangjin: yicixingjiangjin + '',
+                    yicixingjiangjinTax: yicixingjiangjinTax + '',
+                    buchongyiliaobaoxian: buchongyiliaobaoxian + '',
+                    netIncome: netIncome + '',
+                    gongziDesc: ''
+                }
+
+                salarylist.push(newEmpSA);
             }
 
-            salarylist.push(newEmpSA);
             rel(salarylist);
         }
 
@@ -303,7 +306,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.yanglaobaoxian += parseFloat(empsa.yanglaobaoxian);
         reportDataModel.shiyebaoxian += parseFloat(empsa.shiyebaoxian);
         reportDataModel.zhufanggongjijin += parseFloat(empsa.zhufanggongjijin);
-        reportDataModel.yiliaobaoxian += parseFloat(empsa.tongxunyiliaobaoxianButie);
+        reportDataModel.yiliaobaoxian += parseFloat(empsa.yiliaobaoxian);
         reportDataModel.totalKouchu += parseFloat(empsa.kouchu) + parseFloat(empsa.kaohekoukuan);
         reportDataModel.tax += parseFloat(empsa.tax);
         reportDataModel.yicixingjiangjin += parseFloat(empsa.yicixingjiangjin);
@@ -331,7 +334,7 @@ let gatherReportData = function (reportDataModel, gatherObj) {
         gatherObj.yanglaobaoxian += reportDataModel.yanglaobaoxian;
         gatherObj.shiyebaoxian += reportDataModel.shiyebaoxian;
         gatherObj.zhufanggongjijin += reportDataModel.zhufanggongjijin;
-        gatherObj.yiliaobaoxian += reportDataModel.tongxunyiliaobaoxianButie;
+        gatherObj.yiliaobaoxian += reportDataModel.yiliaobaoxian;
         gatherObj.totalKouchu += reportDataModel.totalKouchu
         gatherObj.tax += reportDataModel.tax;
         gatherObj.yicixingjiangjin += reportDataModel.yicixingjiangjin;
@@ -340,6 +343,15 @@ let gatherReportData = function (reportDataModel, gatherObj) {
         gatherObj.netIncome += reportDataModel.netIncome;
     }
     return gatherObj;
+}
+
+let TransferFloatToString = function (ArrayObj) {
+    for (let i = 0; i < ArrayObj.length; i++) {
+        for (var key in ArrayObj[i]) {
+            ArrayObj[i][key] = ArrayObj[i][key] + '';
+        }
+    }
+    return ArrayObj;
 }
 
 GZDServices.calculateByWorkerCategory = function (criteria) {
@@ -372,7 +384,7 @@ GZDServices.calculateByWorkerCategory = function (criteria) {
             }
             salarylist.push(gatherObj);
 
-            rel(salarylist);
+            rel(TransferFloatToString(salarylist));
         }
         sequelize.query("select * from SalaryDetails" + wherecase, { type: sequelize.QueryTypes.SELECT })
             .then(sdata => {
@@ -401,9 +413,9 @@ GZDServices.calculateByDepartment = function (criteria) {
             empsalarys.forEach(function (emp) {
                 let workerCategory = emp.workerCategory;
                 let department = emp.department;
-                
+
                 if (gatherDataObject[department]) {
-                    
+
                     gatherDataObject[department] = calculateReportingData(emp, gatherDataObject[department]);
                 } else {
                     if (workerCategory === NonRegularEmployeeCategory) {
@@ -411,7 +423,7 @@ GZDServices.calculateByDepartment = function (criteria) {
                     } else {
                         gatherDataObject[department] = calculateReportingData(emp, ReportModel('', department));
                     }
-                   
+
                 }
             })
 
@@ -422,7 +434,7 @@ GZDServices.calculateByDepartment = function (criteria) {
             }
             salarylist.push(gatherObj);
 
-            rel(salarylist);
+            rel(TransferFloatToString(salarylist));
         }
         sequelize.query("select * from SalaryDetails" + wherecase, { type: sequelize.QueryTypes.SELECT })
             .then(sdata => {

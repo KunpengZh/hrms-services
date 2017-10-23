@@ -565,7 +565,7 @@ var setSDTableColumns = function () {
         { header: '日工资', key: 'daySalary', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '工作天数', key: 'workDays', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '基本工资', key: 'jibengongzi', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '基本工资计算方法', key: 'jibengongziComments', width: 80, outlineLevel: 1, style: { bold: true } },
+        { header: '基本工资计算方法', key: 'jibengongziComments', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '职务津贴', key: 'zhiwuJintie', width: 15, style: { bold: true } },
         { header: '公里补助', key: 'gongliBuzhu', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '考核奖金', key: 'kaoheJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -574,11 +574,11 @@ var setSDTableColumns = function () {
         { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '平时加班', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '平时加班计算方法', key: 'NormalOTComments', width: 80, outlineLevel: 1, style: { bold: true } },
+        { header: '平时加班计算方法', key: 'NormalOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '周末加班', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '周末加班计算方法', key: 'WeekendOTComments', width: 80, outlineLevel: 1, style: { bold: true } },
+        { header: '周末加班计算方法', key: 'WeekendOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '节假日加班', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '节假日加班计算方法', key: 'HolidayOTComments', width: 80, outlineLevel: 1, style: { bold: true } },
+        { header: '节假日加班计算方法', key: 'HolidayOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '安全奖励(非全日制)', key: 'anquanJiangli', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '无违章奖励(非全日制)', key: 'wuweizhangJiangli', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '加班奖金(非全日制)', key: 'OTJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -589,8 +589,6 @@ var setSDTableColumns = function () {
         { header: '上年收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '年金', key: 'nianjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '年金计算方法', key: 'nianjinComments', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '企业年金', key: 'qiyeNianjin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '企业年金计算方法', key: 'qiyeNianJinComments', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '养老保险', key: 'yanglaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '养老保险计算方法', key: 'yanglaobaoxianComments', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '失业保险', key: 'shiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -599,6 +597,16 @@ var setSDTableColumns = function () {
         { header: '住房公积金计算方法', key: 'zhufanggongjijinComments', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '医疗保险计算方法', key: 'yiliaobaoxianComments', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业年金', key: 'qiyeNianjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业年金计算方法', key: 'qiyeNianJinComments', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业养老保险', key: 'qiyeYanglaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业养老保险计算方法', key: 'qiyeYanglaobaoxianComments', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业失业保险', key: 'qiyeShiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业失业保险计算方法', key: 'qiyeShiyebaoxianComments', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业住房公积金', key: 'qiyeZhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业住房公积金计算方法', key: 'qiyeZhufanggongjijinComments', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业医疗保险计算方法', key: 'yiliaobaoxianComments', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '应税工资', key: 'yingshuigongzi', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '应税工资计算方法', key: 'yingshuigongziComments', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '个人所得税', key: 'tax', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -687,5 +695,120 @@ exports.GZDDataToExcel = function (GZData, filename) {
     })
 }
 
+var setGZDColumnsByWokerCategory = function () {
+    var columns = [
+        { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工资', key: 'jibengongzi', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年金', key: 'nianjin', width: 15, style: { bold: true } },
+        { header: '扣养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
+        { header: '扣失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣个人所得税', key: 'tax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年终奖', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年终奖金税', key: 'yicixingjiangjinTax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '实发工资', key: 'netIncome', width: 10, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+
+exports.GZDDataToExcelByWorkerCategory = function (GZData, filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('ByWorkerCategory', { views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }] });
+        worksheet.columns = setGZDColumnsByWokerCategory();
+
+        worksheet.addRows(GZData);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSGZDDataToExcelByWorkerCategory001")
+                throw err;
+            });
+    })
+}
+
+var setGZDColumnsByDepartment = function () {
+    var columns = [
+        { header: '工作部门', key: 'department', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '工资', key: 'jibengongzi', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年金', key: 'nianjin', width: 15, style: { bold: true } },
+        { header: '扣养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
+        { header: '扣失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣个人所得税', key: 'tax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年终奖', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年终奖金税', key: 'yicixingjiangjinTax', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '实发工资', key: 'netIncome', width: 10, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+
+exports.GZDDataToExcelByDepartment = function (GZData, filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('ByDepartment', { views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }] });
+        worksheet.columns = setGZDColumnsByDepartment();
+
+        worksheet.addRows(GZData);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSGZDDataToExcelByDepartment001")
+                throw err;
+            });
+    })
+}
+
+var setDanweiJitiColumns = function () {
+    var columns = [
+        { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
+        { header: '姓名', key: 'name', width: 15, style: { bold: true } },
+        { header: '个人缴纳', key: 'personal', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '公司缴纳', key: 'company', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '合计', key: 'total', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '备注', key: 'comments', width: 15, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+
+exports.DanweiJitiToExcel = function (danweiJitiData, filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('danweiJiti', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
+        worksheet.columns = setDanweiJitiColumns();
+
+        worksheet.addRows(danweiJitiData);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSDanweiJiti001")
+                throw err;
+            });
+    })
+}
 
 
