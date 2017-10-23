@@ -95,11 +95,10 @@ exports.EmpInfoToJSON = function (filename) {
                     }
                     let emp = {
                         empId: empId ? empId : '',
+                        name: name,
                         department: department ? department : '',
                         jobRole: jobRole ? jobRole : '',
                         entryTime: entryTime ? entryTime : '',
-                        workAge: workAge ? workAge : '',
-                        age: age ? age : '',
                         gender: gender ? gender : '',
                         workerCategory: workerCategory ? workerCategory : '',
                         comment: comment ? comment : ''
