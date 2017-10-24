@@ -315,7 +315,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
         reportDataModel.tax = reportDataModel.tax + parseFloat(empsa.tax);
         reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
-        console.log(reportDataModel);
+       
     } else {
 
         reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
@@ -334,7 +334,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.buchongyiliaobaoxian += parseFloat(empsa.buchongyiliaobaoxian);
         reportDataModel.netIncome += parseFloat(empsa.netIncome);
 
-        console.log(reportDataModel);
+        
     }
 
     return reportDataModel;
