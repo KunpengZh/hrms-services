@@ -65,7 +65,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/login', login);
@@ -119,7 +119,7 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+
 function checkIsHRAdmin(req, res, next) {
   if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "HRAdmin") {
     return next()
