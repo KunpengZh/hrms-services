@@ -315,7 +315,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
         reportDataModel.tax = reportDataModel.tax + parseFloat(empsa.tax);
         reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
-
+        console.log(reportDataModel);
     } else {
 
         reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
@@ -343,7 +343,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
 let gatherReportData = function (reportDataModel, gatherObj) {
 
     if (reportDataModel.workerCategory === NonRegularEmployeeCategory) {
-        gatherObj.jibengongzi += parseFloat(parreportDataModel.jibengongzi);
+        gatherObj.jibengongzi += parseFloat(reportDataModel.jibengongzi);
         gatherObj.totalJiangjin += parseFloat(reportDataModel.totalJiangjin);
         gatherObj.totalOT += parseFloat(reportDataModel.totalOT);
         gatherObj.tax += parseFloat(reportDataModel.tax);
