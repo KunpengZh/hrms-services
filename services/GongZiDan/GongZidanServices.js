@@ -451,7 +451,7 @@ GZDServices.calculateByDepartment = function (criteria) {
                     gatherDataObject[department] = calculateReportingData(emp, gatherDataObject[department]);
                 } else {
                     if (workerCategory === NonRegularEmployeeCategory) {
-                        gatherDataObject[department] = calculateReportingData(emp, NonRegularReportModel('bydepartment', department));
+                        gatherDataObject[department] = calculateReportingData(emp, ReportModel('bydepartment', department));
                     } else {
                         gatherDataObject[department] = calculateReportingData(emp, ReportModel('bydepartment', department));
                     }
