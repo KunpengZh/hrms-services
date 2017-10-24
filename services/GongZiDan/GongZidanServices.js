@@ -334,7 +334,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.buchongyiliaobaoxian += parseFloat(empsa.buchongyiliaobaoxian);
         reportDataModel.netIncome += parseFloat(empsa.netIncome);
 
-
+        console.log(reportDataModel);
     }
 
     return reportDataModel;
