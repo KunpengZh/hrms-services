@@ -13,6 +13,24 @@ var GZDServices = {};
 var ReportModel = require("./Model/ReportModel");
 var NonRegularReportModel = require("./Model/NonRegularReportModel");
 
+const RegularReportDataModel = ['jibengongzi',
+    'totalJiangjin',
+    'totalOT',
+    'tongxunButie',
+    'nianjin',
+    'yanglaobaoxian',
+    'shiyebaoxian',
+    'zhufanggongjijin',
+    'yiliaobaoxian',
+    'totalKouchu',
+    'tax',
+    'yicixingjiangjin',
+    'yicixingjiangjinTax',
+    'buchongyiliaobaoxian',
+    'netIncome'];
+const NonRegularReportReportDataModel = ['jibengongzi', 'totalJiangjin', 'totalOT', 'tax', 'netIncome'];
+
+
 GZDServices.getDataByCycle = function (salaryCycle) {
     return new Promise(function (rel, rej) {
         getGongZiDanData(salaryCycle, null, false).then(gzds => {
@@ -107,21 +125,21 @@ getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                     jobRole: '',
                     workerCategory: '',
                     salaryCycle: '',
-                    jibengongzi: jibengongzi + '',
-                    totalJiangjin: totalJiangjin + '',
-                    totalOT: totalOT + '',
-                    tongxunButie: tongxunButie + '',
+                    jibengongzi: jibengongzi.toFixed(2) + '',
+                    totalJiangjin: totalJiangjin.toFixed(2) + '',
+                    totalOT: totalOT.toFixed(2) + '',
+                    tongxunButie: tongxunButie.toFixed(2) + '',
                     nianjin: nianjin + '',
-                    yanglaobaoxian: yanglaobaoxian + '',
-                    shiyebaoxian: shiyebaoxian + '',
-                    zhufanggongjijin: zhufanggongjijin + '',
-                    yiliaobaoxian: yiliaobaoxian + '',
-                    totalKouchu: totalKouchu + '',
-                    tax: tax + '',
-                    yicixingjiangjin: yicixingjiangjin + '',
-                    yicixingjiangjinTax: yicixingjiangjinTax + '',
-                    buchongyiliaobaoxian: buchongyiliaobaoxian + '',
-                    netIncome: netIncome + '',
+                    yanglaobaoxian: yanglaobaoxian.toFixed(2) + '',
+                    shiyebaoxian: shiyebaoxian.toFixed(2) + '',
+                    zhufanggongjijin: zhufanggongjijin.toFixed(2) + '',
+                    yiliaobaoxian: yiliaobaoxian.toFixed(2) + '',
+                    totalKouchu: totalKouchu.toFixed(2) + '',
+                    tax: tax.toFixed(2) + '',
+                    yicixingjiangjin: yicixingjiangjin.toFixed(2) + '',
+                    yicixingjiangjinTax: yicixingjiangjinTax.toFixed(2) + '',
+                    buchongyiliaobaoxian: buchongyiliaobaoxian.toFixed(2) + '',
+                    netIncome: netIncome.toFixed(2) + '',
                     gongziDesc: ''
                 }
 
@@ -291,64 +309,78 @@ var buildWhereCase = function (criteria) {
 
 let calculateReportingData = function (empsa, reportDataModel) {
     if (empsa.workerCategory === NonRegularEmployeeCategory) {
-        reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
-        reportDataModel.totalJiangjin += parseFloat(empsa.anquanJiangli) + parseFloat(empsa.wuweizhangJiangli);
-        reportDataModel.totalOT += parseFloat(empsa.OTJiangjin);
-        reportDataModel.tax += parseFloat(empsa.tax);
-        reportDataModel.netIncome += parseFloat(empsa.netIncome);
+
+        reportDataModel.jibengongzi = reportDataModel.jibengongzi + parseFloat(empsa.jibengongzi);
+        reportDataModel.totalJiangjin = reportDataModel.totalJiangjin + parseFloat(empsa.anquanJiangli) + parseFloat(empsa.wuweizhangJiangli);
+        reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
+        reportDataModel.tax = reportDataModel.tax + parseFloat(empsa.tax);
+        reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
+
     } else {
 
         reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
-        reportDataModel.totalJiangjin += parseFloat(empsa.zhiwuJintie) + parseFloat(empsa.gongliBuzhu) + parseFloat(empsa.kaoheJiangjin) + parseFloat(empsa.qitaJiangjin) + parseFloat(empsa.xiaxiangBuzhu) + parseFloat(empsa.yingyetingBuzhu);
-        reportDataModel.totalOT += parseFloat(empsa.NormalOT) + parseFloat(empsa.WeekendOT) + parseFloat(empsa.HolidayOT);
+        reportDataModel.totalJiangjin += (parseFloat(empsa.zhiwuJintie) + parseFloat(empsa.gongliBuzhu) + parseFloat(empsa.kaoheJiangjin) + parseFloat(empsa.qitaJiangjin) + parseFloat(empsa.xiaxiangBuzhu) + parseFloat(empsa.yingyetingBuzhu));
+        reportDataModel.totalOT += (parseFloat(empsa.NormalOT) + parseFloat(empsa.WeekendOT) + parseFloat(empsa.HolidayOT));
         reportDataModel.tongxunButie += parseFloat(empsa.tongxunButie);
         reportDataModel.nianjin += parseFloat(empsa.nianjin);
         reportDataModel.yanglaobaoxian += parseFloat(empsa.yanglaobaoxian);
         reportDataModel.shiyebaoxian += parseFloat(empsa.shiyebaoxian);
         reportDataModel.zhufanggongjijin += parseFloat(empsa.zhufanggongjijin);
         reportDataModel.yiliaobaoxian += parseFloat(empsa.yiliaobaoxian);
-        reportDataModel.totalKouchu += parseFloat(empsa.kouchu) + parseFloat(empsa.kaohekoukuan);
+        reportDataModel.totalKouchu += (parseFloat(empsa.kouchu) + parseFloat(empsa.kaohekoukuan));
         reportDataModel.tax += parseFloat(empsa.tax);
         reportDataModel.yicixingjiangjin += parseFloat(empsa.yicixingjiangjin);
         reportDataModel.yicixingjiangjinTax += parseFloat(empsa.yicixingjiangjinTax);
         reportDataModel.buchongyiliaobaoxian += parseFloat(empsa.buchongyiliaobaoxian);
         reportDataModel.netIncome += parseFloat(empsa.netIncome);
 
+
     }
+
     return reportDataModel;
 }
 
 let gatherReportData = function (reportDataModel, gatherObj) {
+
     if (reportDataModel.workerCategory === NonRegularEmployeeCategory) {
-        gatherObj.jibengongzi += reportDataModel.jibengongzi
-        gatherObj.totalJiangjin += reportDataModel.totalJiangjin
-        gatherObj.totalOT += reportDataModel.totalOT
-        gatherObj.tax += reportDataModel.tax;
-        gatherObj.netIncome += reportDataModel.netIncome;
+        gatherObj.jibengongzi += parseFloat(parreportDataModel.jibengongzi);
+        gatherObj.totalJiangjin += parseFloat(reportDataModel.totalJiangjin);
+        gatherObj.totalOT += parseFloat(reportDataModel.totalOT);
+        gatherObj.tax += parseFloat(reportDataModel.tax);
+        gatherObj.netIncome += parseFloat(reportDataModel.netIncome);
     } else {
-        gatherObj.jibengongzi += reportDataModel.jibengongzi;
-        gatherObj.totalJiangjin += reportDataModel.totalJiangjin
-        gatherObj.totalOT += reportDataModel.totalOT
-        gatherObj.tongxunButie += reportDataModel.tongxunButie;
-        gatherObj.nianjin += reportDataModel.nianjin;
-        gatherObj.yanglaobaoxian += reportDataModel.yanglaobaoxian;
-        gatherObj.shiyebaoxian += reportDataModel.shiyebaoxian;
-        gatherObj.zhufanggongjijin += reportDataModel.zhufanggongjijin;
-        gatherObj.yiliaobaoxian += reportDataModel.yiliaobaoxian;
-        gatherObj.totalKouchu += reportDataModel.totalKouchu
-        gatherObj.tax += reportDataModel.tax;
-        gatherObj.yicixingjiangjin += reportDataModel.yicixingjiangjin;
-        gatherObj.yicixingjiangjinTax += reportDataModel.yicixingjiangjinTax;
-        gatherObj.buchongyiliaobaoxian += reportDataModel.buchongyiliaobaoxian;
-        gatherObj.netIncome += reportDataModel.netIncome;
+        gatherObj.jibengongzi += parseFloat(reportDataModel.jibengongzi);
+        gatherObj.totalJiangjin += parseFloat(reportDataModel.totalJiangjin);
+        gatherObj.totalOT += parseFloat(reportDataModel.totalOT);
+        gatherObj.tongxunButie += parseFloat(reportDataModel.tongxunButie);
+        gatherObj.nianjin += parseFloat(reportDataModel.nianjin);
+        gatherObj.yanglaobaoxian += parseFloat(reportDataModel.yanglaobaoxian);
+        gatherObj.shiyebaoxian += parseFloat(reportDataModel.shiyebaoxian);
+        gatherObj.zhufanggongjijin += parseFloat(reportDataModel.zhufanggongjijin);
+        gatherObj.yiliaobaoxian += parseFloat(reportDataModel.yiliaobaoxian);
+        gatherObj.totalKouchu += parseFloat(reportDataModel.totalKouchu);
+        gatherObj.tax += parseFloat(reportDataModel.tax);
+        gatherObj.yicixingjiangjin += parseFloat(reportDataModel.yicixingjiangjin);
+        gatherObj.yicixingjiangjinTax += parseFloat(reportDataModel.yicixingjiangjinTax);
+        gatherObj.buchongyiliaobaoxian += parseFloat(reportDataModel.buchongyiliaobaoxian);
+        gatherObj.netIncome += parseFloat(reportDataModel.netIncome);
     }
     return gatherObj;
 }
 
 let TransferFloatToString = function (ArrayObj) {
+
     for (let i = 0; i < ArrayObj.length; i++) {
-        for (var key in ArrayObj[i]) {
-            ArrayObj[i][key] = ArrayObj[i][key] + '';
+
+        if (ArrayObj[i].workerCategory === NonRegularEmployeeCategory) {
+            NonRegularReportReportDataModel.forEach(function (key) {
+                ArrayObj[i][key] = parseFloat(ArrayObj[i][key]).toFixed(2);
+            })
+        } else {
+            
+            RegularReportDataModel.forEach(function (key) {
+                ArrayObj[i][key] = parseFloat(ArrayObj[i][key]).toFixed(2);
+            })
         }
     }
     return ArrayObj;
@@ -419,9 +451,9 @@ GZDServices.calculateByDepartment = function (criteria) {
                     gatherDataObject[department] = calculateReportingData(emp, gatherDataObject[department]);
                 } else {
                     if (workerCategory === NonRegularEmployeeCategory) {
-                        gatherDataObject[department] = calculateReportingData(emp, NonRegularReportModel('', department));
+                        gatherDataObject[department] = calculateReportingData(emp, NonRegularReportModel('bydepartment', department));
                     } else {
-                        gatherDataObject[department] = calculateReportingData(emp, ReportModel('', department));
+                        gatherDataObject[department] = calculateReportingData(emp, ReportModel('bydepartment', department));
                     }
 
                 }

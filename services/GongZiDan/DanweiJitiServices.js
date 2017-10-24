@@ -6,6 +6,12 @@ const NonRegularEmployeeCategory = "非全日制人员";
 var DanweiJitiService = {};
 var DanweiJitiModel = require("./Model/DanweiJitiModel");
 
+var fixvalue = function (obj) {
+    obj.personal = parseFloat(obj.personal).toFixed(2);
+    obj.company = parseFloat(obj.company).toFixed(2);
+    obj.total = parseFloat(obj.total).toFixed(2);
+    return obj;
+}
 
 DanweiJitiService.Yanglaobaoxian = function (criteria) {
     return new Promise(function (rel, rej) {
@@ -31,10 +37,10 @@ DanweiJitiService.Yanglaobaoxian = function (criteria) {
                         gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
                         gatherObj.total += danweiJiti.total;
-                        resultList.push(danweiJiti);
+                        resultList.push(fixvalue(danweiJiti));
                     }
                 }
-                resultList.push(gatherObj);
+                resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
                     data: resultList,
@@ -69,16 +75,16 @@ DanweiJitiService.Shiyebaoxian = function (criteria) {
                          */
                     } else {
                         let danweiJiti = DanweiJitiModel(emp, "失业保险");
-                        danweiJiti.personal = parseFloat(emp.shiyebaoxian);
-                        danweiJiti.company = parseFloat(emp.qiyeShiyebaoxian);
+                        danweiJiti.personal = parseFloat(emp.yanglaobaoxian);
+                        danweiJiti.company = parseFloat(emp.qiyeYanglaobaoxian);
                         danweiJiti.total = danweiJiti.personal + danweiJiti.company;
                         gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
                         gatherObj.total += danweiJiti.total;
-                        resultList.push(danweiJiti);
+                        resultList.push(fixvalue(danweiJiti));
                     }
                 }
-                resultList.push(gatherObj);
+                resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
                     data: resultList,
@@ -118,10 +124,10 @@ DanweiJitiService.Yiliaobaoxian = function (criteria) {
                         gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
                         gatherObj.total += danweiJiti.total;
-                        resultList.push(danweiJiti);
+                        resultList.push(fixvalue(danweiJiti));
                     }
                 }
-                resultList.push(gatherObj);
+                resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
                     data: resultList,
@@ -161,10 +167,10 @@ DanweiJitiService.Zhufanggongjijin = function (criteria) {
                         gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
                         gatherObj.total += danweiJiti.total;
-                        resultList.push(danweiJiti);
+                        resultList.push(fixvalue(danweiJiti));
                     }
                 }
-                resultList.push(gatherObj);
+                resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
                     data: resultList,
@@ -204,10 +210,10 @@ DanweiJitiService.Nianjin = function (criteria) {
                         gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
                         gatherObj.total += danweiJiti.total;
-                        resultList.push(danweiJiti);
+                        resultList.push(fixvalue(danweiJiti));
                     }
                 }
-                resultList.push(gatherObj);
+                resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
                     data: resultList,
