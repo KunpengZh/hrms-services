@@ -259,7 +259,7 @@ GZDServices.getAllAvailableSalaryCycle = function () {
 }
 
 var buildWhereCase = function (criteria) {
-
+    console.log(criteria)
     let wherecase = '';
     if (criteria.startSalaryCycle) {
         if (wherecase === '') {
@@ -304,6 +304,14 @@ var buildWhereCase = function (criteria) {
         }
     }
 
+    if (criteria.salaryCycle) {
+        if (wherecase === '') {
+            wherecase = "  where salaryCycle ='" + criteria.salaryCycle + "'";
+        } else {
+            wherecase += " and salaryCycle ='" + criteria.salaryCycle + "'";
+        }
+    }
+
     return wherecase;
 }
 
@@ -315,7 +323,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
         reportDataModel.tax = reportDataModel.tax + parseFloat(empsa.tax);
         reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
-       
+
     } else {
 
         reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
@@ -334,7 +342,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.buchongyiliaobaoxian += parseFloat(empsa.buchongyiliaobaoxian);
         reportDataModel.netIncome += parseFloat(empsa.netIncome);
 
-        
+
     }
 
     return reportDataModel;
@@ -377,7 +385,7 @@ let TransferFloatToString = function (ArrayObj) {
                 ArrayObj[i][key] = parseFloat(ArrayObj[i][key]).toFixed(2);
             })
         } else {
-            
+
             RegularReportDataModel.forEach(function (key) {
                 ArrayObj[i][key] = parseFloat(ArrayObj[i][key]).toFixed(2);
             })

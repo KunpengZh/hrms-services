@@ -75,8 +75,8 @@ DanweiJitiService.Shiyebaoxian = function (criteria) {
                          */
                     } else {
                         let danweiJiti = DanweiJitiModel(emp, "失业保险");
-                        danweiJiti.personal = parseFloat(emp.yanglaobaoxian);
-                        danweiJiti.company = parseFloat(emp.qiyeYanglaobaoxian);
+                        danweiJiti.personal = parseFloat(emp.shiyebaoxian);
+                        danweiJiti.company = parseFloat(emp.qiyeShiyebaoxian);
                         danweiJiti.total = danweiJiti.personal + danweiJiti.company;
                         gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;

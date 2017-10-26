@@ -226,14 +226,14 @@ router.get("/nianjin", function (req, res, next) {
     })
 })
 
-let downloadExcel = function (filename, danweiJitiData, res) {
+let downloadExcel = function (filename, danweiJitiData, res, category, criteria) {
     var currDir = path.normalize('files/download'),
         fileName = filename,
         currFile = path.join(currDir, fileName),
         fReadStream;
 
 
-    excelJS.DanweiJitiToExcel(danweiJitiData, currFile).then((excelFilename) => {
+    excelJS.DanweiJitiToExcel(danweiJitiData, currFile, category, criteria).then((excelFilename) => {
         fs.exists(excelFilename, function (exist) {
             if (exist) {
                 res.set({
@@ -290,7 +290,7 @@ router.get("/downloadyanglaobaoxian", function (req, res, next) {
         if (danweiJitiData.status === 200) {
             danweiJitiData = danweiJitiData.data;
             let filename = 'Yanglaobaoxian' + new Date().getTime() + '.xlsx';
-            downloadExcel(filename, danweiJitiData, res);
+            downloadExcel(filename, danweiJitiData, res, 'yanglaobaoxian', criteria);
         } else {
             logger.error("Err when get Data info: " + err);
             res.set("Content-type", "text/html");
@@ -342,7 +342,7 @@ router.get("/downloadshiyebaoxian", function (req, res, next) {
         if (danweiJitiData.status === 200) {
             danweiJitiData = danweiJitiData.data;
             let filename = 'Shiyebaoxian' + new Date().getTime() + '.xlsx';
-            downloadExcel(filename, danweiJitiData, res);
+            downloadExcel(filename, danweiJitiData, res, 'shiyebaoxian', criteria);
         } else {
             logger.error("Err when get Data info: " + err);
             res.set("Content-type", "text/html");
@@ -394,7 +394,7 @@ router.get("/downloadyiliaobaoxian", function (req, res, next) {
         if (danweiJitiData.status === 200) {
             danweiJitiData = danweiJitiData.data;
             let filename = 'Yiliaobaoxian' + new Date().getTime() + '.xlsx';
-            downloadExcel(filename, danweiJitiData, res);
+            downloadExcel(filename, danweiJitiData, res, 'yiliaobaoxian', criteria);
         } else {
             logger.error("Err when get Data info: " + err);
             res.set("Content-type", "text/html");
@@ -446,7 +446,7 @@ router.get("/downloadzhufanggongjijin", function (req, res, next) {
         if (danweiJitiData.status === 200) {
             danweiJitiData = danweiJitiData.data;
             let filename = 'Zhufanggongjijin' + new Date().getTime() + '.xlsx';
-            downloadExcel(filename, danweiJitiData, res);
+            downloadExcel(filename, danweiJitiData, res, 'zhufanggongjijin', criteria);
         } else {
             logger.error("Err when get Data info: " + err);
             res.set("Content-type", "text/html");
@@ -498,7 +498,7 @@ router.get("/downloadnianjin", function (req, res, next) {
         if (danweiJitiData.status === 200) {
             danweiJitiData = danweiJitiData.data;
             let filename = 'Nianjin' + new Date().getTime() + '.xlsx';
-            downloadExcel(filename, danweiJitiData, res);
+            downloadExcel(filename, danweiJitiData, res, 'nianjin', criteria);
         } else {
             logger.error("Err when get Data info: " + err);
             res.set("Content-type", "text/html");

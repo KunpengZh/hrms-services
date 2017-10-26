@@ -24,12 +24,12 @@ var setDefaultWorkBookProperties = function (workbook) {
 
 var setEmpBasicColumns = function () {
     var columns = [
-        { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
+        { header: '员工号', key: 'empId', width: 10, style: { bold: true } },
         { header: '姓名', key: 'name', width: 15, style: { bold: true } },
-        { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工作类别', key: 'workerCategory', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '工作部门', key: 'department', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '工作岗位', key: 'jobRole', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '入职日期', key: 'entryTime', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '入职日期', key: 'entryTime', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '性别', key: 'gender', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '备注', key: 'comment', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
@@ -43,10 +43,16 @@ exports.EmpBasicInfoToExcel = function (emps, filename) {
     return new Promise(function (resolve, reject) {
         var workbook = new Excel.Workbook();
         workbook = setDefaultWorkBookProperties(workbook);
+
+
+        isReportFormat = true;
+
+
         var worksheet = workbook.addWorksheet('EmpBasicInfo', { views: [{ state: 'frozen', xSplit: 0, ySplit: 1 }] });
         worksheet.columns = setEmpBasicColumns();
-
         worksheet.addRows(emps);
+
+
         workbook.xlsx.writeFile(filename)
             .then(function () {
                 logger.info("Successed write to file");
@@ -57,6 +63,124 @@ exports.EmpBasicInfoToExcel = function (emps, filename) {
                 throw err;
             });
     })
+}
+
+let createReportWorkSheet = function (workbook, name) {
+    var worksheet = workbook.addWorksheet(name, {
+        properties: {
+            showGridLines: false,
+            defaultRowHeight: 25,
+            outlineLevelCol: 5
+        },
+        pageSetup: {
+            fitToPage: true,
+            fitToHeight: 5,
+            fitToWidth: 7,
+            orientation: 'portrait',      //'landscape'
+            fitToWidth: 1,
+            fitToHeight: 1,
+            paperSize: 9,  //A4
+            horizontalCentered: true,
+            verticalCentered: false
+        },
+        views: [{ state: 'frozen', xSplit: 2, ySplit: 4 }],
+    })
+
+    return worksheet;
+};
+
+let GeneralReportFormat = function (worksheet, title, columns, data) {
+    let _dictionary = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+    /**
+     * Ro1 is a blank row
+     */
+    worksheet.addRow([]);
+    let row1 = worksheet.getRow(1);
+    row1.height = 5;
+
+
+    /**
+     * Row2 is the Title row
+     */
+    let mergeRange = 'A2:';
+    if (columns.length > 25) {
+        mergeRange = 'A2:Z2';
+    } else {
+        mergeRange += _dictionary[columns.length - 1] + "2"
+    }
+
+    worksheet.addRow([title]);
+    let row2 = worksheet.getRow(2);
+    worksheet.mergeCells(mergeRange);
+    row2.font = { size: 18, underline: 'double', bold: true };
+    row2.alignment = { vertical: 'center', horizontal: 'center' };
+
+    /**
+     * Row3 is a blank row
+     */
+    worksheet.addRow([]);
+    let row3 = worksheet.getRow(3);
+    row3.height = 5;
+
+
+    /**
+     * Row4 is the table header row
+     */
+    let tableHeader = [];
+    let tableKeys = [];
+    columns.forEach(function (element) {
+        tableHeader.push(element.header);
+        tableKeys.push(element.key);
+    });
+    worksheet.addRow(tableHeader);
+    let row4 = worksheet.getRow(4);
+    let tableHeaderRowNum = 4;
+
+    for (let i = 0; i < columns.length; i++) {
+        worksheet.getColumn(i + 1).width = columns[i].width ? columns[i].width : 15;
+        let index = _dictionary[i % 25];
+        worksheet.getCell(index + tableHeaderRowNum).font = { size: 12, bold: true };
+        worksheet.getCell(index + tableHeaderRowNum).alignment = { vertical: 'center', horizontal: 'center' };
+        worksheet.getCell(index + tableHeaderRowNum).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFFFF00' },
+            bgColor: { argb: 'FF0000FF' }
+        }
+        worksheet.getCell(index + tableHeaderRowNum).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    }
+
+
+    /**
+     * Start from row 5, is the table data row
+     */
+
+    let rownum = 5;
+    data.forEach(function (dataObj) {
+        let datarow = [];
+        tableKeys.forEach(function (key) {
+            datarow.push(dataObj[key] ? dataObj[key] : '');
+        })
+        worksheet.addRow(datarow)
+        for (let i = 0; i < columns.length; i++) {
+            let index = _dictionary[i % 25];
+            worksheet.getCell(index + rownum).border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        }
+        rownum++;
+    })
+
+    return worksheet;
 }
 
 
@@ -674,14 +798,45 @@ var setGZDColumns = function () {
     ];
     return columns;
 }
-exports.GZDDataToExcel = function (GZData, filename) {
+var setGZDReportColumns = function () {
+    var columns = [
+        { header: '员工号', key: 'empId', width: 10, style: { bold: true } },
+        { header: '姓名', key: 'name', width: 10, style: { bold: true } },
+        { header: '工资', key: 'jibengongzi', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年金', key: 'nianjin', width: 10, style: { bold: true } },
+        { header: '扣养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
+        { header: '扣失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣住房公积金', key: 'zhufanggongjijin', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣医疗保险', key: 'yiliaobaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣个人所得税', key: 'tax', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '年终奖', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣年终奖金税', key: 'yicixingjiangjinTax', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '扣补充医疗保险', key: 'buchongyiliaobaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '实发工资', key: 'netIncome', width: 15, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+exports.GZDDataToExcel = function (GZData, filename, isReportFormat, criteria) {
     return new Promise(function (rel, rej) {
         var workbook = new Excel.Workbook();
         workbook = setDefaultWorkBookProperties(workbook);
-        var worksheet = workbook.addWorksheet('SalaryData', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
-        worksheet.columns = setGZDColumns();
 
-        worksheet.addRows(GZData);
+        if (isReportFormat) {
+            let title = '献县光大电力实业有限责任公司';
+            let salaryCycle = criteria.salaryCycle;
+            title += salaryCycle.slice(0, 4) + "年" + salaryCycle.slice(4) + "月工资发放表(" + (GZData.length - 1) + ")人";
+            worksheet = createReportWorkSheet(workbook, 'SalaryReport');
+            worksheet = GeneralReportFormat(worksheet, title, setGZDReportColumns(), GZData);
+        } else {
+            var worksheet = workbook.addWorksheet('SalaryData', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
+            worksheet.columns = setGZDColumns();
+            worksheet.addRows(GZData);
+        }
+
         workbook.xlsx.writeFile(filename)
             .then(function () {
                 logger.info("Successed write to file");
@@ -790,14 +945,39 @@ var setDanweiJitiColumns = function () {
     return columns;
 }
 
-exports.DanweiJitiToExcel = function (danweiJitiData, filename) {
+exports.DanweiJitiToExcel = function (danweiJitiData, filename, category, criteria) {
     return new Promise(function (rel, rej) {
         var workbook = new Excel.Workbook();
         workbook = setDefaultWorkBookProperties(workbook);
-        var worksheet = workbook.addWorksheet('danweiJiti', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
-        worksheet.columns = setDanweiJitiColumns();
 
-        worksheet.addRows(danweiJitiData);
+        let salaryCycle = criteria.salaryCycle;
+        let year = salaryCycle.slice(0, 4);
+        let month = salaryCycle.slice(4)
+        let title = '献县光大电力实业有限责任公司' + year + "年";
+        switch (category) {
+            case 'yanglaobaoxian':
+                title += month + "月养老保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                break;
+            case 'shiyebaoxian':
+                title += month + "月失业保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                break;
+            case 'yiliaobaoxian':
+                title +="医疗保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                break;
+            case 'zhufanggongjijin':
+                title += month + "月住房公积金明细(" + (danweiJitiData.length - 1) + ")人";
+                break;
+            case 'nianjin':
+                title += month + "月年金明细表(" + (danweiJitiData.length - 1) + ")人";
+                break;
+            default:
+                title += month + "月明细表(" + (danweiJitiData.length - 1) + ")人";
+                break;
+        }
+
+        worksheet = createReportWorkSheet(workbook, 'danweiJiti');
+        worksheet = GeneralReportFormat(worksheet, title, setDanweiJitiColumns(), danweiJitiData);
+
         workbook.xlsx.writeFile(filename)
             .then(function () {
                 logger.info("Successed write to file");
