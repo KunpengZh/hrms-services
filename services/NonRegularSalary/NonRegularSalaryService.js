@@ -166,6 +166,7 @@ NRSS.InitialWithEmps = function (salaryCycle) {
                                 })
                             }
                         }).catch((err) => {
+                            console.log(err);
                             logger.error("Error Location NonRegularS2003")
                             rel({
                                 status: 500,
