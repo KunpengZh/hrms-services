@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('NonRegularSalary', {
         empId: {
             type: Sequelize.STRING,
-            unique: true,
             allowNull: false,
         },
         name: {
