@@ -251,14 +251,7 @@ var setEmpSensitiveColumns = function () {
         { header: '洗理费', key: 'xilifei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '工龄工资', key: 'gonglingGongzi', width: 15, style: { bold: true } },
         { header: '职务津贴', key: 'zhiwuJintie', width: 15, style: { bold: true } },
-        { header: '公里补助', key: 'gongliBuzhu', width: 15, outlineLevel: 1, style: { bold: true } },
-        { header: '考核奖金', key: 'kaoheJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '其他津贴', key: 'qitaJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '上年收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '上年月平均收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
 }
@@ -312,8 +305,8 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
 
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
-                    let [, empId, name, idCard, bankAccount, jinengGongzi, gangweiGongzi, jichuButie, xilifei, gonglingGongzi, zhiwuJintie, gongliBuzhu,
-                        kaoheJiangjin, tongxunButie, qitaJiangjin, xiaxiangBuzhu, yingyetingBuzhu, buchongyiliaobaoxian, preAnnuallyIncom] = row.values;
+                    let [, empId, name, idCard, bankAccount, jinengGongzi, gangweiGongzi, jichuButie, xilifei,
+                        gonglingGongzi, zhiwuJintie, preAnnuallyIncom] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
@@ -329,13 +322,7 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                         xilifei: xilifei ? xilifei : '',
                         gonglingGongzi: gonglingGongzi ? gonglingGongzi : '',
                         zhiwuJintie: zhiwuJintie ? zhiwuJintie : '',
-                        gongliBuzhu: gongliBuzhu ? gongliBuzhu : '',
-                        kaoheJiangjin: kaoheJiangjin ? kaoheJiangjin : '',
-                        tongxunButie: tongxunButie ? tongxunButie : '',
-                        qitaJiangjin: qitaJiangjin ? qitaJiangjin : '',
-                        xiaxiangBuzhu: xiaxiangBuzhu ? xiaxiangBuzhu : '',
-                        yingyetingBuzhu: yingyetingBuzhu ? yingyetingBuzhu : '',
-                        buchongyiliaobaoxian: buchongyiliaobaoxian ? buchongyiliaobaoxian : '',
+
                         preAnnuallyIncom: preAnnuallyIncom ? preAnnuallyIncom : '',
                     }
                     // nianjin: nianjin ? nianjin : '',
@@ -364,12 +351,18 @@ var setOTDataColumns = function () {
         { header: '工作岗位', key: 'jobRole', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '加班周期', key: 'OTCycle', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '平时加班(小时数)', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '周末加班(小时数)', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '节假日加班(小时数)', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '工资扣除', key: 'kouchu', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '考核扣款', key: 'kaohekoukuan', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '公里补助', key: 'gongliBuzhu', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '考核奖金', key: 'kaoheJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '其他津贴', key: 'qitaJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '夜间值班', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '周末值班', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '节假日值班(天数)', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'kouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '其他罚款', key: 'kaohekoukuan', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '年终奖金', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
@@ -412,7 +405,9 @@ exports.OTExcelToJSON = function (filename) {
 
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
-                    let [, empId, name, department, jobRole, workerCategory, OTCycle, NormalOT, WeekendOT, HolidayOT, kouchu, kaohekoukuan, yiliaobaoxian, yicixingjiangjin] = row.values;
+                    let [, empId, name, department, jobRole, workerCategory, OTCycle, gongliBuzhu,
+                        kaoheJiangjin, tongxunButie, qitaJiangjin, xiaxiangBuzhu, yingyetingBuzhu, buchongyiliaobaoxian,
+                        NormalOT, WeekendOT, HolidayOT, kouchu, kaohekoukuan, yicixingjiangjin] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
@@ -425,12 +420,18 @@ exports.OTExcelToJSON = function (filename) {
                     let OT = {
                         empId: empId ? empId : '',
                         OTCycle: OTCycle ? OTCycle : '',
+                        gongliBuzhu: gongliBuzhu ? gongliBuzhu : '',
+                        kaoheJiangjin: kaoheJiangjin ? kaoheJiangjin : '',
+                        tongxunButie: tongxunButie ? tongxunButie : '',
+                        qitaJiangjin: qitaJiangjin ? qitaJiangjin : '',
+                        xiaxiangBuzhu: xiaxiangBuzhu ? xiaxiangBuzhu : '',
+                        yingyetingBuzhu: yingyetingBuzhu ? yingyetingBuzhu : '',
+                        buchongyiliaobaoxian: buchongyiliaobaoxian ? buchongyiliaobaoxian : '',
                         NormalOT: NormalOT ? NormalOT : '0',
                         WeekendOT: WeekendOT ? WeekendOT : '0',
                         HolidayOT: HolidayOT ? HolidayOT : '0',
                         kouchu: kouchu ? kouchu : '0',
                         kaohekoukuan: kaohekoukuan ? kaohekoukuan : '0',
-                        yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '0',
                         yicixingjiangjin: yicixingjiangjin ? yicixingjiangjin : '0',
                     }
                     OTLists.push(OT);
@@ -557,9 +558,9 @@ var setSDColumns = function () {
         { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '平时加班(小时数)', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '周末加班(小时数)', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '节假日加班(小时数)', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '夜间值班', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '周末值班', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '节假日值班(天数)', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '工资扣除', key: 'kouchu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '考核扣款', key: 'kaohekoukuan', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -696,17 +697,15 @@ var setSDTableColumns = function () {
         { header: '其他津贴', key: 'qitaJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '平时加班', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '平时加班计算方法', key: 'NormalOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
-        { header: '周末加班', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '周末加班计算方法', key: 'WeekendOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
-        { header: '节假日加班', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '节假日加班计算方法', key: 'HolidayOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '夜间值班', key: 'NormalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '周末值班', key: 'WeekendOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '节假日值班', key: 'HolidayOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '节假日值班计算方法', key: 'HolidayOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '安全奖励(非全日制)', key: 'anquanJiangli', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '无违章奖励(非全日制)', key: 'wuweizhangJiangli', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '加班奖金(非全日制)', key: 'OTJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '扣除项', key: 'kouchu', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '考核扣款', key: 'kaohekoukuan', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'kouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '其他罚款', key: 'kaohekoukuan', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '应发工资', key: 'yingfagongzi', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '应发工资计算方法', key: 'yingfagongziComments', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '上年收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -743,6 +742,9 @@ var setSDTableColumns = function () {
     ];
     return columns;
 }
+
+//{ header: '周末值班计算方法', key: 'WeekendOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
+//{ header: '夜间值班计算方法', key: 'NormalOTComments', width: 15, outlineLevel: 1, style: { bold: true } },
 exports.SDTableDataToExcel = function (SDDataLists, filename) {
     return new Promise(function (rel, rej) {
         var workbook = new Excel.Workbook();
@@ -782,7 +784,7 @@ var setGZDColumns = function () {
         { header: '工资周期', key: 'salaryCycle', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '工资', key: 'jibengongzi', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '值班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '扣年金', key: 'nianjin', width: 15, style: { bold: true } },
         { header: '扣养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
@@ -806,12 +808,13 @@ var setGZDReportColumns = function () {
         { header: '奖金', key: 'totalJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '加班费', key: 'totalOT', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '扣工资', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '应发工资', key: 'yingfagongzi', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '扣年金', key: 'nianjin', width: 10, style: { bold: true } },
         { header: '扣养老保险', key: 'yanglaobaoxian', width: 15, style: { bold: true } },
         { header: '扣失业保险', key: 'shiyebaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '扣住房公积金', key: 'zhufanggongjijin', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '扣医疗保险', key: 'yiliaobaoxian', width: 15, outlineLevel: 1, style: { bold: true } },
-        { header: '扣工资', key: 'totalKouchu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '扣个人所得税', key: 'tax', width: 15, outlineLevel: 1, style: { bold: true } },
         { header: '年终奖', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '扣年终奖金税', key: 'yicixingjiangjinTax', width: 15, outlineLevel: 1, style: { bold: true } },
@@ -962,7 +965,7 @@ exports.DanweiJitiToExcel = function (danweiJitiData, filename, category, criter
                 title += month + "月失业保险明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
             case 'yiliaobaoxian':
-                title +="医疗保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                title += "医疗保险明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
             case 'zhufanggongjijin':
                 title += month + "月住房公积金明细(" + (danweiJitiData.length - 1) + ")人";

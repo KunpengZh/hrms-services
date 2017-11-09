@@ -6,6 +6,7 @@ module.exports = function (workerCategory, department) {
         totalJiangjin: 0,
         totalOT: 0,
         tongxunButie: 0,
+        yingfagongzi:0,
         nianjin: 0,
         yanglaobaoxian: 0,
         shiyebaoxian: 0,

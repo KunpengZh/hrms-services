@@ -16,6 +16,7 @@ module.exports = function (empsa) {
         totalOT: (parseFloat(empsa.OTJiangjin)).toFixed(2) + '',
         tongxunButie: '',
         nianjin: '',
+        yingfagongzi:(parseFloat(empsa.yingfagongzi)).toFixed(2) + '',
         yanglaobaoxian: '',
         shiyebaoxian: '',
         zhufanggongjijin: '',

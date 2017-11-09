@@ -17,18 +17,19 @@ const RegularReportDataModel = ['jibengongzi',
     'totalJiangjin',
     'totalOT',
     'tongxunButie',
+    'totalKouchu',
+    'yingfagongzi',
     'nianjin',
     'yanglaobaoxian',
     'shiyebaoxian',
     'zhufanggongjijin',
     'yiliaobaoxian',
-    'totalKouchu',
     'tax',
     'yicixingjiangjin',
     'yicixingjiangjinTax',
     'buchongyiliaobaoxian',
     'netIncome'];
-const NonRegularReportReportDataModel = ['jibengongzi', 'totalJiangjin', 'totalOT', 'tax', 'netIncome'];
+const NonRegularReportReportDataModel = ['jibengongzi', 'yingfagongzi', 'totalJiangjin', 'totalOT', 'tax', 'netIncome'];
 
 
 GZDServices.getDataByCycle = function (salaryCycle) {
@@ -75,12 +76,13 @@ getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                 yicixingjiangjinTax = 0,
                 buchongyiliaobaoxian = 0,
                 netIncome = 0;
+            yingfagongzi = 0;
 
             for (let i = 0; i < empsalarys.length; i++) {
                 let empsalary = empsalarys[i];
                 if (empsalary.workerCategory === NonRegularEmployeeCategory) {
                     let newgongzidan = NonRegularEmpSalaryModel(empsalary);
-
+                    yingfagongzi += newgongzidan.yingfagongzi ? parseFloat(newgongzidan.yingfagongzi) : 0;
                     jibengongzi += newgongzidan.jibengongzi ? parseFloat(newgongzidan.jibengongzi) : 0;
                     totalJiangjin += newgongzidan.totalJiangjin ? parseFloat(newgongzidan.totalJiangjin) : 0;
                     totalOT += newgongzidan.totalOT ? parseFloat(newgongzidan.totalOT) : 0;
@@ -90,7 +92,7 @@ getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                     salarylist.push(newgongzidan);
                 } else {
                     let newgongzidan = SalaryModel(empsalary);
-
+                    yingfagongzi += newgongzidan.yingfagongzi ? parseFloat(newgongzidan.yingfagongzi) : 0;
                     jibengongzi += newgongzidan.jibengongzi ? parseFloat(newgongzidan.jibengongzi) : 0;
                     totalJiangjin += newgongzidan.totalJiangjin ? parseFloat(newgongzidan.totalJiangjin) : 0;
                     totalOT += newgongzidan.totalOT ? parseFloat(newgongzidan.totalOT) : 0;
@@ -129,6 +131,7 @@ getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                     totalJiangjin: totalJiangjin.toFixed(2) + '',
                     totalOT: totalOT.toFixed(2) + '',
                     tongxunButie: tongxunButie.toFixed(2) + '',
+                    yingfagongzi: yingfagongzi.toFixed(2) + '',
                     nianjin: nianjin + '',
                     yanglaobaoxian: yanglaobaoxian.toFixed(2) + '',
                     shiyebaoxian: shiyebaoxian.toFixed(2) + '',
@@ -318,6 +321,7 @@ var buildWhereCase = function (criteria) {
 let calculateReportingData = function (empsa, reportDataModel) {
     if (empsa.workerCategory === NonRegularEmployeeCategory) {
 
+        reportDataModel.yingfagongzi= reportDataModel.yingfagongzi+parseFloat(empsa.yingfagongzi);
         reportDataModel.jibengongzi = reportDataModel.jibengongzi + parseFloat(empsa.jibengongzi);
         reportDataModel.totalJiangjin = reportDataModel.totalJiangjin + parseFloat(empsa.anquanJiangli) + parseFloat(empsa.wuweizhangJiangli);
         reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
@@ -325,7 +329,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
 
     } else {
-
+       
         reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
         reportDataModel.totalJiangjin += (parseFloat(empsa.zhiwuJintie) + parseFloat(empsa.gongliBuzhu) + parseFloat(empsa.kaoheJiangjin) + parseFloat(empsa.qitaJiangjin) + parseFloat(empsa.xiaxiangBuzhu) + parseFloat(empsa.yingyetingBuzhu));
         reportDataModel.totalOT += (parseFloat(empsa.NormalOT) + parseFloat(empsa.WeekendOT) + parseFloat(empsa.HolidayOT));
@@ -340,6 +344,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.yicixingjiangjin += parseFloat(empsa.yicixingjiangjin);
         reportDataModel.yicixingjiangjinTax += parseFloat(empsa.yicixingjiangjinTax);
         reportDataModel.buchongyiliaobaoxian += parseFloat(empsa.buchongyiliaobaoxian);
+        reportDataModel.yingfagongzi += parseFloat(empsa.yingfagongzi);
         reportDataModel.netIncome += parseFloat(empsa.netIncome);
 
 
@@ -356,6 +361,7 @@ let gatherReportData = function (reportDataModel, gatherObj) {
         gatherObj.totalOT += parseFloat(reportDataModel.totalOT);
         gatherObj.tax += parseFloat(reportDataModel.tax);
         gatherObj.netIncome += parseFloat(reportDataModel.netIncome);
+        gatherObj.yingfagongzi += parseFloat(reportDataModel.yingfagongzi);
     } else {
         gatherObj.jibengongzi += parseFloat(reportDataModel.jibengongzi);
         gatherObj.totalJiangjin += parseFloat(reportDataModel.totalJiangjin);
@@ -372,6 +378,7 @@ let gatherReportData = function (reportDataModel, gatherObj) {
         gatherObj.yicixingjiangjinTax += parseFloat(reportDataModel.yicixingjiangjinTax);
         gatherObj.buchongyiliaobaoxian += parseFloat(reportDataModel.buchongyiliaobaoxian);
         gatherObj.netIncome += parseFloat(reportDataModel.netIncome);
+        gatherObj.yingfagongzi += parseFloat(reportDataModel.yingfagongzi);
     }
     return gatherObj;
 }

@@ -15,6 +15,7 @@ module.exports = function (empsa) {
         totalJiangjin: (parseFloat(empsa.zhiwuJintie) + parseFloat(empsa.gongliBuzhu) + parseFloat(empsa.kaoheJiangjin) + parseFloat(empsa.qitaJiangjin) + parseFloat(empsa.xiaxiangBuzhu) + parseFloat(empsa.yingyetingBuzhu)).toFixed(2) + '',
         totalOT: (parseFloat(empsa.NormalOT) + parseFloat(empsa.WeekendOT) + parseFloat(empsa.HolidayOT)).toFixed(2) + '',
         tongxunButie: empsa.tongxunButie,
+        yingfagongzi: empsa.yingfagongzi,
         nianjin: empsa.nianjin,
         yanglaobaoxian: empsa.yanglaobaoxian,
         shiyebaoxian: empsa.shiyebaoxian,
@@ -26,6 +27,6 @@ module.exports = function (empsa) {
         yicixingjiangjinTax: empsa.yicixingjiangjinTax,
         buchongyiliaobaoxian: empsa.buchongyiliaobaoxian,
         netIncome: empsa.netIncome,
-        gongziDesc:'工资+奖金+值班费+通讯补贴-扣款-养老保险-医疗保险-失业保险-住房公积金-个人所得税-补充医疗保险+一次性奖金-奖金税=实发工资'
+        gongziDesc: '工资+奖金+值班费+通讯补贴-扣款-养老保险-医疗保险-失业保险-住房公积金-个人所得税-补充医疗保险+一次性奖金-奖金税=实发工资'
     }
 };

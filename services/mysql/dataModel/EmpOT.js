@@ -37,10 +37,28 @@ module.exports = (sequelize, DataTypes) => {
         kaohekoukuan: {
             type: Sequelize.STRING,
         },
-        yiliaobaoxian: {
+        yicixingjiangjin: {
             type: Sequelize.STRING,
         },
-        yicixingjiangjin: {
+        gongliBuzhu:{
+            type: Sequelize.STRING,
+        },
+        kaoheJiangjin: {
+            type: Sequelize.STRING,
+        },
+        tongxunButie: {
+            type: Sequelize.STRING,
+        },
+        qitaJiangjin:{
+            type: Sequelize.STRING,
+        },
+        xiaxiangBuzhu:{
+            type: Sequelize.STRING,
+        },
+        yingyetingBuzhu:{
+            type: Sequelize.STRING,
+        },
+        buchongyiliaobaoxian:{
             type: Sequelize.STRING,
         },
     })
