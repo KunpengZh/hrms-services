@@ -13,7 +13,7 @@ var PayrollQueryService = {};
 
 PayrollQueryService.getDataByCriteria = function (criteria) {
     return new Promise(function (rel, rej) {
-        getGongZiDanData(criteria).then(gzds => {
+        getPayrollData(criteria).then(gzds => {
             rel(gzds);
         }).catch(err => {
             logger.error("Error Location PayrollQueryService001");
@@ -23,7 +23,7 @@ PayrollQueryService.getDataByCriteria = function (criteria) {
     })
 }
 
-getGongZiDanData = function (criteria) {
+var getPayrollData = function (criteria) {
     return new Promise(function (rel, rej) {
         let salarylist = [];
         let empsalarys = [];

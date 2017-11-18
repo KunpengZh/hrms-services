@@ -55,7 +55,7 @@ GZDServices.getDataByCriteria = function (criteria) {
     })
 }
 
-getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
+var getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
     return new Promise(function (rel, rej) {
         let salarylist = [];
         let empsalarys = [];
