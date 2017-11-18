@@ -34,6 +34,7 @@ var GongziDanController = require("./routes/GongZidanController");
 var UserManagementController = require('./routes/UserManagementController');
 var NonRegularSalayController = require('./routes/NonRegularSalaryController');
 var DanweiJitiController = require('./routes/DanweiJitiController');
+var PayrollQueryController = require('./routes/PayrollQueryController');
 
 
 var app = express();
@@ -108,6 +109,9 @@ app.use('/gongzidan', GongziDanController);
 
 app.use('/danweijiti', checkIsPayrollAdmin);
 app.use('/danweijiti', DanweiJitiController);
+
+app.use('/payrollquery', checkIsPayrollAdmin);
+app.use('/payrollquery', PayrollQueryController);
 
 app.use('/appuser', checkIsSysAdmin);
 app.use('/appuser', UserManagementController);

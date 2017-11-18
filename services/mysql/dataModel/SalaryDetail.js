@@ -69,6 +69,9 @@ module.exports = (sequelize, DataTypes) => {
         kaoheJiangjin: {
             type: Sequelize.STRING,
         },
+        gudingJiangjin: {
+            type: Sequelize.STRING,
+        },
         tongxunButie: {
             type: Sequelize.STRING,
         },

@@ -19,5 +19,8 @@ module.exports = function (Emp, OTCycle) {
         xiaxiangBuzhu: '0',
         yingyetingBuzhu: '0',
         buchongyiliaobaoxian: '0',
+        yiliaobaoxian:'0',
+        qiyeYiliaobaoxian:'0',
+        gudingJiangjin:'0'
     }
 }

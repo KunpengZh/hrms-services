@@ -195,119 +195,127 @@ router.get('/', function (req, res, next) {
     })
 });
 
+/**
+ * 
+ * 去掉在UI上的编辑功能，所以不再需要 update
+ * 
+ */
 
-router.post('/update', function (req, res, next) {
-    if (!req.body.data || !(req.body.data instanceof Array) || !req.body.salaryCycle || req.body.salaryCycle === "") {
-        logger.error("The posted data format is incorrect,  salaryCycle and data mandaotry required, Data must be an Array object");
-        res.json({
-            status: 500,
-            message: "The posted data format is incorrect,  salaryCycle and data mandaotry required, Data must be an Array object",
-            data: []
-        })
-        res.end()
-        return
-    }
+// router.post('/update', function (req, res, next) {
+//     if (!req.body.data || !(req.body.data instanceof Array) || !req.body.salaryCycle || req.body.salaryCycle === "") {
+//         logger.error("The posted data format is incorrect,  salaryCycle and data mandaotry required, Data must be an Array object");
+//         res.json({
+//             status: 500,
+//             message: "The posted data format is incorrect,  salaryCycle and data mandaotry required, Data must be an Array object",
+//             data: []
+//         })
+//         res.end()
+//         return
+//     }
 
-    var SDDataList = req.body.data;
-    var salaryCycle = req.body.salaryCycle;
+//     var SDDataList = req.body.data;
+//     var salaryCycle = req.body.salaryCycle;
 
-    SDServices.update(salaryCycle, SDDataList).then((updateres) => {
-        if (updateres) {
-            SDServices.getDataByCycle(salaryCycle).then((SDData) => {
-                SDData = deleteSenData(SDData);
-                res.json({
-                    status: 200,
-                    data: SDData,
-                    message: '保存成功'
-                })
-                res.end();
-            }).catch((err) => {
-                logger.error("Err when get SD Data: " + err);
-                res.json({
-                    status: 500,
-                    data: [],
-                    message: "更新成功，但获取新数据失败: " + err
-                });
-                res.end()
-            })
-        } else {
-            res.json({
-                status: 500,
-                data: [],
-                message: "更新数据失败"
-            });
-            res.end()
-        }
-    }).catch((err) => {
-        logger.error("Err update Salary Details Data: " + err);
-        res.json({
-            status: 500,
-            data: [],
-            message: "Err update Salary Details Data: " + err
-        })
-    });
-})
-
-
-
-router.get('/downloadot', function (req, res, next) {
-    if (!req.query.salaryCycle || req.query.salaryCycle === "") {
-        logger.error("salaryCycle is mandatory required");
-        res.json({
-            status: 500,
-            message: "salaryCycle is mandatory required",
-            data: ''
-        })
-        res.end()
-        return
-    }
-
-    let salaryCycle = req.query.salaryCycle;
-
-    SDServices.getDataByCycle(salaryCycle).then((SDData) => {
-
-        var currDir = path.normalize('files/download'),
-            fileName = 'SDData_' + salaryCycle + '.xlsx',
-            currFile = path.join(currDir, fileName),
-            fReadStream;
+//     SDServices.update(salaryCycle, SDDataList).then((updateres) => {
+//         if (updateres) {
+//             SDServices.getDataByCycle(salaryCycle).then((SDData) => {
+//                 SDData = deleteSenData(SDData);
+//                 res.json({
+//                     status: 200,
+//                     data: SDData,
+//                     message: '保存成功'
+//                 })
+//                 res.end();
+//             }).catch((err) => {
+//                 logger.error("Err when get SD Data: " + err);
+//                 res.json({
+//                     status: 500,
+//                     data: [],
+//                     message: "更新成功，但获取新数据失败: " + err
+//                 });
+//                 res.end()
+//             })
+//         } else {
+//             res.json({
+//                 status: 500,
+//                 data: [],
+//                 message: "更新数据失败"
+//             });
+//             res.end()
+//         }
+//     }).catch((err) => {
+//         logger.error("Err update Salary Details Data: " + err);
+//         res.json({
+//             status: 500,
+//             data: [],
+//             message: "Err update Salary Details Data: " + err
+//         })
+//     });
+// })
 
 
-        excelJS.SDDataToExcel(SDData, currFile).then((excelFilename) => {
-            fs.exists(excelFilename, function (exist) {
-                if (exist) {
-                    res.set({
-                        "Content-type": "application/octet-stream",
-                        "Content-Disposition": "attachment;filename=" + encodeURI(fileName)
-                    });
-                    fReadStream = fs.createReadStream(excelFilename);
-                    fReadStream.on("data", (chunk) => res.write(chunk, "binary"));
-                    fReadStream.on("end", function () {
-                        res.end();
-                    });
-                } else {
-                    logger.error("the file do not exist :" + currFile);
-                    res.set("Content-type", "text/html");
-                    res.send("要下载的文件不存在!");
-                    res.end();
-                }
-            });
-        }).catch((err) => {
-            logger.error("Transfer Salary Data to Excel file failed")
-            logger.error(err);
-            res.set("Content-type", "text/html");
-            res.send("生成excel文件失败");
-            res.end();
-        })
+/**
+ * replaced by downlaod table
+ */
 
-    }).catch((err) => {
-        logger.error("Err when get Salary Data info: " + err);
-        res.set("Content-type", "text/html");
-        res.send("不能从数据库获取加班信息!");
-        res.end();
-        return;
-    })
+// router.get('/downloadot', function (req, res, next) {
+//     if (!req.query.salaryCycle || req.query.salaryCycle === "") {
+//         logger.error("salaryCycle is mandatory required");
+//         res.json({
+//             status: 500,
+//             message: "salaryCycle is mandatory required",
+//             data: ''
+//         })
+//         res.end()
+//         return
+//     }
 
-})
+//     let salaryCycle = req.query.salaryCycle;
+
+//     SDServices.getDataByCycle(salaryCycle).then((SDData) => {
+
+//         var currDir = path.normalize('files/download'),
+//             fileName = 'SDData_' + salaryCycle + '.xlsx',
+//             currFile = path.join(currDir, fileName),
+//             fReadStream;
+
+
+//         excelJS.SDDataToExcel(SDData, currFile).then((excelFilename) => {
+//             fs.exists(excelFilename, function (exist) {
+//                 if (exist) {
+//                     res.set({
+//                         "Content-type": "application/octet-stream",
+//                         "Content-Disposition": "attachment;filename=" + encodeURI(fileName)
+//                     });
+//                     fReadStream = fs.createReadStream(excelFilename);
+//                     fReadStream.on("data", (chunk) => res.write(chunk, "binary"));
+//                     fReadStream.on("end", function () {
+//                         res.end();
+//                     });
+//                 } else {
+//                     logger.error("the file do not exist :" + currFile);
+//                     res.set("Content-type", "text/html");
+//                     res.send("要下载的文件不存在!");
+//                     res.end();
+//                 }
+//             });
+//         }).catch((err) => {
+//             logger.error("Transfer Salary Data to Excel file failed")
+//             logger.error(err);
+//             res.set("Content-type", "text/html");
+//             res.send("生成excel文件失败");
+//             res.end();
+//         })
+
+//     }).catch((err) => {
+//         logger.error("Err when get Salary Data info: " + err);
+//         res.set("Content-type", "text/html");
+//         res.send("不能从数据库获取加班信息!");
+//         res.end();
+//         return;
+//     })
+
+// })
 
 router.post('/uploadot', function (req, res, next) {
 
@@ -347,21 +355,8 @@ router.post('/uploadot', function (req, res, next) {
                             logger.info("To transfer excel to JSON .......")
                             excelJS.SDExcelToJSON(dstPath).then((SDDataLists) => {
                                 SDServices.upload(SDDataLists).then((uploadres) => {
-                                    if (uploadres) {
-                                        res.json({
-                                            status: 200,
-                                            data: [],
-                                            message: '保存成功'
-                                        })
-                                        res.end();
-                                    } else {
-                                        res.json({
-                                            status: 500,
-                                            data: [],
-                                            message: "更新数据失败"
-                                        });
-                                        res.end()
-                                    }
+                                    res.json(uploadres);
+                                    res.end();
                                 }).catch(function (err) {
                                     res.json({
                                         status: 500,
@@ -448,7 +443,7 @@ router.get('/downloadtable', function (req, res, next) {
 
 })
 
-router.post('/querybycriteria',function(req,res,next){
+router.post('/querybycriteria', function (req, res, next) {
     if (!req.body.data || req.body.data === "") {
         logger.error("Query Criteria is mandatory required");
         res.json({
@@ -459,7 +454,7 @@ router.post('/querybycriteria',function(req,res,next){
         res.end()
         return
     }
-  
+
     let criteria = req.body.data;
 
     SDServices.queryByCriteria(criteria).then((data) => {

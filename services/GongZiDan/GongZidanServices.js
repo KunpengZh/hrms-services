@@ -75,8 +75,8 @@ getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                 yicixingjiangjin = 0,
                 yicixingjiangjinTax = 0,
                 buchongyiliaobaoxian = 0,
-                netIncome = 0;
-            yingfagongzi = 0;
+                netIncome = 0,
+                yingfagongzi = 0;
 
             for (let i = 0; i < empsalarys.length; i++) {
                 let empsalary = empsalarys[i];
@@ -273,9 +273,9 @@ var buildWhereCase = function (criteria) {
     }
     if (criteria.endSalaryCycle) {
         if (wherecase === '') {
-            wherecase = " where salaryCycle <='" + criteria.startSalaryCycle + "'";
+            wherecase = " where salaryCycle <='" + criteria.endSalaryCycle + "'";
         } else {
-            wherecase += " and salaryCycle <='" + criteria.startSalaryCycle + "'";
+            wherecase += " and salaryCycle <='" + criteria.endSalaryCycle + "'";
         }
     }
     if (criteria.name) {
@@ -321,7 +321,7 @@ var buildWhereCase = function (criteria) {
 let calculateReportingData = function (empsa, reportDataModel) {
     if (empsa.workerCategory === NonRegularEmployeeCategory) {
 
-        reportDataModel.yingfagongzi= reportDataModel.yingfagongzi+parseFloat(empsa.yingfagongzi);
+        reportDataModel.yingfagongzi = reportDataModel.yingfagongzi + parseFloat(empsa.yingfagongzi);
         reportDataModel.jibengongzi = reportDataModel.jibengongzi + parseFloat(empsa.jibengongzi);
         reportDataModel.totalJiangjin = reportDataModel.totalJiangjin + parseFloat(empsa.anquanJiangli) + parseFloat(empsa.wuweizhangJiangli);
         reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
@@ -329,7 +329,7 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
 
     } else {
-       
+
         reportDataModel.jibengongzi += parseFloat(empsa.jibengongzi);
         reportDataModel.totalJiangjin += (parseFloat(empsa.zhiwuJintie) + parseFloat(empsa.gongliBuzhu) + parseFloat(empsa.kaoheJiangjin) + parseFloat(empsa.qitaJiangjin) + parseFloat(empsa.xiaxiangBuzhu) + parseFloat(empsa.yingyetingBuzhu));
         reportDataModel.totalOT += (parseFloat(empsa.NormalOT) + parseFloat(empsa.WeekendOT) + parseFloat(empsa.HolidayOT));

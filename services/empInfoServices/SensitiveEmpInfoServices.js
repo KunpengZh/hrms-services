@@ -433,11 +433,27 @@ SensitiveEmpService.updateBasicEmpData = function (empId, empName, department, j
     })
 }
 
-// SensitiveEmpService.xxx = function () {
-//     return new Promise(function (rel, rej) {
+SensitiveEmpService.getEmpById = function (empId) {
+    return new Promise(function (rel, rej) {
+        EmpSensitiveTable.findOne({
+            where: {
+                empId: empId
+            }
+        }).then((employees) => {
+            rel(employees);
+        }, (err) => {
+            logger.error("Error Location SensitiveEmpService0018")
+            logger.err(err);
+            return null;
+        }).catch((err) => {
+            logger.error("Error Location SensitiveEmpService0019")
+            logger.err(err);
+            return null;
+        })
+    })
+}
 
-//     })
-// }
+
 
 
 module.exports = SensitiveEmpService;

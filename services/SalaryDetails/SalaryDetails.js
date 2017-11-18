@@ -70,7 +70,7 @@ SDServices.queryByCriteria = function (criteria) {
     })
 }
 var buildWhereCase = function (criteria) {
-    
+
     let wherecase = '';
     if (criteria.workerCategory) {
         if (wherecase === '') {
@@ -110,10 +110,12 @@ var buildWhereCase = function (criteria) {
         }
     }
     if (criteria.endSalaryCycle) {
+
         if (wherecase === '') {
-            wherecase = " where salaryCycle <='" + criteria.startSalaryCycle + "'";
+            wherecase = " where salaryCycle <='" + criteria.endSalaryCycle + "'";
         } else {
-            wherecase += " and salaryCycle <='" + criteria.startSalaryCycle + "'";
+
+            wherecase += " and salaryCycle <='" + criteria.endSalaryCycle + "'";
         }
     }
 
@@ -195,7 +197,7 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
             try {
                 emps = SalaryCalculation.GenerateSalaryDetails(empbasics, salaryCycle);
                 emps = SalaryCalculation.fillRegularEmployeeGongZiXinXi(emps, empsendata, empOTs);
-                emps = SalaryCalculation.fillNonRegularEmployeeGongZiXinXi(emps, nonRegularData);
+                emps = SalaryCalculation.fillNonRegularEmployeeGongZiXinXi(emps, empsendata, nonRegularData);
                 emps = SalaryCalculation.calculateJibengongzi(emps);
                 emps = SalaryCalculation.categoryOT(emps, configDoc);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
@@ -414,6 +416,7 @@ SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
     })
 }
 
+
 SDServices.update = function (salaryCycle, salaryDataList) {
     return new Promise(function (rel, rej) {
         let processed = 0;
@@ -464,6 +467,18 @@ SDServices.update = function (salaryCycle, salaryDataList) {
 SDServices.upload = function (salaryDataList) {
     return new Promise(function (rel, rej) {
         let processed = 0;
+        let skipList = [];
+        let flowcontroll = function () {
+            if (processed >= salaryDataList.length) {
+                logger.info("Upload Salary data finished");
+                rel({
+                    status: 200,
+                    data: [],
+                    errorList: skipList,
+                    message: '',
+                })
+            }
+        }
         for (let i = 0; i < salaryDataList.length; i++) {
             let emp = salaryDataList[i];
             let empId = emp.empId;
@@ -472,34 +487,143 @@ SDServices.upload = function (salaryDataList) {
             if (empId === null || empId === undefined || empId === '') {
                 logger.error("The give empID is null,will skip");
                 logger.error("Error Location SalaryDetails501")
+                skipList.push({
+                    empId: empId,
+                    name: emp.name,
+                    salaryCycle: emp.salaryCycle,
+                    message: '员工工号不能为空'
+                });
+                logger.error('员工工号不能为空' + emp.name)
                 processed++;
+                flowcontroll();
                 continue;
             }
             if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
                 logger.error("The give salaryCycle is null,will skip");
                 logger.error("Error Location SalaryDetails502")
+                skipList.push({
+                    empId: empId,
+                    name: emp.name,
+                    salaryCycle: emp.salaryCycle,
+                    message: '工次周期不能为空'
+                });
+                logger.error('工次周期不能为空' + empId + " , " + emp.name);
                 processed++;
+                flowcontroll();
                 continue;
             }
 
-
-            SalaryDetails.update(emp, {
+            SalaryDetails.findOne({
                 where: {
                     empId: empId,
                     salaryCycle: salaryCycle
                 }
-            }).then((updateRes) => {
-                processed++;
-                if (processed === salaryDataList.length) {
-                    logger.info("Update Salary Details Data for Cycle:" + salaryCycle + " running completed");
-                    rel(true)
+            }).then((empsd) => {
+                if (empsd === null || empsd === undefined) {
+                    /**
+                     * To create new Employee Salary Data
+                     */
+
+                    //第一步先找到这个员工，如果不存在，跳过
+                    EmpSenServices.getEmpById(empId).then(empsen => {
+                        if (empsen === null || empsen === undefined) {
+                            skipList.push({
+                                empId: empId,
+                                name: emp.name,
+                                salaryCycle: emp.salaryCycle,
+                                message: '此工号' + empId + '在员工敏感信息表中不存在'
+                            });
+                            logger.error('此工号' + empId + '在员工敏感信息表中不存在');
+                            processed++;
+                            flowcontroll();
+                        } else {
+                            emp.name = empsen.name;
+                            emp.department = empsen.department;
+                            emp.jobRole = empsen.jobRole;
+                            emp.workerCategory = empsen.workerCategory;
+                            emp.idCard == empsen.idCard;
+                            emp.birthday = empsen.birthday;
+                            emp.bankAccount = empsen.bankAccount;
+
+                            SalaryDetails.create(CoryptoEnpSen.EncrypteEmps(emp)).then((cres) => {
+                                logger.info("Created successed for emp:" + emp.name + " , salarycycle:" + emp.salaryCycle);
+                                processed++;
+                                flowcontroll();
+                            }).catch(err => {
+                                logger.error("Error Location SalaryDetails203")
+                                skipList.push({
+                                    empId: empId,
+                                    name: emp.name,
+                                    salaryCycle: emp.salaryCycle,
+                                    message: '新建失败'
+                                });
+                                logger.error('新建失败' + empId)
+                                processed++;
+                                flowcontroll();
+                            })
+                        }
+                    })
+                } else {
+                    /**
+                     * To Update Emp Salary Data
+                     */
+                    /**
+                     * 不给Update
+                     */
+                    logger.error('此工号' + empId + ' 和工资周期:' + emp.salaryCycle + '已经存在，不能更新');
+                    skipList.push({
+                        empId: empId,
+                        name: emp.name,
+                        salaryCycle: emp.salaryCycle,
+                        message: '此工号' + empId + ' 和工资周期:' + emp.salaryCycle + '已经存在，不能更新'
+                    });
+                    processed++;
+                    flowcontroll();
+                    // SalaryDetails.update(emp, {
+                    //     where: {
+                    //         empId: empId,
+                    //         salaryCycle: salaryCycle
+                    //     }
+                    // }).then((updateRes) => {
+                    //     processed++;
+                    //     if (processed === salaryDataList.length) {
+                    //         logger.info("Update Salary Details Data for Cycle:" + salaryCycle + " running completed");
+                    //         rel({
+                    //             status: 200,
+                    //             data: [],
+                    //             errorList: skipList,
+                    //             message: '更新成功'
+                    //         })
+                    //     }
+                    // }, (err) => {
+                    //     logger.error("Error Location SalaryDetails503")
+                    //     rel({
+                    //         status: 500,
+                    //         data: [],
+                    //         errorList: skipList,
+                    //         message: err
+                    //     })
+                    // }).catch(function (err) {
+                    //     logger.error("Error Location SalaryDetails504")
+                    //     rel({
+                    //         status: 500,
+                    //         data: [],
+                    //         errorList: skipList,
+                    //         message: err
+                    //     })
+                    // })
                 }
-            }, (err) => {
-                logger.error("Error Location SalaryDetails503")
-                throw err;
             }).catch(function (err) {
-                logger.error("Error Location SalaryDetails504")
-                throw err;
+                logger.error("Error Location SalaryDetails505")
+                logger.error('此工号' + empId + ", 查找员工时出错");
+                skipList.push({
+                    empId: empId,
+                    name: emp.name,
+                    salaryCycle: emp.salaryCycle,
+                    message: '此工号' + empId + ", 查找员工时出错"
+                });
+                processed++;
+                flowcontroll();
             })
         }
     })
