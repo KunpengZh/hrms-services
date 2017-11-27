@@ -9,7 +9,23 @@ var sequelize = require('../mysql/hrmsdb');
 var CoryptoEnpSen = require('../empInfoServices/CryptoEnpSen');
 const NonRegularEmployeeCategory = "非全日制人员";
 var PayrollQueryService = {};
-
+function keepTwoDecimalFull(num) {
+    var result = parseFloat(num);
+    if (isNaN(result)) {
+        return false;
+    }
+    result = Math.round(num * 100) / 100;
+    var s_x = result.toString();
+    var pos_decimal = s_x.indexOf('.');
+    if (pos_decimal < 0) {
+        pos_decimal = s_x.length;
+        s_x += '.';
+    }
+    while (s_x.length <= pos_decimal + 2) {
+        s_x += '0';
+    }
+    return s_x;
+}
 
 PayrollQueryService.getDataByCriteria = function (criteria) {
     return new Promise(function (rel, rej) {
@@ -150,47 +166,47 @@ var getPayrollData = function (criteria) {
                 jobRole: '',
                 workerCategory: '',
                 salaryCycle: '',
-                jinengGongzi: jinengGongzi.toFixed(2) + '',
-                gangweiGongzi: gangweiGongzi.toFixed(2) + '',
-                jichuButie: jichuButie.toFixed(2) + '',
-                xilifei: xilifei.toFixed(2) + '',
-                gonglingGongzi: gonglingGongzi.toFixed(2) + '',
-                jibengongzi: jibengongzi.toFixed(2) + '',
-                zhiwuJintie: zhiwuJintie.toFixed(2) + '',
-                gongliBuzhu: gongliBuzhu.toFixed(2) + '',
-                kaoheJiangjin: kaoheJiangjin.toFixed(2) + '',
-                gudingJiangjin: gudingJiangjin.toFixed(2) + '',
-                tongxunButie: tongxunButie.toFixed(2) + '',
-                qitaJiangjin: qitaJiangjin.toFixed(2) + '',
-                xiaxiangBuzhu: xiaxiangBuzhu.toFixed(2) + '',
-                yingyetingBuzhu: yingyetingBuzhu.toFixed(2) + '',
-                NormalOT: NormalOT.toFixed(2) + '',
-                WeekendOT: WeekendOT.toFixed(2) + '',
-                HolidayOT: HolidayOT.toFixed(2) + '',
-                kouchu: kouchu.toFixed(2) + '',
-                kaohekoukuan: kaohekoukuan.toFixed(2) + '',
-                yingfagongzi: yingfagongzi.toFixed(2) + '',
-                nianjin: nianjin.toFixed(2) + '',
-                qiyeNianjin: qiyeNianjin.toFixed(2) + '',
-                yanglaobaoxian: yanglaobaoxian.toFixed(2) + '',
-                qiyeYanglaobaoxian: qiyeYanglaobaoxian.toFixed(2) + '',
-                shiyebaoxian: shiyebaoxian.toFixed(2) + '',
-                qiyeShiyebaoxian: qiyeShiyebaoxian.toFixed(2) + '',
-                zhufanggongjijin: zhufanggongjijin.toFixed(2) + '',
-                qiyeZhufanggongjijin: qiyeZhufanggongjijin.toFixed(2) + '',
-                yiliaobaoxian: yiliaobaoxian.toFixed(2) + '',
-                qiyeYiliaobaoxian: qiyeYiliaobaoxian.toFixed(2) + '',
-                yingshuigongzi: yingshuigongzi.toFixed(2) + '',
-                tax: tax.toFixed(2) + '',
-                yicixingjiangjin: yicixingjiangjin.toFixed(2) + '',
-                yicixingjiangjinTax: yicixingjiangjinTax.toFixed(2) + '',
-                buchongyiliaobaoxian: buchongyiliaobaoxian.toFixed(2) + '',
-                netIncome: netIncome.toFixed(2) + '',
-                daySalary: daySalary.toFixed(2) + '',
-                workDays: workDays.toFixed(2) + '',
-                anquanJiangli: anquanJiangli.toFixed(2) + '',
-                wuweizhangJiangli: wuweizhangJiangli.toFixed(2) + '',
-                OTJiangjin: OTJiangjin.toFixed(2) + '',
+                jinengGongzi: keepTwoDecimalFull(jinengGongzi),
+                gangweiGongzi: keepTwoDecimalFull(gangweiGongzi),
+                jichuButie: keepTwoDecimalFull(jichuButie),
+                xilifei: keepTwoDecimalFull(xilifei),
+                gonglingGongzi: keepTwoDecimalFull(gonglingGongzi),
+                jibengongzi: keepTwoDecimalFull(jibengongzi),
+                zhiwuJintie: keepTwoDecimalFull(zhiwuJintie),
+                gongliBuzhu: keepTwoDecimalFull(gongliBuzhu),
+                kaoheJiangjin: keepTwoDecimalFull(kaoheJiangjin),
+                gudingJiangjin: keepTwoDecimalFull(gudingJiangjin),
+                tongxunButie: keepTwoDecimalFull(tongxunButie),
+                qitaJiangjin: keepTwoDecimalFull(qitaJiangjin),
+                xiaxiangBuzhu: keepTwoDecimalFull(xiaxiangBuzhu),
+                yingyetingBuzhu: keepTwoDecimalFull(yingyetingBuzhu),
+                NormalOT: keepTwoDecimalFull(NormalOT),
+                WeekendOT: keepTwoDecimalFull(WeekendOT),
+                HolidayOT: keepTwoDecimalFull(HolidayOT),
+                kouchu: keepTwoDecimalFull(kouchu),
+                kaohekoukuan: keepTwoDecimalFull(kaohekoukuan),
+                yingfagongzi: keepTwoDecimalFull(yingfagongzi),
+                nianjin: keepTwoDecimalFull(nianjin),
+                qiyeNianjin: keepTwoDecimalFull(qiyeNianjin),
+                yanglaobaoxian: keepTwoDecimalFull(yanglaobaoxian),
+                qiyeYanglaobaoxian: keepTwoDecimalFull(qiyeYanglaobaoxian),
+                shiyebaoxian: keepTwoDecimalFull(shiyebaoxian),
+                qiyeShiyebaoxian: keepTwoDecimalFull(qiyeShiyebaoxian),
+                zhufanggongjijin: keepTwoDecimalFull(zhufanggongjijin),
+                qiyeZhufanggongjijin: keepTwoDecimalFull(qiyeZhufanggongjijin),
+                yiliaobaoxian: keepTwoDecimalFull(yiliaobaoxian),
+                qiyeYiliaobaoxian: keepTwoDecimalFull(qiyeYiliaobaoxian),
+                yingshuigongzi: keepTwoDecimalFull(yingshuigongzi),
+                tax: keepTwoDecimalFull(tax),
+                yicixingjiangjin: keepTwoDecimalFull(yicixingjiangjin),
+                yicixingjiangjinTax: keepTwoDecimalFull(yicixingjiangjinTax),
+                buchongyiliaobaoxian: keepTwoDecimalFull(buchongyiliaobaoxian),
+                netIncome: keepTwoDecimalFull(netIncome),
+                daySalary: keepTwoDecimalFull(daySalary),
+                workDays: keepTwoDecimalFull(workDays),
+                anquanJiangli: keepTwoDecimalFull(anquanJiangli),
+                wuweizhangJiangli: keepTwoDecimalFull(wuweizhangJiangli),
+                OTJiangjin: keepTwoDecimalFull(OTJiangjin)
             }
 
             salarylist.push(newEmpSA);

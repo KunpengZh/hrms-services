@@ -29,8 +29,35 @@ const RegularReportDataModel = ['jibengongzi',
     'yicixingjiangjinTax',
     'buchongyiliaobaoxian',
     'netIncome'];
-const NonRegularReportReportDataModel = ['jibengongzi', 'yingfagongzi', 'totalJiangjin', 'totalOT', 'tax', 'netIncome'];
+const NonRegularReportReportDataModel = [
+    'jibengongzi',
+     'yingfagongzi', 
+     'nianjin',
+     'yanglaobaoxian',
+     'shiyebaoxian',
+     'totalJiangjin', 
+     'totalOT', 
+     'tax', 
+     'netIncome'
+    ];
 
+var keepTwoDecimalFull = function (num) {
+    var result = parseFloat(num);
+    if (isNaN(result)) {
+        return false;
+    }
+    result = Math.round(num * 100) / 100;
+    var s_x = result.toString();
+    var pos_decimal = s_x.indexOf('.');
+    if (pos_decimal < 0) {
+        pos_decimal = s_x.length;
+        s_x += '.';
+    }
+    while (s_x.length <= pos_decimal + 2) {
+        s_x += '0';
+    }
+    return s_x;
+}
 
 GZDServices.getDataByCycle = function (salaryCycle) {
     return new Promise(function (rel, rej) {
@@ -84,6 +111,9 @@ var getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                     let newgongzidan = NonRegularEmpSalaryModel(empsalary);
                     yingfagongzi += newgongzidan.yingfagongzi ? parseFloat(newgongzidan.yingfagongzi) : 0;
                     jibengongzi += newgongzidan.jibengongzi ? parseFloat(newgongzidan.jibengongzi) : 0;
+                    nianjin += newgongzidan.nianjin ? parseFloat(newgongzidan.nianjin) : 0;
+                    yanglaobaoxian += newgongzidan.yanglaobaoxian ? parseFloat(newgongzidan.yanglaobaoxian) : 0;
+                    shiyebaoxian += newgongzidan.shiyebaoxian ? parseFloat(newgongzidan.shiyebaoxian) : 0;
                     totalJiangjin += newgongzidan.totalJiangjin ? parseFloat(newgongzidan.totalJiangjin) : 0;
                     totalOT += newgongzidan.totalOT ? parseFloat(newgongzidan.totalOT) : 0;
                     tax += newgongzidan.tax ? parseFloat(newgongzidan.tax) : 0;
@@ -127,22 +157,22 @@ var getGongZiDanData = function (salaryCycle, criteria, needGatherData) {
                     jobRole: '',
                     workerCategory: '',
                     salaryCycle: '',
-                    jibengongzi: jibengongzi.toFixed(2) + '',
-                    totalJiangjin: totalJiangjin.toFixed(2) + '',
-                    totalOT: totalOT.toFixed(2) + '',
-                    tongxunButie: tongxunButie.toFixed(2) + '',
-                    yingfagongzi: yingfagongzi.toFixed(2) + '',
-                    nianjin: nianjin + '',
-                    yanglaobaoxian: yanglaobaoxian.toFixed(2) + '',
-                    shiyebaoxian: shiyebaoxian.toFixed(2) + '',
-                    zhufanggongjijin: zhufanggongjijin.toFixed(2) + '',
-                    yiliaobaoxian: yiliaobaoxian.toFixed(2) + '',
-                    totalKouchu: totalKouchu.toFixed(2) + '',
-                    tax: tax.toFixed(2) + '',
-                    yicixingjiangjin: yicixingjiangjin.toFixed(2) + '',
-                    yicixingjiangjinTax: yicixingjiangjinTax.toFixed(2) + '',
-                    buchongyiliaobaoxian: buchongyiliaobaoxian.toFixed(2) + '',
-                    netIncome: netIncome.toFixed(2) + '',
+                    jibengongzi: keepTwoDecimalFull(jibengongzi),
+                    totalJiangjin: keepTwoDecimalFull(totalJiangjin),
+                    totalOT: keepTwoDecimalFull(totalOT),
+                    tongxunButie: keepTwoDecimalFull(tongxunButie),
+                    yingfagongzi: keepTwoDecimalFull(yingfagongzi),
+                    nianjin: keepTwoDecimalFull(nianjin),
+                    yanglaobaoxian: keepTwoDecimalFull(yanglaobaoxian),
+                    shiyebaoxian: keepTwoDecimalFull(shiyebaoxian),
+                    zhufanggongjijin: keepTwoDecimalFull(zhufanggongjijin),
+                    yiliaobaoxian: keepTwoDecimalFull(yiliaobaoxian),
+                    totalKouchu: keepTwoDecimalFull(totalKouchu),
+                    tax: keepTwoDecimalFull(tax),
+                    yicixingjiangjin: keepTwoDecimalFull(yicixingjiangjin),
+                    yicixingjiangjinTax: keepTwoDecimalFull(yicixingjiangjinTax),
+                    buchongyiliaobaoxian: keepTwoDecimalFull(buchongyiliaobaoxian),
+                    netIncome: keepTwoDecimalFull(netIncome),
                     gongziDesc: ''
                 }
 
@@ -327,6 +357,9 @@ let calculateReportingData = function (empsa, reportDataModel) {
         reportDataModel.totalOT = reportDataModel.totalOT + parseFloat(empsa.OTJiangjin);
         reportDataModel.tax = reportDataModel.tax + parseFloat(empsa.tax);
         reportDataModel.netIncome = reportDataModel.netIncome + parseFloat(empsa.netIncome);
+        reportDataModel.nianjin += parseFloat(empsa.nianjin);
+        reportDataModel.yanglaobaoxian += parseFloat(empsa.yanglaobaoxian);
+        reportDataModel.shiyebaoxian += parseFloat(empsa.shiyebaoxian);
 
     } else {
 
@@ -362,6 +395,9 @@ let gatherReportData = function (reportDataModel, gatherObj) {
         gatherObj.tax += parseFloat(reportDataModel.tax);
         gatherObj.netIncome += parseFloat(reportDataModel.netIncome);
         gatherObj.yingfagongzi += parseFloat(reportDataModel.yingfagongzi);
+        gatherObj.nianjin += parseFloat(reportDataModel.nianjin);
+        gatherObj.yanglaobaoxian += parseFloat(reportDataModel.yanglaobaoxian);
+        gatherObj.shiyebaoxian += parseFloat(reportDataModel.shiyebaoxian);
     } else {
         gatherObj.jibengongzi += parseFloat(reportDataModel.jibengongzi);
         gatherObj.totalJiangjin += parseFloat(reportDataModel.totalJiangjin);

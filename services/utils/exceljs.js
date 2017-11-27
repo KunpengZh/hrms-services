@@ -562,7 +562,7 @@ exports.NRExcelToJSON = function (filename) {
 //         { header: '公里补助', key: 'gongliBuzhu', width: 15, outlineLevel: 1, style: { bold: true } },
 //         { header: '考核奖金', key: 'kaoheJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
 //         { header: '通讯补贴', key: 'tongxunButie', width: 10, outlineLevel: 1, style: { bold: true } },
-//         { header: '其他津贴', key: 'qitaJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+//         { header: '其他奖励', key: 'qitaJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
 //         { header: '下乡补助', key: 'xiaxiangBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
 //         { header: '营业厅补助', key: 'yingyetingBuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
 //         { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
