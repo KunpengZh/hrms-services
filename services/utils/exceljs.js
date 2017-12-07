@@ -287,6 +287,13 @@ exports.EmpSensitiveInfoToExcel = function (emps, filename) {
  * function to uplaod Sensitive Employee Information
  */
 
+var objToString = function (obj) {
+    if (typeof obj === "object" && obj.richText[1].text) {
+        obj = obj.richText[1].text
+    }
+    return obj;
+}
+
 exports.EmpSensitiveInfoToJSON = function (filename) {
     return new Promise(function (rel, rej) {
         var workbook = new Excel.Workbook();
@@ -312,10 +319,12 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
                         return;
                     };
+
+
                     let emp = {
-                        empId: empId ? empId : '',
-                        idCard: idCard ? idCard : '',
-                        bankAccount: bankAccount ? bankAccount : '',
+                        empId: empId ? objToString(empId) : '',
+                        idCard: idCard ? objToString(idCard) : '',
+                        bankAccount: bankAccount ? objToString(bankAccount) : '',
                         jinengGongzi: jinengGongzi ? jinengGongzi : '',
                         gangweiGongzi: gangweiGongzi ? gangweiGongzi : '',
                         jichuButie: jichuButie ? jichuButie : '',
