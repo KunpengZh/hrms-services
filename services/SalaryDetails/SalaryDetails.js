@@ -119,6 +119,16 @@ var buildWhereCase = function (criteria) {
         }
     }
 
+    if (criteria.name) {
+
+        if (wherecase === '') {
+            wherecase = " where name='" + criteria.name + "'";
+        } else {
+
+            wherecase += " and name ='" + criteria.name + "'";
+        }
+    }
+
     return wherecase;
 }
 

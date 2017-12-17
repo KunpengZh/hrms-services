@@ -992,6 +992,7 @@ var setDanweiJitiColumns = function () {
     var columns = [
         { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
         { header: '姓名', key: 'name', width: 15, style: { bold: true } },
+        { header: '工资周期', key: 'salaryCycle', width: 15, style: { bold: true } },
         { header: '个人缴纳', key: 'personal', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '公司缴纳', key: 'company', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '合计', key: 'total', width: 10, outlineLevel: 1, style: { bold: true } },
@@ -1000,12 +1001,29 @@ var setDanweiJitiColumns = function () {
     return columns;
 }
 
+var getYearMonthPeriod = function () {
+    var date = new Date;
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+
+    return year.toString() + (month < 10 ? "0" + month : month).toString();
+}
 exports.DanweiJitiToExcel = function (danweiJitiData, filename, category, criteria) {
     return new Promise(function (rel, rej) {
         var workbook = new Excel.Workbook();
         workbook = setDefaultWorkBookProperties(workbook);
 
-        let salaryCycle = criteria.salaryCycle;
+        /**
+         * 暂时先用startSalaryCycle
+         * 现在无法确认报表标题的逻辑
+         */
+        let salaryCycle = '';
+        if (criteria.startSalaryCycle) {
+            salaryCycle = criteria.startSalaryCycle;
+        } else {
+            salaryCycle = getYearMonthPeriod();
+        }
+
         let year = salaryCycle.slice(0, 4);
         let month = salaryCycle.slice(4)
         let title = '献县光大电力实业有限责任公司' + year + "年";

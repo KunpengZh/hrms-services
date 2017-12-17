@@ -34,7 +34,7 @@ DanweiJitiService.Yanglaobaoxian = function (criteria) {
         SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
 
             let resultList = [];
-            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '' }, '合计汇总');
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
             if (empSAs.status === 200) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
@@ -88,7 +88,7 @@ DanweiJitiService.Shiyebaoxian = function (criteria) {
     return new Promise(function (rel, rej) {
         SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
             let resultList = [];
-            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '' }, '合计汇总');
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
             if (empSAs.status === 200) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
@@ -139,7 +139,7 @@ DanweiJitiService.Yiliaobaoxian = function (criteria) {
     return new Promise(function (rel, rej) {
         SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
             let resultList = [];
-            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '' }, '合计汇总');
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
             if (empSAs.status === 200) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
@@ -182,7 +182,7 @@ DanweiJitiService.Zhufanggongjijin = function (criteria) {
     return new Promise(function (rel, rej) {
         SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
             let resultList = [];
-            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '' }, '合计汇总');
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
             if (empSAs.status === 200) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
@@ -225,7 +225,7 @@ DanweiJitiService.Nianjin = function (criteria) {
     return new Promise(function (rel, rej) {
         SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
             let resultList = [];
-            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '' }, '合计汇总');
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
             if (empSAs.status === 200) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
