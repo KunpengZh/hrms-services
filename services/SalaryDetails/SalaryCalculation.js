@@ -738,7 +738,6 @@ SalaryCalculation.calculateYicixingjiangjinTax = function (emps, configDoc) {
             if (yicixingjiangjin > 0) {
                 let comments = '';
                 let dangyueshouru = parseFloat(emp.yingfagongzi)
-                    - parseFloat(emp.nianjin)
                     + parseFloat(emp.qiyeNianjin)
                     - parseFloat(emp.yanglaobaoxian)
                     - parseFloat(emp.shiyebaoxian)
@@ -750,7 +749,7 @@ SalaryCalculation.calculateYicixingjiangjinTax = function (emps, configDoc) {
                     let newyicixingjiangjin = yicixingjiangjin - (gerensuodeshuishuiji - dangyueshouru);
                     newyicixingjiangjin = newyicixingjiangjin > 0 ? newyicixingjiangjin : 0;
 
-                    comments = "当月收入(应发工资+企业年金-个人年金-养老保险-失业保险-住房公积金-医疗保险-通讯补贴):" + dangyueshouru + "小于个人所得税税基(" + gerensuodeshuishuiji + "), 一次性奖金应税额更新为: " + yicixingjiangjin + "-(" + gerensuodeshuishuiji + "-" + dangyueshouru + ")=" + newyicixingjiangjin + "  ";
+                    comments = "当月收入(应发工资+企业年金-养老保险-失业保险-住房公积金-医疗保险-通讯补贴):" + dangyueshouru + "小于个人所得税税基(" + gerensuodeshuishuiji + "), 一次性奖金应税额更新为: " + yicixingjiangjin + "-(" + gerensuodeshuishuiji + "-" + dangyueshouru + ")=" + newyicixingjiangjin + "  ";
                     yicixingjiangjin = newyicixingjiangjin;
                 }
 
