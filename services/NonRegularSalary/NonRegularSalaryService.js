@@ -1,4 +1,5 @@
 var NonRegularSalary = require('../mysql/NonRegularSalary');
+var NonRegularSalaryHistory= require('../mysql/NonRegularSalaryHistory');
 var EmpBasicServices = require('../empInfoServices/EmpBasicServices');
 var NRModel = require('./Model/NonRegularSalary');
 var sequelize = require('../mysql/hrmsdb');

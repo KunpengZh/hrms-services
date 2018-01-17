@@ -24,6 +24,10 @@ router.get('/download', function (req, res, next) {
         res.end()
         return
     }
+    let columns = [];
+    if (req.query.columns) {
+        columns = JSON.parse(req.query.columns);
+    }
 
     let criteria = JSON.parse(req.query.criteria);
 
@@ -46,7 +50,7 @@ router.get('/download', function (req, res, next) {
             fReadStream;
 
 
-        excelJS.PayrollQueryDataToExcel(GongZiData, currFile).then((excelFilename) => {
+        excelJS.PayrollQueryDataToExcel(GongZiData, currFile,columns).then((excelFilename) => {
             fs.exists(excelFilename, function (exist) {
                 if (exist) {
                     res.set({

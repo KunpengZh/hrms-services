@@ -221,6 +221,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         OTJiangjin: {
             type: Sequelize.STRING,
+        },
+        shengyubaoxian: {
+            type: Sequelize.STRING,
+        },
+        gongshangbaoxian: {
+            type: Sequelize.STRING,
         }
     })
 }

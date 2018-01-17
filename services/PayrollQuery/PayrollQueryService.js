@@ -43,7 +43,7 @@ var getPayrollData = function (criteria) {
     return new Promise(function (rel, rej) {
         let salarylist = [];
         let empsalarys = [];
-
+        
         let startGenerationData = function () {
             let jinengGongzi = 0,
                 gangweiGongzi = 0,
@@ -108,7 +108,34 @@ var getPayrollData = function (criteria) {
                     wuweizhangJiangli += newgongzidan.wuweizhangJiangli;
                     OTJiangjin += newgongzidan.OTJiangjin;
 
-                    salarylist.push(newgongzidan);
+                    let isempexist = false;
+                    for (let k = 0; k < salarylist.length; k++) {
+                        
+                        if (salarylist[k].empId === empsalary.empId) {
+                            salarylist[k].jibengongzi += newgongzidan.jibengongzi;
+                            salarylist[k].yingfagongzi += newgongzidan.yingfagongzi;
+                            salarylist[k].nianjin += newgongzidan.nianjin;
+                            salarylist[k].qiyeNianjin += newgongzidan.qiyeNianjin;
+                            salarylist[k].yanglaobaoxian += newgongzidan.yanglaobaoxian;
+                            salarylist[k].qiyeYanglaobaoxian += newgongzidan.qiyeYanglaobaoxian;
+                            salarylist[k].shiyebaoxian += newgongzidan.shiyebaoxian;
+                            salarylist[k].qiyeShiyebaoxian += newgongzidan.qiyeShiyebaoxian;
+                            salarylist[k].yingshuigongzi += newgongzidan.yingshuigongzi;
+                            salarylist[k].tax += newgongzidan.tax;
+                            salarylist[k].netIncome += newgongzidan.netIncome;
+                            salarylist[k].daySalary += newgongzidan.daySalary;
+                            salarylist[k].workDays += newgongzidan.workDays;
+                            salarylist[k].anquanJiangli += newgongzidan.anquanJiangli;
+                            salarylist[k].wuweizhangJiangli += newgongzidan.wuweizhangJiangli;
+                            salarylist[k].OTJiangjin += newgongzidan.OTJiangjin;
+                            isempexist=true;
+                            break;
+                        }
+                    }
+                    if (!isempexist) {
+                        salarylist.push(newgongzidan);
+                    }
+
                 } else {
                     let newgongzidan = regularEmpModel(empsalary);
                     jinengGongzi += newgongzidan.jinengGongzi;
@@ -148,7 +175,53 @@ var getPayrollData = function (criteria) {
                     buchongyiliaobaoxian += newgongzidan.buchongyiliaobaoxian;
                     netIncome += newgongzidan.netIncome;
 
-                    salarylist.push(newgongzidan);
+
+                    let isempexist = false;
+                    for (let k = 0; k < salarylist.length; k++) {
+                        if (salarylist[k].empId === empsalary.empId) {
+                            salarylist[k].jinengGongzi += newgongzidan.jinengGongzi;
+                            salarylist[k].gangweiGongzi += newgongzidan.gangweiGongzi;
+                            salarylist[k].jichuButie += newgongzidan.jichuButie;
+                            salarylist[k].xilifei += newgongzidan.xilifei;
+                            salarylist[k].gonglingGongzi += newgongzidan.gonglingGongzi;
+                            salarylist[k].jibengongzi += newgongzidan.jibengongzi;
+                            salarylist[k].zhiwuJintie += newgongzidan.zhiwuJintie;
+                            salarylist[k].gongliBuzhu += newgongzidan.gongliBuzhu;
+                            salarylist[k].kaoheJiangjin += newgongzidan.kaoheJiangjin;
+                            salarylist[k].gudingJiangjin += newgongzidan.gudingJiangjin;
+                            salarylist[k].tongxunButie += newgongzidan.tongxunButie;
+                            salarylist[k].qitaJiangjin += newgongzidan.qitaJiangjin;
+                            salarylist[k].xiaxiangBuzhu += newgongzidan.xiaxiangBuzhu;
+                            salarylist[k].yingyetingBuzhu += newgongzidan.yingyetingBuzhu;
+                            salarylist[k].NormalOT += newgongzidan.NormalOT;
+                            salarylist[k].WeekendOT += newgongzidan.WeekendOT;
+                            salarylist[k].HolidayOT += newgongzidan.HolidayOT;
+                            salarylist[k].kouchu += newgongzidan.kouchu;
+                            salarylist[k].kaohekoukuan += newgongzidan.kaohekoukuan;
+                            salarylist[k].yingfagongzi += newgongzidan.yingfagongzi;
+                            salarylist[k].nianjin += newgongzidan.nianjin;
+                            salarylist[k].qiyeNianjin += newgongzidan.qiyeNianjin;
+                            salarylist[k].yanglaobaoxian += newgongzidan.yanglaobaoxian;
+                            salarylist[k].qiyeYanglaobaoxian += newgongzidan.qiyeYanglaobaoxian;
+                            salarylist[k].shiyebaoxian += newgongzidan.shiyebaoxian;
+                            salarylist[k].qiyeShiyebaoxian += newgongzidan.qiyeShiyebaoxian;
+                            salarylist[k].zhufanggongjijin += newgongzidan.zhufanggongjijin;
+                            salarylist[k].qiyeZhufanggongjijin += newgongzidan.qiyeZhufanggongjijin;
+                            salarylist[k].yiliaobaoxian += newgongzidan.yiliaobaoxian;
+                            salarylist[k].qiyeYiliaobaoxian += newgongzidan.qiyeYiliaobaoxian;
+                            salarylist[k].yingshuigongzi += newgongzidan.yingshuigongzi;
+                            salarylist[k].tax += newgongzidan.tax;
+                            salarylist[k].yicixingjiangjin += newgongzidan.yicixingjiangjin;
+                            salarylist[k].yicixingjiangjinTax += newgongzidan.yicixingjiangjinTax;
+                            salarylist[k].buchongyiliaobaoxian += newgongzidan.buchongyiliaobaoxian;
+                            salarylist[k].netIncome += newgongzidan.netIncome;
+                            isempexist=true;
+                            break;
+                        }
+                    }
+                    if (!isempexist) {
+                        salarylist.push(newgongzidan);
+                    }
 
                 }
             }

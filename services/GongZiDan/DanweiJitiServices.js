@@ -272,4 +272,94 @@ DanweiJitiService.Nianjin = function (criteria) {
     })
 }
 
+
+
+DanweiJitiService.Shengyubaoxian = function (criteria) {
+    return new Promise(function (rel, rej) {
+        SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
+            let resultList = [];
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
+            if (empSAs.status === 200) {
+                empSAs = empSAs.data;
+                for (let i = 0; i < empSAs.length; i++) {
+                    let emp = empSAs[i];
+                    if (emp.workerCategory === NonRegularEmployeeCategory) {
+                        /**
+                         * 非全日制员工，没有养老保险
+                         */
+                    } else {
+                        let danweiJiti = DanweiJitiModel(emp, "生育保险");
+                        danweiJiti.personal = 0;
+                        danweiJiti.company = parseFloat(emp.shengyubaoxian);
+                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                        gatherObj.personal += danweiJiti.personal;
+                        gatherObj.company += danweiJiti.company;
+                        gatherObj.total += danweiJiti.total;
+                        resultList.push(fixvalue(danweiJiti));
+                    }
+
+                }
+                resultList.push(fixvalue(gatherObj));
+                rel({
+                    status: 200,
+                    data: resultList,
+                    message: ''
+                })
+            } else {
+                logger.error("Error Location DanweiJiti Services, Shengyubaoxian ");
+                logger.error(empSAs.message);
+                rej(empSAs);
+            }
+        }, rejObj => {
+            logger.error("Error Location DanweiJiti Services, Shengyubaoxian 2");
+            logger.error(rejObj.message);
+            rej(rejObj);
+        })
+    })
+}
+
+DanweiJitiService.Gongshangbaoxian = function (criteria) {
+    return new Promise(function (rel, rej) {
+        SalaryDetailServices.queryByCriteria(criteria).then(empSAs => {
+            let resultList = [];
+            let gatherObj = DanweiJitiModel({ empId: '汇总:', name: '', salaryCycle: '' }, '合计汇总');
+            if (empSAs.status === 200) {
+                empSAs = empSAs.data;
+                for (let i = 0; i < empSAs.length; i++) {
+                    let emp = empSAs[i];
+                    if (emp.workerCategory === NonRegularEmployeeCategory) {
+                        /**
+                         * 非全日制员工，没有养老保险
+                         */
+                    } else {
+                        let danweiJiti = DanweiJitiModel(emp, "工伤保险");
+                        danweiJiti.personal = 0;
+                        danweiJiti.company = parseFloat(emp.gongshangbaoxian);
+                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                        gatherObj.personal += danweiJiti.personal;
+                        gatherObj.company += danweiJiti.company;
+                        gatherObj.total += danweiJiti.total;
+                        resultList.push(fixvalue(danweiJiti));
+                    }
+
+                }
+                resultList.push(fixvalue(gatherObj));
+                rel({
+                    status: 200,
+                    data: resultList,
+                    message: ''
+                })
+            } else {
+                logger.error("Error Location DanweiJiti Services, Gongshangbaoxian ");
+                logger.error(empSAs.message);
+                rej(empSAs);
+            }
+        }, rejObj => {
+            logger.error("Error Location DanweiJiti Services, Gongshangbaoxian 2");
+            logger.error(rejObj.message);
+            rej(rejObj);
+        })
+    })
+}
+
 module.exports = DanweiJitiService;

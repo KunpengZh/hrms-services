@@ -33,7 +33,7 @@ const NotApplicableNonRegularEmpColumns = ['jinengGongzi', 'gangweiGongzi', 'jic
     'zhufanggongjijinComments', 'yiliaobaoxian', 'yiliaobaoxianComments', 'netIncome', 'netIncomeComments',
     'yicixingjiangjinTaxComments', 'buchongyiliaobaoxian',
     'yicixingjiangjin', 'yicixingjiangjinTax', 'qiyeZhufanggongjijin', 'qiyeZhufanggongjijinComments', 'qiyeYiliaobaoxian',
-    'qiyeYiliaobaoxianComments', 'gudingJiangjin'];
+    'qiyeYiliaobaoxianComments', 'gudingJiangjin','shengyubaoxian','gongshangbaoxian'];
 
 const RegularEmpGongZiInfo = ['jinengGongzi', 'gangweiGongzi', 'jichuButie', 'xilifei', 'gonglingGongzi',
     'zhiwuJintie', 'preAnnuallyIncom'];
@@ -43,7 +43,7 @@ const NonRegularEmployeeCategory = "非全日制人员";
 const NotApplicableComments = "不适用";
 const MonthlyEmpOTData = ["NormalOT", "WeekendOT", "HolidayOT", "kouchu", "kaohekoukuan", "yicixingjiangjin",
     'gongliBuzhu', 'kaoheJiangjin', 'tongxunButie', 'qitaJiangjin', 'xiaxiangBuzhu',
-    'yingyetingBuzhu', 'buchongyiliaobaoxian', 'yiliaobaoxian', 'gudingJiangjin', 'qiyeYiliaobaoxian'];
+    'yingyetingBuzhu', 'buchongyiliaobaoxian', 'yiliaobaoxian', 'gudingJiangjin', 'qiyeYiliaobaoxian','shengyubaoxian','gongshangbaoxian'];
 
 var keepTwoDecimalFull=function(num) {
     var result = parseFloat(num);
@@ -759,7 +759,7 @@ SalaryCalculation.calculateYicixingjiangjinTax = function (emps, configDoc) {
                 let tax = 0;
                 let taxComments = '';
                 if (yingshuigongzi <= 1500) {
-                    tax = yicixingjiangjin * 0.03;
+                    tax = yingshuigongzi * 0.03;
                     taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 3%";
                 } else if (yingshuigongzi <= 4500) {
                     tax = yicixingjiangjin * 0.1 - 105;

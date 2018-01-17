@@ -1,4 +1,5 @@
 var EmpOT = require('../mysql/EmpOT');
+var EmpOTHistory = require('../mysql/EmpOTHistory');
 var EmpBasicServices = require('../empInfoServices/EmpBasicServices');
 var EmpOTMOdel = require('./Model/EmpOT');
 var empInfo = require('../mysql/EmpInfo');
@@ -65,7 +66,7 @@ EmpOTServices.queryByCriteria = function (criteria) {
     })
 }
 var buildWhereCase = function (criteria) {
-  
+
     let wherecase = '';
     if (criteria.workerCategory) {
         if (wherecase === '') {
@@ -171,7 +172,7 @@ EmpOTServices.InitialWithEmps = function (OTCycle) {
                     }
                 }).then((OTData) => {
                     if (OTData === null) {
-                        let OTData = EmpOTMOdel(emp, OTCycle);
+                        OTData = EmpOTMOdel(emp, OTCycle);
                         EmpOT.create(OTData).then(creationRes => {
                             logger.info("New OT data created for " + emp.name + " , on OT Cycle: " + OTCycle);
                             processed++;

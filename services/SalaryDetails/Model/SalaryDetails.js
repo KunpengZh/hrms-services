@@ -73,5 +73,7 @@ module.exports = function (emp, salaryCycle) {
         anquanJiangli: '0',
         wuweizhangJiangli: '0',
         OTJiangjin: '0',
+        shengyubaoxian:'0',
+        gongshangbaoxian:'0'
     }
 };
