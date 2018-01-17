@@ -483,6 +483,8 @@ var setNRDataColumns = function () {
         { header: '安全奖励', key: 'anquanJiangli', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '无违章奖励', key: 'wuweizhangJiangli', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '加班奖金', key: 'OTJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业部分医疗保险', key: 'qiyeYiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
 }
@@ -525,7 +527,7 @@ exports.NRExcelToJSON = function (filename) {
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, department, jobRole, workerCategory, salaryCycle, daySalary,
-                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin] = row.values;
+                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin,yiliaobaoxian,qiyeYiliaobaoxian] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
