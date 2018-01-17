@@ -527,7 +527,7 @@ exports.NRExcelToJSON = function (filename) {
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, department, jobRole, workerCategory, salaryCycle, daySalary,
-                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin,yiliaobaoxian,qiyeYiliaobaoxian] = row.values;
+                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin, yiliaobaoxian, qiyeYiliaobaoxian] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
@@ -545,6 +545,8 @@ exports.NRExcelToJSON = function (filename) {
                         anquanJiangli: anquanJiangli ? anquanJiangli : '0',
                         wuweizhangJiangli: wuweizhangJiangli ? wuweizhangJiangli : '0',
                         OTJiangjin: OTJiangjin ? OTJiangjin : '0',
+                        yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '0',
+                        qiyeYiliaobaoxian: qiyeYiliaobaoxian ? qiyeYiliaobaoxian : '0'
                     }
                     NRLists.push(NREmp);
                 });
