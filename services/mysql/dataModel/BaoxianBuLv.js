@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('BaoxianBulv', {
+    return sequelize.define('baoxianbulv', {
         empId: {
             type: Sequelize.STRING,
             allowNull: false,

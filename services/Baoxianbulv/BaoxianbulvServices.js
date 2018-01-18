@@ -71,7 +71,7 @@ BaoxianbulvServices.queryByCriteria = function (criteria) {
 
         let wherecase = buildWhereCase(criteria);
         let data = [];
-        sequelize.query("select * from Baoxianbulvs" + wherecase, { type: sequelize.QueryTypes.SELECT })
+        sequelize.query("select * from baoxianbulvs" + wherecase, { type: sequelize.QueryTypes.SELECT })
             .then(walfaredata => {
                 data = JSON.parse(JSON.stringify(walfaredata));
                 rel({
@@ -453,7 +453,7 @@ BaoxianbulvServices.upload = function (WelDataList) {
 
 BaoxianbulvServices.delete = function (empIds, salaryCycle) {
     return new Promise(function (rel, rej) {
-        sequelize.query('DELETE FROM Baoxianbulvs WHERE empId IN(:empIds) and salaryCycle=:salaryCycle',
+        sequelize.query('DELETE FROM baoxianbulvs WHERE empId IN(:empIds) and salaryCycle=:salaryCycle',
             { replacements: { empIds: empIds, salaryCycle: salaryCycle } }
         ).spread((results, metadata) => {
             rel({
