@@ -39,6 +39,7 @@ var SalaryCalculationsController = require('./routes/SalaryCalculationsControlle
 var EmpDeskAccountController = require('./routes/EmpDeskAccount');
 var WelfaresController = require("./routes/WelfaresController");
 var BaoxianbulvController=require("./routes/Baoxianbulv");
+var DanweiWelfaresController=require("./routes/Danwelfares");
 
 var app = express();
 
@@ -101,6 +102,11 @@ app.use('/ot', OTController);
 
 app.use('/welfares', checkIsHRAdmin);
 app.use('/welfares', WelfaresController);
+
+app.use('/danweiwelfares', checkIsHRAdmin);
+app.use('/danweiwelfares', DanweiWelfaresController);
+
+
 
 app.use('/bulv', checkIsHRAdmin);
 app.use('/bulv', BaoxianbulvController);

@@ -39,11 +39,39 @@ PayrollQueryService.getDataByCriteria = function (criteria) {
     })
 }
 
+var regularEmpColumns = ['jinengGongzi', 'gangweiGongzi', 'jichuButie', 'xilifei', 'gonglingGongzi',
+    'jibengongzi', 'zhiwuJintie', 'gongliBuzhu', 'kaoheJiangjin', 'gudingJiangjin', 'tongxunButie',
+    'qitaJiangjin', 'xiaxiangBuzhu', 'yingyetingBuzhu', 'NormalOT', 'WeekendOT', 'HolidayOT', 'kouchu',
+    'kaohekoukuan', 'yingfagongzi', 'nianjin', 'qiyeNianjin', 'yanglaobaoxian', 'qiyeYanglaobaoxian',
+    'shiyebaoxian', 'qiyeShiyebaoxian', 'zhufanggongjijin', 'qiyeZhufanggongjijin', 'yiliaobaoxian',
+    'qiyeYiliaobaoxian', 'yingshuigongzi', 'tax', 'yicixingjiangjin', 'yicixingjiangjinTax',
+    'buchongyiliaobaoxian', 'netIncome', 'shengyubaoxian', 'gongshangbaoxian',];
+var nonRegularEmpColumns = ['jibengongzi', 'yingfagongzi', 'nianjin', 'qiyeNianjin', 'yanglaobaoxian',
+    'qiyeYanglaobaoxian', 'shiyebaoxian', 'qiyeShiyebaoxian', 'yingshuigongzi', 'tax', 'netIncome', 'daySalary',
+    'workDays', 'anquanJiangli', 'wuweizhangJiangli', 'OTJiangjin', 'shengyubaoxian', 'gongshangbaoxian',];
+
+var fixValueFormat = function (arrayList) {
+
+    for (let i = 0; i < arrayList.length; i++) {
+        if (arrayList[i].workerCategory === NonRegularEmployeeCategory) {
+            nonRegularEmpColumns.forEach(function (element) {
+                arrayList[i][element] = keepTwoDecimalFull(arrayList[i][element]);
+            })
+        } else {
+            regularEmpColumns.forEach(function (element) {
+                arrayList[i][element] = keepTwoDecimalFull(arrayList[i][element]);
+                if (element === 'yanglaobaoxian') console.log(arrayList[i][element])
+            })
+        }
+    }
+    return arrayList;
+}
+
 var getPayrollData = function (criteria) {
     return new Promise(function (rel, rej) {
         let salarylist = [];
         let empsalarys = [];
-        
+
         let startGenerationData = function () {
             let jinengGongzi = 0,
                 gangweiGongzi = 0,
@@ -85,6 +113,8 @@ var getPayrollData = function (criteria) {
                 workDays = 0,
                 anquanJiangli = 0,
                 wuweizhangJiangli = 0,
+                shengyubaoxian = 0,
+                gongshangbaoxian = 0,
                 OTJiangjin = 0;
 
             for (let i = 0; i < empsalarys.length; i++) {
@@ -107,10 +137,12 @@ var getPayrollData = function (criteria) {
                     anquanJiangli += newgongzidan.anquanJiangli;
                     wuweizhangJiangli += newgongzidan.wuweizhangJiangli;
                     OTJiangjin += newgongzidan.OTJiangjin;
+                    shengyubaoxian += newgongzidan.shengyubaoxian;
+                    gongshangbaoxian += newgongzidan.gongshangbaoxian;
 
                     let isempexist = false;
                     for (let k = 0; k < salarylist.length; k++) {
-                        
+
                         if (salarylist[k].empId === empsalary.empId) {
                             salarylist[k].jibengongzi += newgongzidan.jibengongzi;
                             salarylist[k].yingfagongzi += newgongzidan.yingfagongzi;
@@ -128,7 +160,9 @@ var getPayrollData = function (criteria) {
                             salarylist[k].anquanJiangli += newgongzidan.anquanJiangli;
                             salarylist[k].wuweizhangJiangli += newgongzidan.wuweizhangJiangli;
                             salarylist[k].OTJiangjin += newgongzidan.OTJiangjin;
-                            isempexist=true;
+                            salarylist[k].shengyubaoxian += newgongzidan.shengyubaoxian;
+                            salarylist[k].gongshangbaoxian += newgongzidan.gongshangbaoxian;
+                            isempexist = true;
                             break;
                         }
                     }
@@ -174,6 +208,8 @@ var getPayrollData = function (criteria) {
                     yicixingjiangjinTax += newgongzidan.yicixingjiangjinTax;
                     buchongyiliaobaoxian += newgongzidan.buchongyiliaobaoxian;
                     netIncome += newgongzidan.netIncome;
+                    shengyubaoxian += newgongzidan.shengyubaoxian;
+                    gongshangbaoxian += newgongzidan.gongshangbaoxian;
 
 
                     let isempexist = false;
@@ -215,7 +251,9 @@ var getPayrollData = function (criteria) {
                             salarylist[k].yicixingjiangjinTax += newgongzidan.yicixingjiangjinTax;
                             salarylist[k].buchongyiliaobaoxian += newgongzidan.buchongyiliaobaoxian;
                             salarylist[k].netIncome += newgongzidan.netIncome;
-                            isempexist=true;
+                            salarylist[k].shengyubaoxian += newgongzidan.shengyubaoxian;
+                            salarylist[k].gongshangbaoxian += newgongzidan.gongshangbaoxian;
+                            isempexist = true;
                             break;
                         }
                     }
@@ -279,13 +317,15 @@ var getPayrollData = function (criteria) {
                 workDays: keepTwoDecimalFull(workDays),
                 anquanJiangli: keepTwoDecimalFull(anquanJiangli),
                 wuweizhangJiangli: keepTwoDecimalFull(wuweizhangJiangli),
-                OTJiangjin: keepTwoDecimalFull(OTJiangjin)
+                OTJiangjin: keepTwoDecimalFull(OTJiangjin),
+                shengyubaoxian: keepTwoDecimalFull(shengyubaoxian),
+                gongshangbaoxian: keepTwoDecimalFull(gongshangbaoxian),
             }
 
             salarylist.push(newEmpSA);
 
 
-            rel(salarylist);
+            rel(fixValueFormat(salarylist));
         }
 
 

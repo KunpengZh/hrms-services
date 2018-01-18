@@ -91,9 +91,9 @@ WelfareServices.tongJiDetails = function (criteria) {
                     tongji.Sangzangbuzhu = keepTwoDecimalFull(parseFloat(tongji.Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                     tongji.Fuxufei = keepTwoDecimalFull(parseFloat(tongji.Fuxufei) + parseFloat(wel.Fuxufei));
                     tongji.Fangshujiangwen = keepTwoDecimalFull(parseFloat(tongji.Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                    tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                    //tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                     tongji.Personalqitafuli = keepTwoDecimalFull(parseFloat(tongji.Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                    tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                    //tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                     
                 })
                 WelData.push(tongji);
@@ -134,9 +134,9 @@ WelfareServices.tongJiByCategory = function (criteria) {
                             databycategory[i].Sangzangbuzhu = keepTwoDecimalFull(parseFloat(databycategory[i].Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                             databycategory[i].Fuxufei = keepTwoDecimalFull(parseFloat(databycategory[i].Fuxufei) + parseFloat(wel.Fuxufei));
                             databycategory[i].Fangshujiangwen = keepTwoDecimalFull(parseFloat(databycategory[i].Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                            databycategory[i].Shitangjingfei = keepTwoDecimalFull(parseFloat(databycategory[i].Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                            //databycategory[i].Shitangjingfei = keepTwoDecimalFull(parseFloat(databycategory[i].Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                             databycategory[i].Personalqitafuli = keepTwoDecimalFull(parseFloat(databycategory[i].Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                            databycategory[i].CompanyQitafuli = keepTwoDecimalFull(parseFloat(databycategory[i].CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                           // databycategory[i].CompanyQitafuli = keepTwoDecimalFull(parseFloat(databycategory[i].CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                             break;
                         }
                     }
@@ -156,9 +156,9 @@ WelfareServices.tongJiByCategory = function (criteria) {
                     tongji.Sangzangbuzhu = keepTwoDecimalFull(parseFloat(tongji.Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                     tongji.Fuxufei = keepTwoDecimalFull(parseFloat(tongji.Fuxufei) + parseFloat(wel.Fuxufei));
                     tongji.Fangshujiangwen = keepTwoDecimalFull(parseFloat(tongji.Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                    tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                    //tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                     tongji.Personalqitafuli = keepTwoDecimalFull(parseFloat(tongji.Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                    tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                    //tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                 })
                 databycategory.push(tongji);
                 rel({
@@ -199,9 +199,9 @@ WelfareServices.tongJiByDepartment = function (criteria) {
                             databydepartment[i].Sangzangbuzhu = keepTwoDecimalFull(parseFloat(databydepartment[i].Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                             databydepartment[i].Fuxufei = keepTwoDecimalFull(parseFloat(databydepartment[i].Fuxufei) + parseFloat(wel.Fuxufei));
                             databydepartment[i].Fangshujiangwen = keepTwoDecimalFull(parseFloat(databydepartment[i].Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                            databydepartment[i].Shitangjingfei = keepTwoDecimalFull(parseFloat(databydepartment[i].Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                            //databydepartment[i].Shitangjingfei = keepTwoDecimalFull(parseFloat(databydepartment[i].Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                             databydepartment[i].Personalqitafuli = keepTwoDecimalFull(parseFloat(databydepartment[i].Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                            databydepartment[i].CompanyQitafuli = keepTwoDecimalFull(parseFloat(databydepartment[i].CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                            //databydepartment[i].CompanyQitafuli = keepTwoDecimalFull(parseFloat(databydepartment[i].CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                             break;
                         }
                     }
@@ -220,9 +220,9 @@ WelfareServices.tongJiByDepartment = function (criteria) {
                     tongji.Sangzangbuzhu = keepTwoDecimalFull(parseFloat(tongji.Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                     tongji.Fuxufei = keepTwoDecimalFull(parseFloat(tongji.Fuxufei) + parseFloat(wel.Fuxufei));
                     tongji.Fangshujiangwen = keepTwoDecimalFull(parseFloat(tongji.Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                    tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                    //tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                     tongji.Personalqitafuli = keepTwoDecimalFull(parseFloat(tongji.Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                    tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                    //tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                 })
                 databydepartment.push(tongji);
                 rel({
@@ -265,9 +265,9 @@ WelfareServices.tongJiByEmp = function (criteria) {
                             newWelData[i].Sangzangbuzhu = keepTwoDecimalFull(parseFloat(newWelData[i].Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                             newWelData[i].Fuxufei = keepTwoDecimalFull(parseFloat(newWelData[i].Fuxufei) + parseFloat(wel.Fuxufei));
                             newWelData[i].Fangshujiangwen = keepTwoDecimalFull(parseFloat(newWelData[i].Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                            newWelData[i].Shitangjingfei = keepTwoDecimalFull(parseFloat(newWelData[i].Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                            //newWelData[i].Shitangjingfei = keepTwoDecimalFull(parseFloat(newWelData[i].Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                             newWelData[i].Personalqitafuli = keepTwoDecimalFull(parseFloat(newWelData[i].Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                            newWelData[i].CompanyQitafuli = keepTwoDecimalFull(parseFloat(newWelData[i].CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                            //newWelData[i].CompanyQitafuli = keepTwoDecimalFull(parseFloat(newWelData[i].CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                             break;
                         }
                     }
@@ -283,9 +283,9 @@ WelfareServices.tongJiByEmp = function (criteria) {
                     tongji.Sangzangbuzhu = keepTwoDecimalFull(parseFloat(tongji.Sangzangbuzhu) + parseFloat(wel.Sangzangbuzhu));
                     tongji.Fuxufei = keepTwoDecimalFull(parseFloat(tongji.Fuxufei) + parseFloat(wel.Fuxufei));
                     tongji.Fangshujiangwen = keepTwoDecimalFull(parseFloat(tongji.Fangshujiangwen) + parseFloat(wel.Fangshujiangwen));
-                    tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
+                    //tongji.Shitangjingfei = keepTwoDecimalFull(parseFloat(tongji.Shitangjingfei) + parseFloat(wel.Shitangjingfei));
                     tongji.Personalqitafuli = keepTwoDecimalFull(parseFloat(tongji.Personalqitafuli) + parseFloat(wel.Personalqitafuli));
-                    tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
+                    //tongji.CompanyQitafuli = keepTwoDecimalFull(parseFloat(tongji.CompanyQitafuli) + parseFloat(wel.CompanyQitafuli));
                 })
 
                 newWelData.push(tongji);

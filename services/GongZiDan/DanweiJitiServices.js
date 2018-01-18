@@ -55,15 +55,35 @@ DanweiJitiService.Yanglaobaoxian = function (criteria) {
                     //     gatherObj.total += danweiJiti.total;
                     //     resultList.push(fixvalue(danweiJiti));
                     // }
-                    let danweiJiti = DanweiJitiModel(emp, "养老保险");
-                    danweiJiti.personal = parseFloat(emp.yanglaobaoxian);
-                    danweiJiti.company = parseFloat(emp.qiyeYanglaobaoxian);
-                    danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                    gatherObj.personal += danweiJiti.personal;
-                    gatherObj.company += danweiJiti.company;
-                    gatherObj.total += danweiJiti.total;
-                    resultList.push(fixvalue(danweiJiti));
+
+                    let isDataExist = false;
+                    for (let k = 0; k < resultList.length; k++) {
+                        if (resultList[k].empId === emp.empId) {
+
+                            resultList[k].personal += parseFloat(emp.yanglaobaoxian);
+                            resultList[k].company += parseFloat(emp.qiyeYanglaobaoxian);
+                            resultList[k].total = resultList[k].personal + resultList[k].company;
+                            gatherObj.personal += parseFloat(emp.yanglaobaoxian);
+                            gatherObj.company += parseFloat(emp.qiyeYanglaobaoxian);
+                            isDataExist = true;
+                            break;
+                        }
+                    }
+
+                    if (!isDataExist) {
+                        let danweiJiti = DanweiJitiModel(emp, "养老保险");
+                        danweiJiti.personal = parseFloat(emp.yanglaobaoxian);
+                        danweiJiti.company = parseFloat(emp.qiyeYanglaobaoxian);
+                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                        resultList.push(danweiJiti);
+                        gatherObj.personal += danweiJiti.personal;
+                        gatherObj.company += danweiJiti.company;
+                    }
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -107,15 +127,36 @@ DanweiJitiService.Shiyebaoxian = function (criteria) {
                     //     gatherObj.total += danweiJiti.total;
                     //     resultList.push(fixvalue(danweiJiti));
                     // }
-                    let danweiJiti = DanweiJitiModel(emp, "失业保险");
-                    danweiJiti.personal = parseFloat(emp.shiyebaoxian);
-                    danweiJiti.company = parseFloat(emp.qiyeShiyebaoxian);
-                    danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                    gatherObj.personal += danweiJiti.personal;
-                    gatherObj.company += danweiJiti.company;
-                    gatherObj.total += danweiJiti.total;
-                    resultList.push(fixvalue(danweiJiti));
+
+                    let isDataExist = false;
+                    for (let k = 0; k < resultList.length; k++) {
+                        if (resultList[k].empId === emp.empId) {
+
+                            resultList[k].personal += parseFloat(emp.shiyebaoxian);
+                            resultList[k].company += parseFloat(emp.qiyeShiyebaoxian);
+                            resultList[k].total = resultList[k].personal + resultList[k].company;
+                            gatherObj.personal += parseFloat(emp.shiyebaoxian);
+                            gatherObj.company += parseFloat(emp.qiyeShiyebaoxian);
+                            isDataExist = true;
+                            break;
+                        }
+                    }
+
+                    if (!isDataExist) {
+                        let danweiJiti = DanweiJitiModel(emp, "失业保险");
+                        danweiJiti.personal = parseFloat(emp.shiyebaoxian);
+                        danweiJiti.company = parseFloat(emp.qiyeShiyebaoxian);
+                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                        resultList.push(danweiJiti);
+                        gatherObj.personal += danweiJiti.personal;
+                        gatherObj.company += danweiJiti.company;
+                    }
+
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -149,16 +190,36 @@ DanweiJitiService.Yiliaobaoxian = function (criteria) {
                          * 非全日制员工，没有养老保险
                          */
                     } else {
-                        let danweiJiti = DanweiJitiModel(emp, "医疗保险");
-                        danweiJiti.personal = parseFloat(emp.yiliaobaoxian);
-                        danweiJiti.company = parseFloat(emp.qiyeYiliaobaoxian);
-                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                        gatherObj.personal += danweiJiti.personal;
-                        gatherObj.company += danweiJiti.company;
-                        gatherObj.total += danweiJiti.total;
-                        resultList.push(fixvalue(danweiJiti));
+
+                        let isDataExist = false;
+                        for (let k = 0; k < resultList.length; k++) {
+                            if (resultList[k].empId === emp.empId) {
+
+                                resultList[k].personal += parseFloat(emp.yiliaobaoxian);
+                                resultList[k].company += parseFloat(emp.qiyeYiliaobaoxian);
+                                resultList[k].total = resultList[k].personal + resultList[k].company;
+                                gatherObj.personal += parseFloat(emp.yiliaobaoxian);
+                                gatherObj.company += parseFloat(emp.qiyeYiliaobaoxian);
+                                isDataExist = true;
+                                break;
+                            }
+                        }
+
+                        if (!isDataExist) {
+                            let danweiJiti = DanweiJitiModel(emp, "医疗保险");
+                            danweiJiti.personal = parseFloat(emp.yiliaobaoxian);
+                            danweiJiti.company = parseFloat(emp.qiyeYiliaobaoxian);
+                            danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                            resultList.push(danweiJiti);
+                            gatherObj.personal += danweiJiti.personal;
+                            gatherObj.company += danweiJiti.company;
+                        }
                     }
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -192,16 +253,39 @@ DanweiJitiService.Zhufanggongjijin = function (criteria) {
                          * 非全日制员工，没有养老保险
                          */
                     } else {
-                        let danweiJiti = DanweiJitiModel(emp, "住房公积金");
-                        danweiJiti.personal = parseFloat(emp.zhufanggongjijin);
-                        danweiJiti.company = parseFloat(emp.qiyeZhufanggongjijin);
-                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                        gatherObj.personal += danweiJiti.personal;
-                        gatherObj.company += danweiJiti.company;
-                        gatherObj.total += danweiJiti.total;
-                        resultList.push(fixvalue(danweiJiti));
+
+                        let isDataExist = false;
+                        for (let k = 0; k < resultList.length; k++) {
+                            if (resultList[k].empId === emp.empId) {
+
+                                resultList[k].personal += parseFloat(emp.zhufanggongjijin);
+                                resultList[k].company += parseFloat(emp.qiyeZhufanggongjijin);
+                                resultList[k].total = resultList[k].personal + resultList[k].company;
+                                gatherObj.personal += parseFloat(emp.zhufanggongjijin);
+                                gatherObj.company += parseFloat(emp.qiyeZhufanggongjijin);
+                                isDataExist = true;
+                                break;
+                            }
+                        }
+
+                        if (!isDataExist) {
+                            let danweiJiti = DanweiJitiModel(emp, "住房公积金");
+                            danweiJiti.personal = parseFloat(emp.zhufanggongjijin);
+                            danweiJiti.company = parseFloat(emp.qiyeZhufanggongjijin);
+                            danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                            resultList.push(danweiJiti);
+                            gatherObj.personal += danweiJiti.personal;
+                            gatherObj.company += danweiJiti.company;
+                        }
+
+
+
                     }
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -244,15 +328,34 @@ DanweiJitiService.Nianjin = function (criteria) {
                     //     gatherObj.total += danweiJiti.total;
                     //     resultList.push(fixvalue(danweiJiti));
                     // }
-                    let danweiJiti = DanweiJitiModel(emp, "年金");
-                    danweiJiti.personal = parseFloat(emp.nianjin);
-                    danweiJiti.company = parseFloat(emp.qiyeNianjin);
-                    danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                    gatherObj.personal += danweiJiti.personal;
-                    gatherObj.company += danweiJiti.company;
-                    gatherObj.total += danweiJiti.total;
-                    resultList.push(fixvalue(danweiJiti));
+                    let isDataExist = false;
+                    for (let k = 0; k < resultList.length; k++) {
+                        if (resultList[k].empId === emp.empId) {
+
+                            resultList[k].personal += parseFloat(emp.nianjin);
+                            resultList[k].company += parseFloat(emp.qiyeNianjin);
+                            resultList[k].total = resultList[k].personal + resultList[k].company;
+                            gatherObj.personal += parseFloat(emp.nianjin);
+                            gatherObj.company += parseFloat(emp.qiyeNianjin);
+                            isDataExist = true;
+                            break;
+                        }
+                    }
+
+                    if (!isDataExist) {
+                        let danweiJiti = DanweiJitiModel(emp, "年金");
+                        danweiJiti.personal = parseFloat(emp.nianjin);
+                        danweiJiti.company = parseFloat(emp.qiyeNianjin);
+                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                        resultList.push(danweiJiti);
+                        gatherObj.personal += danweiJiti.personal;
+                        gatherObj.company += danweiJiti.company;
+                    }
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -283,22 +386,49 @@ DanweiJitiService.Shengyubaoxian = function (criteria) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
                     let emp = empSAs[i];
-                    if (emp.workerCategory === NonRegularEmployeeCategory) {
-                        /**
-                         * 非全日制员工，没有养老保险
-                         */
-                    } else {
+                    // if (emp.workerCategory === NonRegularEmployeeCategory) {
+                    //     /**
+                    //      * 非全日制员工，没有养老保险
+                    //      */
+                    // } else {
+                    //     let danweiJiti = DanweiJitiModel(emp, "生育保险");
+                    //     danweiJiti.personal = 0;
+                    //     danweiJiti.company = parseFloat(emp.shengyubaoxian);
+                    //     danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                    //     gatherObj.personal += danweiJiti.personal;
+                    //     gatherObj.company += danweiJiti.company;
+                    //     gatherObj.total += danweiJiti.total;
+                    //     resultList.push(fixvalue(danweiJiti));
+                    // }
+                    let isDataExist = false;
+                    for (let k = 0; k < resultList.length; k++) {
+                        if (resultList[k].empId === emp.empId) {
+
+                            //resultList[k].personal += parseFloat(emp.shengyubaoxian);
+                            resultList[k].company += parseFloat(emp.shengyubaoxian);
+                            resultList[k].total = resultList[k].personal + resultList[k].company;
+                            //gatherObj.personal += parseFloat(emp.shengyubaoxian);
+                            gatherObj.company += parseFloat(emp.shengyubaoxian);
+                            isDataExist = true;
+                            break;
+                        }
+                    }
+
+                    if (!isDataExist) {
                         let danweiJiti = DanweiJitiModel(emp, "生育保险");
                         danweiJiti.personal = 0;
                         danweiJiti.company = parseFloat(emp.shengyubaoxian);
                         danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                        gatherObj.personal += danweiJiti.personal;
+                        resultList.push(danweiJiti);
+                        //gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
-                        gatherObj.total += danweiJiti.total;
-                        resultList.push(fixvalue(danweiJiti));
                     }
 
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -327,22 +457,49 @@ DanweiJitiService.Gongshangbaoxian = function (criteria) {
                 empSAs = empSAs.data;
                 for (let i = 0; i < empSAs.length; i++) {
                     let emp = empSAs[i];
-                    if (emp.workerCategory === NonRegularEmployeeCategory) {
-                        /**
-                         * 非全日制员工，没有养老保险
-                         */
-                    } else {
+                    // if (emp.workerCategory === NonRegularEmployeeCategory) {
+                    //     /**
+                    //      * 非全日制员工，没有养老保险
+                    //      */
+                    // } else {
+                    //     let danweiJiti = DanweiJitiModel(emp, "工伤保险");
+                    //     danweiJiti.personal = 0;
+                    //     danweiJiti.company = parseFloat(emp.gongshangbaoxian);
+                    //     danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                    //     gatherObj.personal += danweiJiti.personal;
+                    //     gatherObj.company += danweiJiti.company;
+                    //     gatherObj.total += danweiJiti.total;
+                    //     resultList.push(fixvalue(danweiJiti));
+                    // }
+                    let isDataExist = false;
+                    for (let k = 0; k < resultList.length; k++) {
+                        if (resultList[k].empId === emp.empId) {
+
+                            //resultList[k].personal += parseFloat(emp.shengyubaoxian);
+                            resultList[k].company += parseFloat(emp.gongshangbaoxian);
+                            resultList[k].total = resultList[k].personal + resultList[k].company;
+                            //gatherObj.personal += parseFloat(emp.shengyubaoxian);
+                            gatherObj.company += parseFloat(emp.gongshangbaoxian);
+                            isDataExist = true;
+                            break;
+                        }
+                    }
+
+                    if (!isDataExist) {
                         let danweiJiti = DanweiJitiModel(emp, "工伤保险");
                         danweiJiti.personal = 0;
                         danweiJiti.company = parseFloat(emp.gongshangbaoxian);
                         danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                        gatherObj.personal += danweiJiti.personal;
+                        resultList.push(danweiJiti);
+                        //gatherObj.personal += danweiJiti.personal;
                         gatherObj.company += danweiJiti.company;
-                        gatherObj.total += danweiJiti.total;
-                        resultList.push(fixvalue(danweiJiti));
                     }
 
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,
@@ -376,17 +533,37 @@ DanweiJitiService.Buchongyiliaobaoxian = function (criteria) {
                          * 非全日制员工，没有补充医疗保险
                          */
                     } else {
-                        let danweiJiti = DanweiJitiModel(emp, "补充医疗保险");
-                        danweiJiti.personal = 0;
-                        danweiJiti.company = parseFloat(emp.buchongyiliaobaoxian);
-                        danweiJiti.total = danweiJiti.personal + danweiJiti.company;
-                        gatherObj.personal += danweiJiti.personal;
-                        gatherObj.company += danweiJiti.company;
-                        gatherObj.total += danweiJiti.total;
-                        resultList.push(fixvalue(danweiJiti));
+
+                        let isDataExist = false;
+                        for (let k = 0; k < resultList.length; k++) {
+                            if (resultList[k].empId === emp.empId) {
+
+                                //resultList[k].personal += parseFloat(emp.shengyubaoxian);
+                                resultList[k].company += parseFloat(emp.buchongyiliaobaoxian);
+                                resultList[k].total = resultList[k].personal + resultList[k].company;
+                                //gatherObj.personal += parseFloat(emp.shengyubaoxian);
+                                gatherObj.company += parseFloat(emp.buchongyiliaobaoxian);
+                                isDataExist = true;
+                                break;
+                            }
+                        }
+
+                        if (!isDataExist) {
+                            let danweiJiti = DanweiJitiModel(emp, "补充医疗保险");
+                            danweiJiti.personal = 0;
+                            danweiJiti.company = parseFloat(emp.buchongyiliaobaoxian);
+                            danweiJiti.total = danweiJiti.personal + danweiJiti.company;
+                            resultList.push(danweiJiti);
+                            //gatherObj.personal += danweiJiti.personal;
+                            gatherObj.company += danweiJiti.company;
+                        }
                     }
 
                 }
+                gatherObj.total = gatherObj.personal + gatherObj.company;
+                resultList = resultList.map(function (obj) {
+                    return fixvalue(obj);
+                })
                 resultList.push(fixvalue(gatherObj));
                 rel({
                     status: 200,

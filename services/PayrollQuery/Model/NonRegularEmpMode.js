@@ -48,5 +48,7 @@ module.exports = function (empsa) {
         anquanJiangli : parseFloat(empsa.anquanJiangli),
         wuweizhangJiangli : parseFloat(empsa.wuweizhangJiangli),
         OTJiangjin : parseFloat(empsa.OTJiangjin),
+        shengyubaoxian:parseFloat(empsa.shengyubaoxian),
+        gongshangbaoxian:parseFloat(empsa.gongshangbaoxian)
     }
 };

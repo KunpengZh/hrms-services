@@ -377,8 +377,8 @@ var setOTDataColumns = function () {
         { header: '年终奖金', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '医疗保险扣款', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '企业部分医疗保险', key: 'qiyeYiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
 }
@@ -485,6 +485,8 @@ var setNRDataColumns = function () {
         { header: '加班奖金', key: 'OTJiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '企业部分医疗保险', key: 'qiyeYiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
 }
@@ -527,7 +529,8 @@ exports.NRExcelToJSON = function (filename) {
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, department, jobRole, workerCategory, salaryCycle, daySalary,
-                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin, yiliaobaoxian, qiyeYiliaobaoxian] = row.values;
+                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin, yiliaobaoxian, 
+                        qiyeYiliaobaoxian,shengyubaoxian, gongshangbaoxian] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
@@ -546,7 +549,9 @@ exports.NRExcelToJSON = function (filename) {
                         wuweizhangJiangli: wuweizhangJiangli ? wuweizhangJiangli : '0',
                         OTJiangjin: OTJiangjin ? OTJiangjin : '0',
                         yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : '0',
-                        qiyeYiliaobaoxian: qiyeYiliaobaoxian ? qiyeYiliaobaoxian : '0'
+                        qiyeYiliaobaoxian: qiyeYiliaobaoxian ? qiyeYiliaobaoxian : '0',
+                        shengyubaoxian: shengyubaoxian ? shengyubaoxian : '0',
+                        gongshangbaoxian: gongshangbaoxian ? gongshangbaoxian : '0'
                     }
                     NRLists.push(NREmp);
                 });
@@ -1053,10 +1058,10 @@ exports.DanweiJitiToExcel = function (danweiJitiData, filename, category, criter
                 title += month + "月年金明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
             case 'shengyubaoxian':
-                title += month + "月生育保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                title += month + "月企业生育保险明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
             case 'gongshangbaoxian':
-                title += month + "月工伤保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                title += month + "月企业工伤保险明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
             case 'buchongyiliaobaoxian':
                 title += month + "月补充医疗 保险明细表(" + (danweiJitiData.length - 1) + ")人";
@@ -1220,6 +1225,8 @@ var setPayrollFullQueryColumns = function (columnsList) {
         { header: '年终奖金', key: 'yicixingjiangjin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '年终奖金税', key: 'yicixingjiangjinTax', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '实发工资', key: 'netIncome', width: 10, outlineLevel: 1, style: { bold: true } },
 
     ];
@@ -1287,8 +1294,8 @@ var setBaoxianbulvDataColumns = function () {
         { header: '企业住房公积金', key: 'qiyeZhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '企业医疗保险', key: 'qiyeYiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
 }
@@ -1399,9 +1406,9 @@ var setWelfareDataColumns = function () {
         { header: '丧葬补助', key: 'Sangzangbuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '抚恤费', key: 'Fuxufei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '防暑降温费', key: 'Fangshujiangwen', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
+        //{ header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '个人其它福利', key: 'Personalqitafuli', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
+        //{ header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
     ];
     return columns;
 }
@@ -1440,12 +1447,11 @@ exports.WEExcelToJSON = function (filename) {
                 }
 
                 let WelfaresLists = [];
-
+                //CompanyQitafuli,Shitangjingfei
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, department, jobRole, workerCategory, salaryCycle, Yiliaofeiyong, Liaoyangfeiyong,
-                        Gongnuanbutie, Dushengzinv, Sangzangbuzhu, Fuxufei, Fangshujiangwen, Shitangjingfei, Personalqitafuli,
-                        CompanyQitafuli] = row.values;
+                        Gongnuanbutie, Dushengzinv, Sangzangbuzhu, Fuxufei, Fangshujiangwen, Personalqitafuli] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
@@ -1465,9 +1471,9 @@ exports.WEExcelToJSON = function (filename) {
                         Sangzangbuzhu: Sangzangbuzhu ? Sangzangbuzhu : '',
                         Fuxufei: Fuxufei ? Fuxufei : '',
                         Fangshujiangwen: Fangshujiangwen ? Fangshujiangwen : '',
-                        Shitangjingfei: Shitangjingfei ? Shitangjingfei : '',
+                        //Shitangjingfei: Shitangjingfei ? Shitangjingfei : '',
                         Personalqitafuli: Personalqitafuli ? Personalqitafuli : '',
-                        CompanyQitafuli: CompanyQitafuli ? CompanyQitafuli : ''
+                        //CompanyQitafuli: CompanyQitafuli ? CompanyQitafuli : ''
                     }
                     WelfaresLists.push(OT);
                 });
@@ -1490,9 +1496,9 @@ var setWelColumnsByCategory = function () {
         { header: '丧葬补助', key: 'Sangzangbuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '抚恤费', key: 'Fuxufei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '防暑降温费', key: 'Fangshujiangwen', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
+        //{ header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '个人其它福利', key: 'Personalqitafuli', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
+        //{ header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
     ];
     return columns;
 }
@@ -1527,9 +1533,9 @@ var setWelColumnsByDepartment = function () {
         { header: '丧葬补助', key: 'Sangzangbuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '抚恤费', key: 'Fuxufei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '防暑降温费', key: 'Fangshujiangwen', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
+        //{ header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '个人其它福利', key: 'Personalqitafuli', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
+        //{ header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
     ];
     return columns;
 }
@@ -1567,9 +1573,9 @@ var setWelColumnsByEmp = function () {
         { header: '丧葬补助', key: 'Sangzangbuzhu', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '抚恤费', key: 'Fuxufei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '防暑降温费', key: 'Fangshujiangwen', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
+        //{ header: '食堂经费', key: 'Shitangjingfei', width: 10, outlineLevel: 1, style: { bold: true } },
         { header: '个人其它福利', key: 'Personalqitafuli', width: 10, outlineLevel: 1, style: { bold: true } },
-        { header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
+        //{ header: '单位其它福利', key: 'CompanyQitafuli', width: 10, outlineLevel: 1, style: { bold: true } }
     ];
     return columns;
 }

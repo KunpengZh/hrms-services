@@ -33,12 +33,12 @@ const NotApplicableNonRegularEmpColumns = ['jinengGongzi', 'gangweiGongzi', 'jic
     'zhufanggongjijinComments', 'yiliaobaoxian', 'yiliaobaoxianComments', 'netIncome', 'netIncomeComments',
     'yicixingjiangjinTaxComments', 'buchongyiliaobaoxian',
     'yicixingjiangjin', 'yicixingjiangjinTax', 'qiyeZhufanggongjijin', 'qiyeZhufanggongjijinComments', 'qiyeYiliaobaoxian',
-    'qiyeYiliaobaoxianComments', 'gudingJiangjin', 'shengyubaoxian', 'gongshangbaoxian'];
+    'qiyeYiliaobaoxianComments', 'gudingJiangjin'];
 
 const RegularEmpGongZiInfo = ['jinengGongzi', 'gangweiGongzi', 'jichuButie', 'xilifei', 'gonglingGongzi',
     'zhiwuJintie', 'preAnnuallyIncom'];
 
-const NonRegularEmpGongZiInfo = ["daySalary", "workDays", "anquanJiangli", "wuweizhangJiangli", "OTJiangjin"];
+const NonRegularEmpGongZiInfo = ["daySalary", "workDays", "anquanJiangli", "wuweizhangJiangli", "OTJiangjin",, 'shengyubaoxian', 'gongshangbaoxian'];
 const NonRegularEmployeeCategory = "非全日制人员";
 const NotApplicableComments = "不适用";
 const MonthlyEmpOTData = ["NormalOT", "WeekendOT", "HolidayOT", "kouchu", "kaohekoukuan", "yicixingjiangjin",
@@ -665,6 +665,13 @@ SalaryCalculation.baoxianbulvData = function (emps, bulvData) {
             emp.qiyeYanglaobaoxianComments += ' + 本月补录数据(' + bulvEmp.qiyeYanglaobaoxian + ')=' + emp.qiyeYanglaobaoxian;
         }
 
+        if (bulvEmp.shengyubaoxian && parseFloat(bulvEmp.shengyubaoxian) > 0) {
+            emp.shengyubaoxian = keepTwoDecimalFull(parseFloat(emp.shengyubaoxian) + parseFloat(bulvEmp.shengyubaoxian));
+        }
+        if (bulvEmp.gongshangbaoxian && parseFloat(bulvEmp.gongshangbaoxian) > 0) {
+            emp.gongshangbaoxian = keepTwoDecimalFull(parseFloat(emp.gongshangbaoxian) + parseFloat(bulvEmp.gongshangbaoxian));
+        }
+
 
         if (emp.workerCategory.trim() === NonRegularEmployeeCategory) {
             /**
@@ -702,12 +709,7 @@ SalaryCalculation.baoxianbulvData = function (emps, bulvData) {
             if (bulvEmp.buchongyiliaobaoxian && parseFloat(bulvEmp.buchongyiliaobaoxian) > 0) {
                 emp.buchongyiliaobaoxian = keepTwoDecimalFull(parseFloat(emp.buchongyiliaobaoxian) + parseFloat(bulvEmp.buchongyiliaobaoxian));
             }
-            if (bulvEmp.shengyubaoxian && parseFloat(bulvEmp.shengyubaoxian) > 0) {
-                emp.shengyubaoxian = keepTwoDecimalFull(parseFloat(emp.shengyubaoxian) + parseFloat(bulvEmp.shengyubaoxian));
-            }
-            if (bulvEmp.gongshangbaoxian && parseFloat(bulvEmp.gongshangbaoxian) > 0) {
-                emp.gongshangbaoxian = keepTwoDecimalFull(parseFloat(emp.gongshangbaoxian) + parseFloat(bulvEmp.gongshangbaoxian));
-            }
+            
         }
         return emp;
     });
