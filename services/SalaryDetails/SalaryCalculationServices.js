@@ -17,6 +17,7 @@ var SalaryCalculation = require('./SalaryCalculation');
 var ConfigDoc = require('../mysql/ConfigDoc');
 var CoryptoEnpSen = require('../empInfoServices/CryptoEnpSen');
 var NonRegularServices = require('../NonRegularSalary/NonRegularSalaryService');
+var BaoxianbulvTable = require('../mysql/BaoxianBuLv');
 
 var SDServices = {};
 
@@ -172,7 +173,7 @@ SDServices.SyncWithEmps = function (salaryCycle) {
 
 
 
-SDServices.InitialWithEmps = function (salaryCycle) {
+SDServices.InitialWithEmps = function (salaryCycle, skipVerifyOpenSalaryCycle) {
     return new Promise(function (rel, rej) {
 
         //verify the salaryCycle not be closed already
@@ -191,10 +192,16 @@ SDServices.InitialWithEmps = function (salaryCycle) {
                         if (isFinalizedCycle) {
                             rel({
                                 status: 500,
+                                data: [],
                                 message: '指定的工资周期已经被冻结，不能再重新初始化：' + salaryCycle
                             })
                         } else {
-                            verifyOpenSalaryCycle();
+                            if (skipVerifyOpenSalaryCycle) {
+                                initialSalaryCAL()
+                            } else {
+                                verifyOpenSalaryCycle();
+                            }
+
                         }
 
                     } else {
@@ -219,6 +226,7 @@ SDServices.InitialWithEmps = function (salaryCycle) {
                     if (sacals.length > 0) {
                         rel({
                             status: 500,
+                            data: [],
                             message: '当前存在正在计算中的工资周期，请冻结当前的工资周期，或是清除后再重新初始化'
                         })
                     } else {
@@ -238,7 +246,10 @@ SDServices.InitialWithEmps = function (salaryCycle) {
                 }
             }).then(() => {
                 CreateSalaryDetails(salaryCycle).then(returnVals => {
-                    rel(returnVals);
+                    rel({
+                        status: 200,
+                        data: returnVals
+                    });
                 }).catch((err) => {
                     logger.error("Error Location SalaryCalculations2002")
                     throw err;
@@ -300,6 +311,7 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
         let configDoc = {};
         let empOTs = [];
         let nonRegularData = [];
+        let baoxianbulvData = [];
 
         if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
             logger.error("The give salaryCycle is null,will return");
@@ -317,8 +329,11 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
                 emps = SalaryCalculation.calculateJibengongzi(emps);
                 emps = SalaryCalculation.categoryOT(emps, configDoc);
                 emps = SalaryCalculation.calculateYingfagongzi(emps);
-                emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
-                emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)
+                emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc);
+                if (baoxianbulvData.length > 0) {
+                    emps = SalaryCalculation.baoxianbulvData(emps, baoxianbulvData);
+                }
+                emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc);
                 emps = SalaryCalculation.calculateGerensuodeshui(emps, configDoc);
                 emps = SalaryCalculation.calculateYicixingjiangjinTax(emps, configDoc)
                 emps = SalaryCalculation.calculateNetIncome(emps);
@@ -328,26 +343,30 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
                         rel(returnval);
                     }).catch(err => {
                         logger.error("Error Location SalaryCalculations202")
+                        logger.error(err);
                         rej(err);
                     })
                 }).catch(err => {
                     logger.error("Error Location SalaryCalculations203")
+                    logger.error(err);
                     rej(err);
                 })
 
             } catch (err) {
                 logger.error("Error Location SalaryCalculations204")
+                logger.error(err);
                 rej(err);
             }
         }
 
         let WorkFlowControl = function () {
             functionsprocessed++;
-            if (functionsprocessed >= 5) {
+            if (functionsprocessed >= 6) {
                 InitialSalaryDetails();
             }
         }
 
+        //step 1 to get all basic employee info
         if (parEmpBasics) {
             empbasics = JSON.parse(JSON.stringify(parEmpBasics));
             WorkFlowControl();
@@ -357,16 +376,18 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
                 WorkFlowControl();
             }).catch(err => {
                 logger.error("Error Location SalaryCalculations205")
+                logger.error(err);
                 rej(err);
             })
         }
 
-
+        //setp 2 to get sensitive employee info
         EmpSenServices.getAllSensitiveEmpInfo().then(sendata => {
             empsendata = JSON.parse(JSON.stringify(sendata));
             WorkFlowControl();
         }).catch(err => {
             logger.error("Error Location SalaryCalculations206")
+            logger.error(err);
             rej(err);
         })
 
@@ -378,6 +399,7 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
         //     rej(err);
         // })
 
+        //step 3 to get config document
         ConfigDoc.findOne({
             where: {
                 configKey: 'ConfigData'
@@ -396,17 +418,21 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
             }
         }).catch(err => {
             logger.error("Error Location SalaryCalculations209")
+            logger.error(err);
             rej(err);
         })
 
+        //step 4, to get all regular salary data
         EmpOTServices.getOTByCycle(salaryCycle).then(ots => {
             empOTs = JSON.parse(JSON.stringify(ots));
             WorkFlowControl();
         }).catch(err => {
             logger.error("Error Location SalaryCalculations210")
+            logger.error(err);
             rej(err);
         })
 
+        //step 5 to get all non-regular employee salary data
         NonRegularServices.getNRSSByCycle(salaryCycle).then(data => {
             if (data.status === 200) {
                 nonRegularData = JSON.parse(JSON.stringify(data.data));
@@ -418,119 +444,149 @@ let CreateSalaryDetails = function (salaryCycle, parEmpBasics) {
             }
         })
 
+        //step 6 to get all baoxian bulv data
+        BaoxianbulvTable.findAll({
+            where: {
+                salaryCycle: salaryCycle
+            }
+        }).then((bulvData) => {
+            baoxianbulvData = JSON.parse(JSON.stringify(bulvData));
+            WorkFlowControl();
+        }).catch(err => {
+            logger.error("Error Location SalaryCalculations212")
+            logger.error(err);
+            rej(err);
+        })
+
     })
 }
-
 
 
 SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
     return new Promise(function (rel, rej) {
-        let emps = [];
-        let configDoc = {};
-
-
-        if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
-            logger.error("The give salaryCycle is null,will return");
-            logger.error("Error Location SalaryCalculations301")
-            rej(new Error("The give salaryCycle is null,will return"));
-            return;
-        }
-
-        let functionsprocessed = 0;
-
-        let calculateSalaryDetails = function () {
-            try {
-                emps = SalaryCalculation.calculateJibengongzi(emps);
-                emps = SalaryCalculation.categoryOT(emps, configDoc);
-                emps = SalaryCalculation.calculateYingfagongzi(emps);
-                emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
-                emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)
-                emps = SalaryCalculation.calculateGerensuodeshui(emps, configDoc);
-                emps = SalaryCalculation.calculateYicixingjiangjinTax(emps, configDoc)
-                emps = SalaryCalculation.calculateNetIncome(emps);
-
-                let processed = 0;
-
-                emps.forEach(function (emp) {
-                    SalaryDetails.update(CoryptoEnpSen.EncrypteEmps(emp), {
-                        where: {
-                            id: emp.id
-                        }
-                    }).then(ures => {
-                        processed++;
-                        updateWorkFlowControl(processed, emps.length);
-                    }).catch(err => {
-                        logger.error("Error Location SalaryCalculations302");
-                        rej(err);
-                    })
-                });
-                /**
-                 * to reutrn in case emps is a []
-                 */
-                updateWorkFlowControl(processed, emps.length);
-            } catch (err) {
-                logger.error("Error Location SalaryCalculations303")
-                rej(err);
-            }
-        }
-
-        let updateWorkFlowControl = function (processed, reqlength) {
-            if (processed === reqlength) {
-                SDServices.getDataByCycle(salaryCycle).then(sdemps => {
-                    rel(emps)
-                }).catch(err => {
-                    logger.error("Error Location SalaryCalculations304")
-                    rej(err);
-                })
-            }
-        }
-
-        let WorkFlowControl = function () {
-            functionsprocessed++;
-            if (functionsprocessed >= 2) {
-                calculateSalaryDetails();
-            }
-        }
-
-        SDServices.getDataByCycle(salaryCycle).then(sdemps => {
-            emps = sdemps;
-            WorkFlowControl();
+        SDServices.InitialWithEmps(salaryCycle, true).then(saldata => {
+            rel(saldata)
         }).catch(err => {
-            logger.error("Error Location SalaryCalculations305")
-            rej(err);
+            logger.error("Error Location ReCalculateSalaryDetails")
+            logger.error(err);
+            rel({
+                status: 500,
+                data: [],
+                message: err
+            })
         })
-
-        ConfigDoc.findOne({
-            where: {
-                configKey: 'ConfigData'
-            }
-        }).then((qres) => {
-            if (qres === null) {
-                logger.error("Error Location SalaryCalculations306")
-                logger.error("Do not have ConfigData find");
-                rej(err);
-            } else {
-                configDoc = qres.get({
-                    plain: true
-                });
-                configDoc = JSON.parse(configDoc.configDoc);
-                WorkFlowControl();
-            }
-        }).catch(err => {
-            logger.error("Error Location SalaryCalculations307")
-            rej(err);
-        })
-
-
-        // EmpOTServices.getOTByCycle(salaryCycle).then(ots => {
-        //     empOTs = JSON.parse(JSON.stringify(ots));
-        //     WorkFlowControl();
-        // }).catch(err => {
-        //     logger.error("Error Location SalaryCalculations308")
-        //     rej(err);
-        // })
     })
+
 }
+
+// SDServices.ReCalculateSalaryDetails = function (salaryCycle) {
+//     return new Promise(function (rel, rej) {
+//         let emps = [];
+//         let configDoc = {};
+
+
+//         if (salaryCycle === null || salaryCycle === undefined || salaryCycle === '') {
+//             logger.error("The give salaryCycle is null,will return");
+//             logger.error("Error Location SalaryCalculations301")
+//             rej(new Error("The give salaryCycle is null,will return"));
+//             return;
+//         }
+
+//         let functionsprocessed = 0;
+
+//         let calculateSalaryDetails = function () {
+//             try {
+//                 emps = SalaryCalculation.calculateJibengongzi(emps);
+//                 emps = SalaryCalculation.categoryOT(emps, configDoc);
+//                 emps = SalaryCalculation.calculateYingfagongzi(emps);
+//                 emps = SalaryCalculation.calculateNianJinAndBaoXian(emps, configDoc)
+//                 emps = SalaryCalculation.calculateYingshuigongzi(emps, configDoc)
+//                 emps = SalaryCalculation.calculateGerensuodeshui(emps, configDoc);
+//                 emps = SalaryCalculation.calculateYicixingjiangjinTax(emps, configDoc)
+//                 emps = SalaryCalculation.calculateNetIncome(emps);
+
+//                 let processed = 0;
+
+//                 emps.forEach(function (emp) {
+//                     SalaryDetails.update(CoryptoEnpSen.EncrypteEmps(emp), {
+//                         where: {
+//                             id: emp.id
+//                         }
+//                     }).then(ures => {
+//                         processed++;
+//                         updateWorkFlowControl(processed, emps.length);
+//                     }).catch(err => {
+//                         logger.error("Error Location SalaryCalculations302");
+//                         rej(err);
+//                     })
+//                 });
+//                 /**
+//                  * to reutrn in case emps is a []
+//                  */
+//                 updateWorkFlowControl(processed, emps.length);
+//             } catch (err) {
+//                 logger.error("Error Location SalaryCalculations303")
+//                 rej(err);
+//             }
+//         }
+
+//         let updateWorkFlowControl = function (processed, reqlength) {
+//             if (processed === reqlength) {
+//                 SDServices.getDataByCycle(salaryCycle).then(sdemps => {
+//                     rel(emps)
+//                 }).catch(err => {
+//                     logger.error("Error Location SalaryCalculations304")
+//                     rej(err);
+//                 })
+//             }
+//         }
+
+//         let WorkFlowControl = function () {
+//             functionsprocessed++;
+//             if (functionsprocessed >= 2) {
+//                 calculateSalaryDetails();
+//             }
+//         }
+
+//         SDServices.getDataByCycle(salaryCycle).then(sdemps => {
+//             emps = sdemps;
+//             WorkFlowControl();
+//         }).catch(err => {
+//             logger.error("Error Location SalaryCalculations305")
+//             rej(err);
+//         })
+
+//         ConfigDoc.findOne({
+//             where: {
+//                 configKey: 'ConfigData'
+//             }
+//         }).then((qres) => {
+//             if (qres === null) {
+//                 logger.error("Error Location SalaryCalculations306")
+//                 logger.error("Do not have ConfigData find");
+//                 rej(err);
+//             } else {
+//                 configDoc = qres.get({
+//                     plain: true
+//                 });
+//                 configDoc = JSON.parse(configDoc.configDoc);
+//                 WorkFlowControl();
+//             }
+//         }).catch(err => {
+//             logger.error("Error Location SalaryCalculations307")
+//             rej(err);
+//         })
+
+
+//         // EmpOTServices.getOTByCycle(salaryCycle).then(ots => {
+//         //     empOTs = JSON.parse(JSON.stringify(ots));
+//         //     WorkFlowControl();
+//         // }).catch(err => {
+//         //     logger.error("Error Location SalaryCalculations308")
+//         //     rej(err);
+//         // })
+//     })
+// }
 
 SDServices.finalizeSalaryCalData = function () {
     return new Promise(function (rel, rej) {

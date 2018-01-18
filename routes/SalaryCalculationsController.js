@@ -86,13 +86,20 @@ router.get('/initialSD', function (req, res, next) {
     let salaryCycle = req.query.salaryCycle;
 
     SDServices.InitialWithEmps(salaryCycle).then((SDData) => {
-        SDData = deleteSenData(SDData);
-        res.json({
-            status: 200,
-            data: SDData,
-            message: '初始化完成'
-        })
-        res.end();
+        if (SDData.status === 200) {
+            SDData = SDData.data;
+            SDData = deleteSenData(SDData);
+            res.json({
+                status: 200,
+                data: SDData,
+                message: '初始化完成'
+            })
+            res.end();
+        } else {
+            res.json(SDData)
+            res.end();
+        }
+
 
     }, (err) => {
         logger.error(err);
@@ -128,11 +135,7 @@ router.get('/recalculate', function (req, res, next) {
 
     SDServices.ReCalculateSalaryDetails(salaryCycle).then((SDData) => {
         SDData = deleteSenData(SDData);
-        res.json({
-            status: 200,
-            data: SDData,
-            message: '初始化完成'
-        })
+        res.json(SDData)
         res.end();
 
     }, (err) => {

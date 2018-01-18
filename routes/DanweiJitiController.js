@@ -269,6 +269,49 @@ router.get("/shengyubaoxian", function (req, res, next) {
     })
 })
 
+router.get("/buchongyiliaobaoxian", function (req, res, next) {
+    if (!req.query.criteria || req.query.criteria === "") {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    let criteria = JSON.parse(req.query.criteria);
+
+    if (JSON.stringify(criteria) === '{}') {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    DanweiJitiService.Buchongyiliaobaoxian(criteria).then((danweiJitiData) => {
+        res.json(danweiJitiData)
+        res.end();
+    }, (rejObj) => {
+        logger.error(rejObj.message);
+        res.json(rejObj)
+        res.end();
+    }).catch((err) => {
+        logger.error(err);
+        res.json({
+            status: 500,
+            message: err,
+            data: []
+        })
+        res.end();
+    })
+})
+
 router.get("/Gongshangbaoxian", function (req, res, next) {
     if (!req.query.criteria || req.query.criteria === "") {
         logger.error("Query Criteria is mandatory required");
@@ -377,6 +420,58 @@ router.get("/downloadyanglaobaoxian", function (req, res, next) {
             danweiJitiData = danweiJitiData.data;
             let filename = 'Yanglaobaoxian' + new Date().getTime() + '.xlsx';
             downloadExcel(filename, danweiJitiData, res, 'yanglaobaoxian', criteria);
+        } else {
+            logger.error("Err when get Data info: " + err);
+            res.set("Content-type", "text/html");
+            res.send(danweiJitiData.message);
+            res.end();
+            return;
+        }
+    }, (rejObj) => {
+        logger.error("Err when get Data info: " + err);
+        res.set("Content-type", "text/html");
+        res.send(rejObj.message);
+        res.end();
+        return;
+    }).catch((err) => {
+        logger.error("Err when get Data info: " + err);
+        res.set("Content-type", "text/html");
+        res.send("不能从数据库获取工资数据!");
+        res.end();
+        return;
+    })
+})
+
+router.get("/downloadbuchongyiliaobaoxian", function (req, res, next) {
+    if (!req.query.criteria || req.query.criteria === "") {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    let criteria = JSON.parse(req.query.criteria);
+
+    if (JSON.stringify(criteria) === '{}') {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+    DanweiJitiService.Buchongyiliaobaoxian(criteria).then((danweiJitiData) => {
+        if (danweiJitiData.status === 200) {
+            danweiJitiData = danweiJitiData.data;
+            let filename = 'BuchongYiliaobaoxian' + new Date().getTime() + '.xlsx';
+            downloadExcel(filename, danweiJitiData, res, 'buchongyiliaobaoxian', criteria);
         } else {
             logger.error("Err when get Data info: " + err);
             res.set("Content-type", "text/html");

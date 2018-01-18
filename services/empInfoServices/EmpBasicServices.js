@@ -277,7 +277,7 @@ EmpBasicService.queryByCriteria = function (criteria) {
 EmpBasicService.queryActiveByCriteria = function (criteria) {
     return new Promise(function (rel, rej) {
 
-        if (criteria === null) criteria = {};
+        if (criteria === null || criteria===undefined) criteria = {};
         criteria.empStatus = ActiveEmpStatus;
 
         let wherecase = buildWhereCase(criteria);

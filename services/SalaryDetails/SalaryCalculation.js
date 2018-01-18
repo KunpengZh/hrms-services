@@ -33,7 +33,7 @@ const NotApplicableNonRegularEmpColumns = ['jinengGongzi', 'gangweiGongzi', 'jic
     'zhufanggongjijinComments', 'yiliaobaoxian', 'yiliaobaoxianComments', 'netIncome', 'netIncomeComments',
     'yicixingjiangjinTaxComments', 'buchongyiliaobaoxian',
     'yicixingjiangjin', 'yicixingjiangjinTax', 'qiyeZhufanggongjijin', 'qiyeZhufanggongjijinComments', 'qiyeYiliaobaoxian',
-    'qiyeYiliaobaoxianComments', 'gudingJiangjin','shengyubaoxian','gongshangbaoxian'];
+    'qiyeYiliaobaoxianComments', 'gudingJiangjin', 'shengyubaoxian', 'gongshangbaoxian'];
 
 const RegularEmpGongZiInfo = ['jinengGongzi', 'gangweiGongzi', 'jichuButie', 'xilifei', 'gonglingGongzi',
     'zhiwuJintie', 'preAnnuallyIncom'];
@@ -43,9 +43,9 @@ const NonRegularEmployeeCategory = "非全日制人员";
 const NotApplicableComments = "不适用";
 const MonthlyEmpOTData = ["NormalOT", "WeekendOT", "HolidayOT", "kouchu", "kaohekoukuan", "yicixingjiangjin",
     'gongliBuzhu', 'kaoheJiangjin', 'tongxunButie', 'qitaJiangjin', 'xiaxiangBuzhu',
-    'yingyetingBuzhu', 'buchongyiliaobaoxian', 'yiliaobaoxian', 'gudingJiangjin', 'qiyeYiliaobaoxian','shengyubaoxian','gongshangbaoxian'];
+    'yingyetingBuzhu', 'buchongyiliaobaoxian', 'yiliaobaoxian', 'gudingJiangjin', 'qiyeYiliaobaoxian', 'shengyubaoxian', 'gongshangbaoxian'];
 
-var keepTwoDecimalFull=function(num) {
+var keepTwoDecimalFull = function (num) {
     var result = parseFloat(num);
     if (isNaN(result)) {
         return false;
@@ -302,8 +302,7 @@ SalaryCalculation.categoryOT = function (emps, configDoc) {
             //emp.WeekendOT = ((parseFloat(emp.jinengGongzi) + parseFloat(emp.gangweiGongzi)) / 21.75 / 8 * PINGRIJIABANXISHU * parseFloat(emp.WeekendOT)).toFixed(2) + '';
 
             emp.HolidayOT = Math.round((parseFloat(emp.jinengGongzi) + parseFloat(emp.gangweiGongzi)) / 21.75 * 2 * parseFloat(emp.HolidayOT));
-            console.log(emp.HolidayOT);
-            console.log("**********************************")
+
             emp.NormalOTComments += emp.NormalOT
             emp.WeekendOTComments += emp.WeekendOT
             emp.HolidayOTComments += emp.HolidayOT
@@ -468,11 +467,15 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
 
 
     let newemps = emps.map(function (emp) {
+        
+        let preAnnuallyIncom = parseFloat(emp.preAnnuallyIncom);
+        if (isNaN(preAnnuallyIncom)) preAnnuallyIncom = 0;
+
         if (emp.workerCategory.trim() === NonRegularEmployeeCategory) {
             /**
              * 非全日制员工，有养老保险，年金和失业保险
              */
-            let preAnnuallyIncom = parseFloat(emp.preAnnuallyIncom);
+
             let preComments = '';
             emp.nianjin = keepTwoDecimalFull(preAnnuallyIncom * nianjinxishu);
             emp.yanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * yanglaobaoxianxishu);
@@ -483,35 +486,41 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
             /**
              * 企业部分
              */
-            if (parseFloat(emp.nianjin) > 0) {
-                emp.qiyeNianjin = keepTwoDecimalFull(preAnnuallyIncom * qiyenianjinxishu);
-                emp.qiyeNianJinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
-            } else {
-                emp.qiyeNianjin = '0';
-                emp.qiyeNianJinComments = '本月无缴费';
-            }
+            emp.qiyeNianjin = keepTwoDecimalFull(preAnnuallyIncom * qiyenianjinxishu);
+            emp.qiyeNianJinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
+            // if (parseFloat(emp.nianjin) > 0) {
+            //     emp.qiyeNianjin = keepTwoDecimalFull(preAnnuallyIncom * qiyenianjinxishu);
+            //     emp.qiyeNianJinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
+            // } else {
+            //     emp.qiyeNianjin = '0';
+            //     emp.qiyeNianJinComments = '本月无缴费';
+            // }
 
-            if (parseFloat(emp.yanglaobaoxian) > 0) {
-                emp.qiyeYanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeyanglaobaoxianxishu);
-                emp.qiyeYanglaobaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业养老保险系数(' + qiyeyanglaobaoxianxishu + ')=' + emp.qiyeYanglaobaoxian;
-            } else {
-                emp.qiyeYanglaobaoxian = '0';
-                emp.qiyeYanglaobaoxianComments = '本月无缴费';
-            }
+            emp.qiyeYanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeyanglaobaoxianxishu);
+            emp.qiyeYanglaobaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业养老保险系数(' + qiyeyanglaobaoxianxishu + ')=' + emp.qiyeYanglaobaoxian;
+            // if (parseFloat(emp.yanglaobaoxian) > 0) {
+            //     emp.qiyeYanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeyanglaobaoxianxishu);
+            //     emp.qiyeYanglaobaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业养老保险系数(' + qiyeyanglaobaoxianxishu + ')=' + emp.qiyeYanglaobaoxian;
+            // } else {
+            //     emp.qiyeYanglaobaoxian = '0';
+            //     emp.qiyeYanglaobaoxianComments = '本月无缴费';
+            // }
 
-            if (parseFloat(emp.shiyebaoxian) > 0) {
-                emp.qiyeShiyebaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeshiyebaoxianxishu);
-                emp.qiyeShiyebaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业失业保险系数(' + qiyeshiyebaoxianxishu + ')=' + emp.qiyeShiyebaoxian;
-            } else {
-                emp.qiyeShiyebaoxian = '0';
-                emp.qiyeShiyebaoxianComments = '本月无缴费';
-            }
+            emp.qiyeShiyebaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeshiyebaoxianxishu);
+            emp.qiyeShiyebaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业失业保险系数(' + qiyeshiyebaoxianxishu + ')=' + emp.qiyeShiyebaoxian;
+            // if (parseFloat(emp.shiyebaoxian) > 0) {
+            //     emp.qiyeShiyebaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeshiyebaoxianxishu);
+            //     emp.qiyeShiyebaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业失业保险系数(' + qiyeshiyebaoxianxishu + ')=' + emp.qiyeShiyebaoxian;
+            // } else {
+            //     emp.qiyeShiyebaoxian = '0';
+            //     emp.qiyeShiyebaoxianComments = '本月无缴费';
+            // }
         } else {
             /**
             * 全日制员工
             */
 
-            let preAnnuallyIncom = parseFloat(emp.preAnnuallyIncom);
+
             let preComments = '';
 
             /**
@@ -551,37 +560,45 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
             /**
              * 企业部分
              */
-            if (parseFloat(emp.nianjin) > 0) {
-                emp.qiyeNianjin = keepTwoDecimalFull(preAnnuallyIncom * qiyenianjinxishu);
-                emp.qiyeNianJinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
-            } else {
-                emp.qiyeNianjin = '0';
-                emp.qiyeNianJinComments = '本月无缴费';
-            }
+            emp.qiyeNianjin = keepTwoDecimalFull(preAnnuallyIncom * qiyenianjinxishu);
+            emp.qiyeNianJinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
+            // if (parseFloat(emp.nianjin) > 0) {
+            //     emp.qiyeNianjin = keepTwoDecimalFull(preAnnuallyIncom * qiyenianjinxishu);
+            //     emp.qiyeNianJinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业年金系数(' + qiyenianjinxishu + ')=' + emp.qiyeNianjin;
+            // } else {
+            //     emp.qiyeNianjin = '0';
+            //     emp.qiyeNianJinComments = '本月无缴费';
+            // }
 
-            if (parseFloat(emp.yanglaobaoxian) > 0) {
-                emp.qiyeYanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeyanglaobaoxianxishu);
-                emp.qiyeYanglaobaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业养老保险系数(' + qiyeyanglaobaoxianxishu + ')=' + emp.qiyeYanglaobaoxian;
-            } else {
-                emp.qiyeYanglaobaoxian = '0';
-                emp.qiyeYanglaobaoxianComments = '本月无缴费';
-            }
+            emp.qiyeYanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeyanglaobaoxianxishu);
+            emp.qiyeYanglaobaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业养老保险系数(' + qiyeyanglaobaoxianxishu + ')=' + emp.qiyeYanglaobaoxian;
+            // if (parseFloat(emp.yanglaobaoxian) > 0) {
+            //     emp.qiyeYanglaobaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeyanglaobaoxianxishu);
+            //     emp.qiyeYanglaobaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业养老保险系数(' + qiyeyanglaobaoxianxishu + ')=' + emp.qiyeYanglaobaoxian;
+            // } else {
+            //     emp.qiyeYanglaobaoxian = '0';
+            //     emp.qiyeYanglaobaoxianComments = '本月无缴费';
+            // }
 
-            if (parseFloat(emp.shiyebaoxian) > 0) {
-                emp.qiyeShiyebaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeshiyebaoxianxishu);
-                emp.qiyeShiyebaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业失业保险系数(' + qiyeshiyebaoxianxishu + ')=' + emp.qiyeShiyebaoxian;
-            } else {
-                emp.qiyeShiyebaoxian = '0';
-                emp.qiyeShiyebaoxianComments = '本月无缴费';
-            }
+            emp.qiyeShiyebaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeshiyebaoxianxishu);
+            emp.qiyeShiyebaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业失业保险系数(' + qiyeshiyebaoxianxishu + ')=' + emp.qiyeShiyebaoxian;
+            // if (parseFloat(emp.shiyebaoxian) > 0) {
+            //     emp.qiyeShiyebaoxian = keepTwoDecimalFull(preAnnuallyIncom * qiyeshiyebaoxianxishu);
+            //     emp.qiyeShiyebaoxianComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业失业保险系数(' + qiyeshiyebaoxianxishu + ')=' + emp.qiyeShiyebaoxian;
+            // } else {
+            //     emp.qiyeShiyebaoxian = '0';
+            //     emp.qiyeShiyebaoxianComments = '本月无缴费';
+            // }
 
-            if (parseFloat(emp.zhufanggongjijin) > 0) {
-                emp.qiyeZhufanggongjijin = keepTwoDecimalFull(preAnnuallyIncom * qiyezhufanggongjijinxishu);
-                emp.qiyeZhufanggongjijinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业住房公积金系数(' + qiyezhufanggongjijinxishu + ')=' + emp.qiyeZhufanggongjijin;
-            } else {
-                emp.qiyeZhufanggongjijin = '0';
-                emp.qiyeZhufanggongjijinComments = '本月无缴费';
-            }
+            emp.qiyeZhufanggongjijin = keepTwoDecimalFull(preAnnuallyIncom * qiyezhufanggongjijinxishu);
+            emp.qiyeZhufanggongjijinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业住房公积金系数(' + qiyezhufanggongjijinxishu + ')=' + emp.qiyeZhufanggongjijin;
+            // if (parseFloat(emp.zhufanggongjijin) > 0) {
+            //     emp.qiyeZhufanggongjijin = keepTwoDecimalFull(preAnnuallyIncom * qiyezhufanggongjijinxishu);
+            //     emp.qiyeZhufanggongjijinComments = preComments + '上一年度月平均收入(' + preAnnuallyIncom + ')*企业住房公积金系数(' + qiyezhufanggongjijinxishu + ')=' + emp.qiyeZhufanggongjijin;
+            // } else {
+            //     emp.qiyeZhufanggongjijin = '0';
+            //     emp.qiyeZhufanggongjijinComments = '本月无缴费';
+            // }
 
             // if (parseFloat(emp.yiliaobaoxian) > 0) {
             //     emp.qiyeYiliaobaoxian = (preAnnuallyIncom * qiyeyiliaobaoxianxishu).toFixed(2) + '';
@@ -597,6 +614,103 @@ SalaryCalculation.calculateNianJinAndBaoXian = function (emps, configDoc) {
         return emp;
     });
 
+    return newemps;
+}
+
+SalaryCalculation.baoxianbulvData = function (emps, bulvData) {
+    let newemps = emps.map(function (emp) {
+
+        let bulvEmp = {};
+        let isbulvEmpExist = false;
+        for (let i = 0; i < bulvData.length; i++) {
+            if (bulvData[i].empId === emp.empId) {
+                bulvEmp = bulvData[i];
+                isbulvEmpExist = true;
+                break
+            }
+        }
+
+        if (!isbulvEmpExist) {
+            return emp;
+        }
+
+        /**
+         * 全日制员工和非全日制员工都有的保险部分
+         */
+        if (bulvEmp.nianjin && parseFloat(bulvEmp.nianjin) > 0) {
+            emp.nianjin = keepTwoDecimalFull(parseFloat(emp.nianjin) + parseFloat(bulvEmp.nianjin));
+            emp.nianjinComments += ' + 本月补录数据(' + bulvEmp.nianjin + ')=' + emp.nianjin;
+        }
+        if (bulvEmp.yanglaobaoxian && parseFloat(bulvEmp.yanglaobaoxian) > 0) {
+            emp.yanglaobaoxian = keepTwoDecimalFull(parseFloat(emp.yanglaobaoxian) + parseFloat(bulvEmp.yanglaobaoxian));
+            emp.yanglaobaoxianComments += ' + 本月补录数据(' + bulvEmp.yanglaobaoxian + ')=' + emp.yanglaobaoxian;
+        }
+        if (bulvEmp.shiyebaoxian && parseFloat(bulvEmp.shiyebaoxian) > 0) {
+            emp.shiyebaoxian = keepTwoDecimalFull(parseFloat(emp.shiyebaoxian) + parseFloat(bulvEmp.shiyebaoxian));
+            emp.shiyebaoxianComments += ' + 本月补录数据(' + bulvEmp.shiyebaoxian + ')=' + emp.shiyebaoxian;
+        }
+
+        if (bulvEmp.qiyeNianjin && parseFloat(bulvEmp.qiyeNianjin) > 0) {
+            emp.qiyeNianjin = keepTwoDecimalFull(parseFloat(emp.qiyeNianjin) + parseFloat(bulvEmp.qiyeNianjin));
+            emp.qiyeNianJinComments += ' + 本月补录数据(' + bulvEmp.qiyeNianjin + ')=' + emp.qiyeNianjin;
+        }
+
+        if (bulvEmp.qiyeShiyebaoxian && parseFloat(bulvEmp.qiyeShiyebaoxian) > 0) {
+            emp.qiyeShiyebaoxian = keepTwoDecimalFull(parseFloat(emp.qiyeShiyebaoxian) + parseFloat(bulvEmp.qiyeShiyebaoxian));
+            emp.qiyeShiyebaoxianComments += ' + 本月补录数据(' + bulvEmp.qiyeShiyebaoxian + ')=' + emp.qiyeShiyebaoxian;
+        }
+
+        if (bulvEmp.qiyeYanglaobaoxian && parseFloat(bulvEmp.qiyeYanglaobaoxian) > 0) {
+            emp.qiyeYanglaobaoxian = keepTwoDecimalFull(parseFloat(emp.qiyeYanglaobaoxian) + parseFloat(bulvEmp.qiyeYanglaobaoxian));
+            emp.qiyeYanglaobaoxianComments += ' + 本月补录数据(' + bulvEmp.qiyeYanglaobaoxian + ')=' + emp.qiyeYanglaobaoxian;
+        }
+
+
+        if (emp.workerCategory.trim() === NonRegularEmployeeCategory) {
+            /**
+             * 非全日制员工，有养老保险，年金和失业保险
+             * 已经包括在上面的共享部分
+             */
+
+
+        } else {
+            /**
+            * 全日制员工, 只有全日制员工有的保险，住房公积金，医疗保险，补充医疗保险，生育保险，工伤保险
+            */
+
+            if (bulvEmp.zhufanggongjijin && parseFloat(bulvEmp.zhufanggongjijin) > 0) {
+                emp.zhufanggongjijin = keepTwoDecimalFull(parseFloat(emp.zhufanggongjijin) + parseFloat(bulvEmp.zhufanggongjijin));
+                emp.zhufanggongjijinComments += ' + 本月补录数据(' + bulvEmp.zhufanggongjijin + ')=' + emp.zhufanggongjijin;
+            }
+            if (bulvEmp.qiyeZhufanggongjijin && parseFloat(bulvEmp.qiyeZhufanggongjijin) > 0) {
+                emp.qiyeZhufanggongjijin = keepTwoDecimalFull(parseFloat(emp.qiyeZhufanggongjijin) + parseFloat(bulvEmp.qiyeZhufanggongjijin));
+                emp.qiyeZhufanggongjijinComments += ' + 本月补录数据(' + bulvEmp.qiyeZhufanggongjijin + ')=' + emp.qiyeZhufanggongjijin;
+            }
+            if (bulvEmp.yiliaobaoxian && parseFloat(bulvEmp.yiliaobaoxian) > 0) {
+                emp.yiliaobaoxianComments += '本月医疗保险（' + emp.yiliaobaoxian + ')';
+                emp.yiliaobaoxian = keepTwoDecimalFull(parseFloat(emp.yiliaobaoxian) + parseFloat(bulvEmp.yiliaobaoxian));
+                emp.yiliaobaoxianComments += '+本月补录数据(' + bulvEmp.yiliaobaoxian + ')=' + emp.yiliaobaoxian;
+            }
+            if (bulvEmp.qiyeYiliaobaoxian && parseFloat(bulvEmp.qiyeYiliaobaoxian) > 0) {
+                emp.qiyeYiliaobaoxianComments += '本月企业医疗保险（' + emp.qiyeYiliaobaoxian + ')';
+                emp.qiyeYiliaobaoxian = keepTwoDecimalFull(parseFloat(emp.qiyeYiliaobaoxian) + parseFloat(bulvEmp.qiyeYiliaobaoxian));
+                emp.qiyeYiliaobaoxianComments += '+本月补录数据(' + bulvEmp.qiyeYiliaobaoxian + ')=' + emp.qiyeYiliaobaoxian;
+            }
+            /**
+             * 因为数据库里没有为补充医疗保险，生育保险，工伤保险设置 comments字段，所以斩时不保存comments
+             */
+            if (bulvEmp.buchongyiliaobaoxian && parseFloat(bulvEmp.buchongyiliaobaoxian) > 0) {
+                emp.buchongyiliaobaoxian = keepTwoDecimalFull(parseFloat(emp.buchongyiliaobaoxian) + parseFloat(bulvEmp.buchongyiliaobaoxian));
+            }
+            if (bulvEmp.shengyubaoxian && parseFloat(bulvEmp.shengyubaoxian) > 0) {
+                emp.shengyubaoxian = keepTwoDecimalFull(parseFloat(emp.shengyubaoxian) + parseFloat(bulvEmp.shengyubaoxian));
+            }
+            if (bulvEmp.gongshangbaoxian && parseFloat(bulvEmp.gongshangbaoxian) > 0) {
+                emp.gongshangbaoxian = keepTwoDecimalFull(parseFloat(emp.gongshangbaoxian) + parseFloat(bulvEmp.gongshangbaoxian));
+            }
+        }
+        return emp;
+    });
     return newemps;
 }
 

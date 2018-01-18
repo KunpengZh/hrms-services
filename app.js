@@ -38,6 +38,7 @@ var PayrollQueryController = require('./routes/PayrollQueryController');
 var SalaryCalculationsController = require('./routes/SalaryCalculationsController');
 var EmpDeskAccountController = require('./routes/EmpDeskAccount');
 var WelfaresController = require("./routes/WelfaresController");
+var BaoxianbulvController=require("./routes/Baoxianbulv");
 
 var app = express();
 
@@ -101,7 +102,8 @@ app.use('/ot', OTController);
 app.use('/welfares', checkIsHRAdmin);
 app.use('/welfares', WelfaresController);
 
-
+app.use('/bulv', checkIsHRAdmin);
+app.use('/bulv', BaoxianbulvController);
 
 app.use('/categoryConfig', checkIsPayrollAdmin);
 app.use('/categoryConfig', CategoryConfigController);

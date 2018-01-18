@@ -1058,6 +1058,9 @@ exports.DanweiJitiToExcel = function (danweiJitiData, filename, category, criter
             case 'gongshangbaoxian':
                 title += month + "月工伤保险明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
+            case 'buchongyiliaobaoxian':
+                title += month + "月补充医疗 保险明细表(" + (danweiJitiData.length - 1) + ")人";
+                break;
             default:
                 title += month + "月明细表(" + (danweiJitiData.length - 1) + ")人";
                 break;
@@ -1262,7 +1265,121 @@ exports.PayrollQueryDataToExcel = function (SDDataLists, filename, columns) {
             });
     })
 }
+/**
+ * Baoxian bulv related functions
+ */
+var setBaoxianbulvDataColumns = function () {
+    var columns = [
+        { header: '员工号', key: 'empId', width: 15, style: { bold: true } },
+        { header: '姓名', key: 'name', width: 15, style: { bold: true } },
+        { header: '工作部门', key: 'department', width: 15, outlineLevel: 1, style: { bold: true } },
+        { header: '工作岗位', key: 'jobRole', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工作类别', key: 'workerCategory', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '周期', key: 'salaryCycle', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年金', key: 'nianjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '养老保险', key: 'yanglaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '失业保险', key: 'shiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '住房公积金', key: 'zhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '医疗保险', key: 'yiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业年金', key: 'qiyeNianjin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业养老保险', key: 'qiyeYanglaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业失业保险', key: 'qiyeShiyebaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业住房公积金', key: 'qiyeZhufanggongjijin', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '企业医疗保险', key: 'qiyeYiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '补充医疗保险', key: 'buchongyiliaobaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '生育保险', key: 'shengyubaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '工伤保险', key: 'gongshangbaoxian', width: 10, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+exports.BulvDataToExcel = function (WEDataLists, filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('WelfareData', { views: [{ state: 'frozen', xSplit: 2, ySplit: 1 }] });
+        worksheet.columns = setBaoxianbulvDataColumns();
 
+        worksheet.addRows(WEDataLists);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSOT001")
+                throw err;
+            });
+    })
+}
+
+exports.BulvExcelToJSON = function (filename) {
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook.xlsx.readFile(filename)
+            .then(function (excelDoc) {
+                var worksheet = excelDoc.getWorksheet(1);
+                rowCount = worksheet.rowCount;
+                if (rowCount < 1) {
+                    logger.error("Do not find excel data");
+                    logger.error("Error Location EXCELJSOT002")
+                    throw new Error("Do not find excel data");
+                    return;
+                }
+
+                let WelfaresLists = [];
+
+                worksheet.eachRow(function (row, rowNumber) {
+                    if (rowNumber === 1) return;
+                    let [, empId, name, department, jobRole, workerCategory, salaryCycle,
+                        nianjin,
+                        yanglaobaoxian,
+                        shiyebaoxian,
+                        zhufanggongjijin,
+                        yiliaobaoxian,
+                        qiyeNianjin,
+                        qiyeYanglaobaoxian,
+                        qiyeShiyebaoxian,
+                        qiyeZhufanggongjijin,
+                        qiyeYiliaobaoxian,
+                        buchongyiliaobaoxian,
+                        shengyubaoxian,
+                        gongshangbaoxian] = row.values;
+
+                    if (null === empId || empId === undefined || empId === '') {
+                        logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
+                        return;
+                    };
+                    if (null === salaryCycle || salaryCycle === undefined || salaryCycle === '') {
+                        logger.error("salaryCycle is not provided from the excel, will skip row: " + rowNumber);
+                        return;
+                    };
+                    let OT = {
+                        empId: empId ? empId : '',
+                        salaryCycle: salaryCycle ? salaryCycle : '',
+                        nianjin: nianjin ? nianjin : 0,
+                        yanglaobaoxian: yanglaobaoxian ? yanglaobaoxian : 0,
+                        shiyebaoxian: shiyebaoxian ? shiyebaoxian : 0,
+                        zhufanggongjijin: zhufanggongjijin ? zhufanggongjijin : 0,
+                        yiliaobaoxian: yiliaobaoxian ? yiliaobaoxian : 0,
+                        qiyeNianjin: qiyeNianjin ? qiyeNianjin : 0,
+                        qiyeYanglaobaoxian: qiyeYanglaobaoxian ? qiyeYanglaobaoxian : 0,
+                        qiyeShiyebaoxian: qiyeShiyebaoxian ? qiyeShiyebaoxian : 0,
+                        qiyeZhufanggongjijin: qiyeZhufanggongjijin ? qiyeZhufanggongjijin : 0,
+                        qiyeYiliaobaoxian: qiyeYiliaobaoxian ? qiyeYiliaobaoxian : 0,
+                        buchongyiliaobaoxian: buchongyiliaobaoxian ? buchongyiliaobaoxian : 0,
+                        shengyubaoxian: shengyubaoxian ? shengyubaoxian : 0,
+                        gongshangbaoxian: gongshangbaoxian ? gongshangbaoxian : 0,
+                    }
+                    WelfaresLists.push(OT);
+                });
+
+                rel(WelfaresLists);
+            }).catch(function (err) {
+                logger.error("Error Location EXCELJSOT003")
+                throw err;
+            })
+    })
+};
 /**
  * Welfares related functinos
  */
