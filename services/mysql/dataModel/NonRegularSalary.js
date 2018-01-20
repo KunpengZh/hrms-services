@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('NonRegularSalary', {
         empId: {
             type: Sequelize.STRING,
-            unique: true,
             allowNull: false,
         },
         name: {
@@ -45,6 +44,18 @@ module.exports = (sequelize, DataTypes) => {
             type: Sequelize.STRING,
         },
         OTJiangjin: {
+            type: Sequelize.STRING,
+        },
+        yiliaobaoxian:{
+            type: Sequelize.STRING,
+        },
+        qiyeYiliaobaoxian:{
+            type: Sequelize.STRING,
+        },
+        shengyubaoxian: {
+            type: Sequelize.STRING,
+        },
+        gongshangbaoxian: {
             type: Sequelize.STRING,
         }
     })

@@ -37,6 +37,26 @@ var updateWorkAge = function (emp) {
     return emp;
 }
 
+EmpBasicService.getEmpById = function (empId) {
+    return new Promise(function (rel, rej) {
+        empInfo.findAll({
+            where: {
+                empId: empId
+            }
+        }).then((employees) => {
+            rel(employees);
+        }, (err) => {
+            logger.error("Error Location EmpBasicService001")
+            logger.err(err);
+            return null;
+        }).catch((err) => {
+            logger.error("Error Location EmpBasicService002")
+            logger.err(err);
+            return null;
+        })
+    })
+}
+
 /**
  * This functions is for data coming from UI , it will update exist employee info and create new employee records
  */
@@ -257,7 +277,7 @@ EmpBasicService.queryByCriteria = function (criteria) {
 EmpBasicService.queryActiveByCriteria = function (criteria) {
     return new Promise(function (rel, rej) {
 
-        if (criteria === null) criteria = {};
+        if (criteria === null || criteria===undefined) criteria = {};
         criteria.empStatus = ActiveEmpStatus;
 
         let wherecase = buildWhereCase(criteria);
@@ -278,7 +298,7 @@ EmpBasicService.queryActiveByCriteria = function (criteria) {
 
 
 var buildWhereCase = function (criteria) {
-    
+
     let wherecase = '';
     if (criteria.workerCategory) {
         if (wherecase === '') {
@@ -318,7 +338,7 @@ var buildWhereCase = function (criteria) {
         }
     }
 
-   
+
     return wherecase;
 }
 

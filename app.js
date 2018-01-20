@@ -34,7 +34,12 @@ var GongziDanController = require("./routes/GongZidanController");
 var UserManagementController = require('./routes/UserManagementController');
 var NonRegularSalayController = require('./routes/NonRegularSalaryController');
 var DanweiJitiController = require('./routes/DanweiJitiController');
-
+var PayrollQueryController = require('./routes/PayrollQueryController');
+var SalaryCalculationsController = require('./routes/SalaryCalculationsController');
+var EmpDeskAccountController = require('./routes/EmpDeskAccount');
+var WelfaresController = require("./routes/WelfaresController");
+var BaoxianbulvController=require("./routes/Baoxianbulv");
+var DanweiWelfaresController=require("./routes/Danwelfares");
 
 var app = express();
 
@@ -95,7 +100,16 @@ app.use('/empsen', SensitiveEmployeeInfoController);
 app.use('/ot', checkIsHRAdmin);
 app.use('/ot', OTController);
 
+app.use('/welfares', checkIsHRAdmin);
+app.use('/welfares', WelfaresController);
 
+app.use('/danweiwelfares', checkIsHRAdmin);
+app.use('/danweiwelfares', DanweiWelfaresController);
+
+
+
+app.use('/bulv', checkIsHRAdmin);
+app.use('/bulv', BaoxianbulvController);
 
 app.use('/categoryConfig', checkIsPayrollAdmin);
 app.use('/categoryConfig', CategoryConfigController);
@@ -103,11 +117,21 @@ app.use('/categoryConfig', CategoryConfigController);
 app.use('/sdd', checkIsPayrollAdmin);
 app.use('/sdd', SalaryDetailsController);
 
+app.use('/scal', checkIsPayrollAdmin);
+app.use('/scal', SalaryCalculationsController);
+
 app.use('/gongzidan', checkIsPayrollAdmin);
 app.use('/gongzidan', GongziDanController);
 
+app.use('/deskaccount', checkIsPayrollAdmin);
+app.use('/deskaccount', EmpDeskAccountController);
+
+
 app.use('/danweijiti', checkIsPayrollAdmin);
 app.use('/danweijiti', DanweiJitiController);
+
+app.use('/payrollquery', checkIsPayrollAdmin);
+app.use('/payrollquery', PayrollQueryController);
 
 app.use('/appuser', checkIsSysAdmin);
 app.use('/appuser', UserManagementController);

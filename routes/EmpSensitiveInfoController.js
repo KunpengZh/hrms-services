@@ -211,42 +211,42 @@ router.post('/uploadempsensitiveinfo', function (req, res, next) {
 
 router.post('/querybycriteria', function (req, res, next) {
   if (!req.body.data || req.body.data === "") {
-      logger.error("Query Criteria is mandatory required");
-      res.json({
-          status: 500,
-          message: "Query Criteria is mandatory required",
-          data: []
-      })
-      res.end()
-      return
+    logger.error("Query Criteria is mandatory required");
+    res.json({
+      status: 500,
+      message: "Query Criteria is mandatory required",
+      data: []
+    })
+    res.end()
+    return
   }
 
   let criteria = req.body.data;
 
   EmpServices.queryByCriteria(criteria).then((emps) => {
-      res.json({
-          status: 200,
-          data: emps,
-          message: '成功'
-      })
-      res.end();
+    res.json({
+      status: 200,
+      data: emps,
+      message: '成功'
+    })
+    res.end();
 
   }, (err) => {
-      logger.error(err);
-      res.json({
-          status: 500,
-          message: err,
-          data: []
-      })
-      res.end();
+    logger.error(err);
+    res.json({
+      status: 500,
+      message: err,
+      data: []
+    })
+    res.end();
   }).catch((err) => {
-      logger.error(err);
-      res.json({
-          status: 500,
-          message: err,
-          data: []
-      })
-      res.end();
+    logger.error(err);
+    res.json({
+      status: 500,
+      message: err,
+      data: []
+    })
+    res.end();
   })
 })
 

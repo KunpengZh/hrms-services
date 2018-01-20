@@ -13,6 +13,8 @@ module.exports = function (emp, salaryCycle) {
         workDays: "",
         anquanJiangli: "",
         wuweizhangJiangli: "",
-        OTJiangjin: ""
+        OTJiangjin: "",
+        yiliaobaoxian:"",
+        qiyeYiliaobaoxian:""
     }
 };

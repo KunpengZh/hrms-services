@@ -22,6 +22,7 @@ module.exports = function (emp, salaryCycle) {
         zhiwuJintie: '0',
         gongliBuzhu: '0',
         kaoheJiangjin: '0',
+        gudingJiangjin:'0',
         tongxunButie: '0',
         qitaJiangjin: '0',
         xiaxiangBuzhu: '0',
@@ -72,5 +73,7 @@ module.exports = function (emp, salaryCycle) {
         anquanJiangli: '0',
         wuweizhangJiangli: '0',
         OTJiangjin: '0',
+        shengyubaoxian:'0',
+        gongshangbaoxian:'0'
     }
 };

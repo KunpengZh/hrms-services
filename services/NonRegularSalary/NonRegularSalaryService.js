@@ -1,4 +1,5 @@
 var NonRegularSalary = require('../mysql/NonRegularSalary');
+var NonRegularSalaryHistory= require('../mysql/NonRegularSalaryHistory');
 var EmpBasicServices = require('../empInfoServices/EmpBasicServices');
 var NRModel = require('./Model/NonRegularSalary');
 var sequelize = require('../mysql/hrmsdb');
@@ -166,6 +167,7 @@ NRSS.InitialWithEmps = function (salaryCycle) {
                                 })
                             }
                         }).catch((err) => {
+                            console.log(err);
                             logger.error("Error Location NonRegularS2003")
                             rel({
                                 status: 500,
