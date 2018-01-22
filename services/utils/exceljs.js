@@ -254,6 +254,10 @@ var setEmpSensitiveColumns = function () {
         { header: '工龄工资', key: 'gonglingGongzi', width: 15, style: { bold: true } },
         { header: '职务津贴', key: 'zhiwuJintie', width: 15, style: { bold: true } },
         { header: '上年月平均收入', key: 'preAnnuallyIncom', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '年金基数', key: 'nianjinJishu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '失业保险基数', key: 'shiyebaoxianJishu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '养老保险基数', key: 'yanglaobaoxianJishu', width: 10, outlineLevel: 1, style: { bold: true } },
+        { header: '住房公积金基数', key: 'zhufanggongjijinJishu', width: 10, outlineLevel: 1, style: { bold: true } },
     ];
     return columns;
 }
@@ -315,7 +319,8 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, idCard, bankAccount, jinengGongzi, gangweiGongzi, jichuButie, xilifei,
-                        gonglingGongzi, zhiwuJintie, preAnnuallyIncom] = row.values;
+                        gonglingGongzi, zhiwuJintie, preAnnuallyIncom, nianjinJishu, shiyebaoxianJishu,
+                        yanglaobaoxianJishu, zhufanggongjijinJishu] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);
@@ -334,6 +339,10 @@ exports.EmpSensitiveInfoToJSON = function (filename) {
                         zhiwuJintie: zhiwuJintie ? objToString(zhiwuJintie) : '',
 
                         preAnnuallyIncom: preAnnuallyIncom ? objToString(preAnnuallyIncom) : '',
+                        nianjinJishu: nianjinJishu ? objToString(nianjinJishu) : '',
+                        shiyebaoxianJishu: shiyebaoxianJishu ? objToString(shiyebaoxianJishu) : '',
+                        yanglaobaoxianJishu: yanglaobaoxianJishu ? objToString(yanglaobaoxianJishu) : '',
+                        zhufanggongjijinJishu: zhufanggongjijinJishu ? objToString(zhufanggongjijinJishu) : '',
                     }
                     // nianjin: nianjin ? nianjin : '',
                     // qiyeNianjin: qiyeNianjin ? qiyeNianjin : '',
@@ -529,8 +538,8 @@ exports.NRExcelToJSON = function (filename) {
                 worksheet.eachRow(function (row, rowNumber) {
                     if (rowNumber === 1) return;
                     let [, empId, name, department, jobRole, workerCategory, salaryCycle, daySalary,
-                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin, yiliaobaoxian, 
-                        qiyeYiliaobaoxian,shengyubaoxian, gongshangbaoxian] = row.values;
+                        workDays, anquanJiangli, wuweizhangJiangli, OTJiangjin, yiliaobaoxian,
+                        qiyeYiliaobaoxian, shengyubaoxian, gongshangbaoxian] = row.values;
 
                     if (null === empId || empId === undefined || empId === '') {
                         logger.error("Employee ID is not provided from the excel, will skip row: " + rowNumber);

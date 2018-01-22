@@ -227,6 +227,57 @@ module.exports = (sequelize, DataTypes) => {
         },
         gongshangbaoxian: {
             type: Sequelize.STRING,
+        },
+        nianjinJishu:{
+            type: Sequelize.STRING,
+        },
+        yanglaobaoxianJishu:{
+            type: Sequelize.STRING,
+        },
+        shiyebaoxianJishu:{
+            type: Sequelize.STRING,
+        },
+        zhufanggongjijinJishu:{
+            type: Sequelize.STRING,
+        },
+        nianjinBulv: {
+            type: Sequelize.STRING,
+        },
+        qiyeNianjinBulv: {
+            type: Sequelize.STRING,
+        },
+        yanglaobaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        qiyeYanglaobaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        shiyebaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        qiyeShiyebaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        zhufanggongjijinBulv: {
+            type: Sequelize.STRING,
+        },
+        qiyeZhufanggongjijinBulv: {
+            type: Sequelize.STRING,
+        },
+        yiliaobaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        qiyeYiliaobaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        buchongyiliaobaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        shengyubaoxianBulv: {
+            type: Sequelize.STRING,
+        },
+        gongshangbaoxianBulv: {
+            type: Sequelize.STRING,
         }
     })
 }

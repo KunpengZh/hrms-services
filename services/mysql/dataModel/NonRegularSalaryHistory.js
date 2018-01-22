@@ -57,6 +57,17 @@ module.exports = (sequelize, DataTypes) => {
         },
         gongshangbaoxian: {
             type: Sequelize.STRING,
+        },nianjinJishu:{
+            type: Sequelize.STRING,
+        },
+        yanglaobaoxianJishu:{
+            type: Sequelize.STRING,
+        },
+        shiyebaoxianJishu:{
+            type: Sequelize.STRING,
+        },
+        zhufanggongjijinJishu:{
+            type: Sequelize.STRING,
         }
     })
 }
