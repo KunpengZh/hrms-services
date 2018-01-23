@@ -49,7 +49,6 @@ UserManagementServices.create = function (user) {
                 UserModel.User.create(
                     {
                         username: user.username,
-                        empId: user.empId,
                         empName: user.empName,
                         password: UserModel.encryptPassword(user.password),
                         jobRole: user.jobRole
@@ -97,7 +96,7 @@ UserManagementServices.update = function (user) {
             } else {
                 existuser = JSON.parse(JSON.stringify(existuser));
                 if (user.password) existuser.password = UserModel.encryptPassword(user.password);
-                if (user.empId) existuser.empId = user.empId;
+                //if (user.empId) existuser.empId = user.empId;
                 if (user.empName) existuser.empName = user.empName;
                 if (user.jobRole) existuser.jobRole = user.jobRole;
 

@@ -145,7 +145,7 @@ app.get('/logout', function (req, res) {
 
 
 function checkIsHRAdmin(req, res, next) {
-  if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "HRAdmin") {
+  if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "HRAdmin" || req.user.jobRole==="ReadOnlyUser") {
     return next()
   } else {
     logger.error("你没有权限访问此模块, HRAdmin")
@@ -158,7 +158,7 @@ function checkIsHRAdmin(req, res, next) {
 }
 
 function checkIsPayrollAdmin(req, res, next) {
-  if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "PayrollAdmin") {
+  if (req.user.jobRole === 'SysAdmin' || req.user.jobRole === "PayrollAdmin" || req.user.jobRole==="ReadOnlyUser") {
     return next()
   } else {
     logger.error("你没有权限访问此模块, PayrollAdmin")
@@ -171,7 +171,7 @@ function checkIsPayrollAdmin(req, res, next) {
 }
 
 function checkIsSysAdmin(req, res, next) {
-  if (req.user.jobRole === 'SysAdmin') {
+  if (req.user.jobRole === 'SysAdmin'|| req.user.jobRole==="ReadOnlyUser") {
     return next()
   } else {
     logger.error("你没有权限访问此模块, SysAdmin")
