@@ -1629,3 +1629,32 @@ exports.WelfaresToExcelDetails = function (WelData, filename) {
     })
 }
 
+var setDanweiWelColumns = function () {
+    var columns = [
+        { header: '福利周期', key: 'salaryCycle', width: 15, style: { bold: true } },
+        { header: '食堂经费', key: 'Shitangjingfei', width: 15, style: { bold: true } },
+        { header: '其他单位福利', key: 'CompanyQitafuli', width: 15, outlineLevel: 1, style: { bold: true } },
+    ];
+    return columns;
+}
+exports.DanweiWelfaresQueryDataToExcel=function(welData,filename){
+    
+    return new Promise(function (rel, rej) {
+        var workbook = new Excel.Workbook();
+        workbook = setDefaultWorkBookProperties(workbook);
+        var worksheet = workbook.addWorksheet('DanweiWelfares', { views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }] });
+        worksheet.columns = setDanweiWelColumns();
+
+        worksheet.addRows(welData);
+        workbook.xlsx.writeFile(filename)
+            .then(function () {
+                logger.info("Successed write to file");
+                rel(filename);
+            }).catch(function (err) {
+                logger.error(err);
+                logger.error("Error Location EXCELJSDanweiWelfaresToExcel001")
+                throw err;
+            });
+    })
+}
+

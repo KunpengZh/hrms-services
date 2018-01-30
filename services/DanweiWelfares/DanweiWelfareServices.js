@@ -195,7 +195,7 @@ DanweiWelfareServices.update = function (WelDataList) {
                     }).then((updateRes) => {
                         processed++;
                         if (processed === WelDataList.length) {
-                            logger.info("Update danwei welfares Data for Cycle:" + salaryCycle + " running completed");
+                            logger.info("Update danwei welfares Data running completed");
                             rel({
                                 status: 200,
                                 data: [],

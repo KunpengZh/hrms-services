@@ -4,7 +4,10 @@ var log4js = require("log4js");
 var logger = log4js.getLogger('HRMS-Danwei-Welfares-Controller');
 logger.level = 'All';
 
-
+var fs = require('fs');
+var multiparty = require('multiparty');
+var path = require('path');
+var excelJS = require('../services/utils/exceljs');
 
 var DanweiWelfareServices = require("../services/DanweiWelfares/DanweiWelfareServices");
 
@@ -185,5 +188,66 @@ router.post('/querybycriteria', function (req, res, next) {
         res.json(err)
         res.end();
     })
+})
+
+router.get('/download', function (req, res, next) {
+    if (!req.query.criteria || req.query.criteria === "") {
+        logger.error("Query Criteria is mandatory required");
+        res.json({
+            status: 500,
+            message: "Query Criteria is mandatory required",
+            data: []
+        })
+        res.end()
+        return
+    }
+
+
+    let criteria = JSON.parse(req.query.criteria);
+
+
+    DanweiWelfareServices.queryByCriteria(criteria).then((data) => {
+
+        var currDir = path.normalize('files/download'),
+            fileName = 'DanweiWelfares' + new Date().getTime() + '.xlsx',
+            currFile = path.join(currDir, fileName),
+            fReadStream;
+
+
+        excelJS.DanweiWelfaresQueryDataToExcel(data.data, currFile).then((excelFilename) => {
+            fs.exists(excelFilename, function (exist) {
+                if (exist) {
+                    res.set({
+                        "Content-type": "application/octet-stream",
+                        "Content-Disposition": "attachment;filename=" + encodeURI(fileName)
+                    });
+                    fReadStream = fs.createReadStream(excelFilename);
+                    fReadStream.on("data", (chunk) => res.write(chunk, "binary"));
+                    fReadStream.on("end", function () {
+                        res.end();
+                    });
+                } else {
+                    logger.error("the file do not exist :" + currFile);
+                    res.set("Content-type", "text/html");
+                    res.send("要下载的文件不存在!");
+                    res.end();
+                }
+            });
+        }).catch((err) => {
+            logger.error("Transfer Salary Data to Excel file failed")
+            logger.error(err);
+            res.set("Content-type", "text/html");
+            res.send("生成excel文件失败");
+            res.end();
+        })
+
+    }).catch((err) => {
+        logger.error("Err when get Salary Data info: " + err);
+        res.set("Content-type", "text/html");
+        res.send("不能从数据库获取工资!");
+        res.end();
+        return;
+    })
+
 })
 module.exports = router;
