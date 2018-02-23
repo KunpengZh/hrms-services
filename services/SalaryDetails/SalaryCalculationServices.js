@@ -273,7 +273,7 @@ SDServices.getYearMonthPeriod = function () {
         sequelize.query("SELECT * FROM SalaryCycles where status='Closed'", { type: sequelize.QueryTypes.SELECT })
             .then(sals => {
 
-                for (let i = 0; i < 13; i++) {
+                for (let i = 0; i < 30; i++) {
                     month = month - 1;
                     if (month < 1) {
                         year = year - 1;
