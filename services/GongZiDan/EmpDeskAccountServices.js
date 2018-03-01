@@ -299,7 +299,7 @@ EmpDeskAccount.getEmpDeskAccountByYear = function (calendarYear) {
         }
 
 
-        sequelize.query("SELECT empId,name,workerCategory,department, jobrole, salaryCycle, yingfagongzi,jibengongzi from SalaryDetails where salaryCycle>=:startSalaryCycle and salaryCycle<=:endSalaryCycle", { replacements: { startSalaryCycle: startSalaryCycle, endSalaryCycle: endSalaryCycle }, type: sequelize.QueryTypes.SELECT })
+        sequelize.query("SELECT empId,name,workerCategory,department, jobrole, salaryCycle, yingfagongzi,jibengongzi,yicixingjiangjin from SalaryDetails where salaryCycle>=:startSalaryCycle and salaryCycle<=:endSalaryCycle", { replacements: { startSalaryCycle: startSalaryCycle, endSalaryCycle: endSalaryCycle }, type: sequelize.QueryTypes.SELECT })
             .then(saldata => {
 
                 for (let i = 0; i < saldata.length; i++) {
@@ -308,9 +308,13 @@ EmpDeskAccount.getEmpDeskAccountByYear = function (calendarYear) {
                     for (let k = 0; k < empaccount.length; k++) {
                         if (empaccount[k].empId === saldata[i].empId) {
                             let samonth = translateMonthNumToMonth(saldata[i].salaryCycle.substring(4, 6));
+                            let yicixingjiangjin = parseFloat(saldata[i].yicixingjiangjin);
+                            if (yicixingjiangjin.toString() == "NaN") {
+                                yicixingjiangjin = 0;
+                            }
                             empaccount[k][samonth + 'Xiaoji'] = saldata[i].yingfagongzi;
                             empaccount[k][samonth + 'Gongzi'] = saldata[i].jibengongzi;
-                            empaccount[k][samonth + 'Jiangjin'] = keepTwoDecimalFull(parseFloat(saldata[i].yingfagongzi) - parseFloat(saldata[i].jibengongzi));
+                            empaccount[k][samonth + 'Jiangjin'] = keepTwoDecimalFull(parseFloat(saldata[i].yingfagongzi) - parseFloat(saldata[i].jibengongzi) + yicixingjiangjin);
 
                             empaccount[k].JANTODECXiaoji = keepTwoDecimalFull(parseFloat(empaccount[k].JANTODECXiaoji) + parseFloat(empaccount[k][samonth + 'Xiaoji']));
                             empaccount[k].JANTODECGongzi = keepTwoDecimalFull(parseFloat(empaccount[k].JANTODECGongzi) + parseFloat(empaccount[k][samonth + 'Gongzi']));
@@ -332,9 +336,14 @@ EmpDeskAccount.getEmpDeskAccountByYear = function (calendarYear) {
                         let newemp = createEmpAccount(saldata[i].empId, saldata[i].name, saldata[i].workerCategory, saldata[i].department, saldata[i].jobrole);
                         let samonth = translateMonthNumToMonth(saldata[i].salaryCycle.substring(4, 6));
 
+                        let yicixingjiangjin = parseFloat(saldata[i].yicixingjiangjin);
+                        if (yicixingjiangjin.toString() == "NaN") {
+                            yicixingjiangjin = 0;
+                        }
+
                         newemp[samonth + 'Xiaoji'] = saldata[i].yingfagongzi;
                         newemp[samonth + 'Gongzi'] = saldata[i].jibengongzi;
-                        newemp[samonth + 'Jiangjin'] = keepTwoDecimalFull(parseFloat(saldata[i].yingfagongzi) - parseFloat(saldata[i].jibengongzi));
+                        newemp[samonth + 'Jiangjin'] = keepTwoDecimalFull(parseFloat(saldata[i].yingfagongzi) - parseFloat(saldata[i].jibengongzi)+yicixingjiangjin);
 
                         newemp.JANTODECXiaoji = saldata[i].yingfagongzi;
                         newemp.JANTODECGongzi = saldata[i].jibengongzi;
