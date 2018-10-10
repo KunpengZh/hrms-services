@@ -1044,7 +1044,7 @@ SalaryCalculation.baoxianbulvData = function(emps, bulvData) {
 
 SalaryCalculation.calculateYingshuigongzi = function(emps, configDoc) {
   let ConfigPercentage = configDoc.ConfigPercentage;
-  let gerensuodeshuishuiji = 3500;
+  let gerensuodeshuishuiji = 5000;
   let haveShuiJi = false;
   for (let i = 0; i < ConfigPercentage.length; i++) {
     if (ConfigPercentage[i].text === GERENSUODESHUISHUIJI) {
@@ -1055,7 +1055,7 @@ SalaryCalculation.calculateYingshuigongzi = function(emps, configDoc) {
   }
 
   if (!haveShuiJi) {
-    logger.error("没有找到个人所得税税基数据,将会使用默认值3500来计算个税");
+    logger.error("没有找到个人所得税税基数据,将会使用默认值5000来计算个税");
   }
 
   let newemps = emps.map(function(emp) {
@@ -1136,27 +1136,27 @@ SalaryCalculation.calculateGerensuodeshui = function(emps, configDoc) {
     let yingshuigongzi = parseFloat(emp.yingshuigongzi);
     let tax = 0;
     let taxComments = "";
-    if (yingshuigongzi <= 1500) {
+    if (yingshuigongzi <= 3000) {
       tax = yingshuigongzi * 0.03;
       taxComments = "应税工资(" + emp.yingshuigongzi + ") * 3%=";
-    } else if (yingshuigongzi <= 4500) {
-      tax = yingshuigongzi * 0.1 - 105;
-      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 10%-105=";
-    } else if (yingshuigongzi <= 9000) {
-      tax = yingshuigongzi * 0.2 - 555;
-      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 20%-555=";
+    } else if (yingshuigongzi <= 12000) {
+      tax = yingshuigongzi * 0.1 - 210;
+      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 10%-210=";
+    } else if (yingshuigongzi <= 25000) {
+      tax = yingshuigongzi * 0.2 - 1410;
+      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 20%-1410=";
     } else if (yingshuigongzi <= 35000) {
-      tax = yingshuigongzi * 0.25 - 1005;
-      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 25%-1005=";
+      tax = yingshuigongzi * 0.25 - 2660;
+      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 25%-2660=";
     } else if (yingshuigongzi <= 55000) {
-      tax = yingshuigongzi * 0.3 - 2755;
-      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 30%-2755=";
+      tax = yingshuigongzi * 0.3 - 4410;
+      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 30%-4410=";
     } else if (yingshuigongzi <= 80000) {
-      tax = yingshuigongzi * 0.35 - 5505;
-      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 35%-5505=";
+      tax = yingshuigongzi * 0.35 - 7160;
+      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 35%-7160=";
     } else if (yingshuigongzi > 80000) {
-      tax = yingshuigongzi * 0.45 - 13505;
-      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 45%-13505=";
+      tax = yingshuigongzi * 0.45 - 15160;
+      taxComments = "应税工资(" + emp.yingshuigongzi + ") * 45%-15160=";
     }
 
     emp.tax = "" + keepTwoDecimalFull(tax);
@@ -1169,7 +1169,7 @@ SalaryCalculation.calculateGerensuodeshui = function(emps, configDoc) {
 
 SalaryCalculation.calculateYicixingjiangjinTax = function(emps, configDoc) {
   let ConfigPercentage = configDoc.ConfigPercentage;
-  let gerensuodeshuishuiji = 3500;
+  let gerensuodeshuishuiji = 5000;
   let haveShuiJi = false;
 
   for (let i = 0; i < ConfigPercentage.length; i++) {
@@ -1181,13 +1181,14 @@ SalaryCalculation.calculateYicixingjiangjinTax = function(emps, configDoc) {
   }
 
   if (!haveShuiJi) {
-    logger.error("没有找到个人所得税税基数据,将会使用默认值3500来计算个税");
+    logger.error("没有找到个人所得税税基数据,将会使用默认值5000来计算个税");
   }
 
   let newemps = emps.map(function(emp) {
     if (emp.workerCategory.trim() === NonRegularEmployeeCategory) {
       /**
        * 非全日制员工, 没有一次性奖金
+       *  +parseFloat(emp.qiyeNianjin)
        */
     } else {
       let yicixingjiangjin = parseFloat(emp.yicixingjiangjin);
@@ -1195,12 +1196,12 @@ SalaryCalculation.calculateYicixingjiangjinTax = function(emps, configDoc) {
       if (yicixingjiangjin > 0) {
         let comments = "";
         let dangyueshouru =
-          parseFloat(emp.yingfagongzi) +
-          parseFloat(emp.qiyeNianjin) -
+          parseFloat(emp.yingfagongzi) -
           parseFloat(emp.yanglaobaoxian) -
           parseFloat(emp.shiyebaoxian) -
           parseFloat(emp.zhufanggongjijin) -
           parseFloat(emp.yiliaobaoxian) -
+          parseFloat(emp.nianjin) -
           parseFloat(emp.tongxunButie);
 
         if (dangyueshouru < gerensuodeshuishuiji) {
@@ -1210,7 +1211,7 @@ SalaryCalculation.calculateYicixingjiangjinTax = function(emps, configDoc) {
             newyicixingjiangjin > 0 ? newyicixingjiangjin : 0;
 
           comments =
-            "当月收入(应发工资+企业年金-养老保险-失业保险-住房公积金-医疗保险-通讯补贴):" +
+            "当月收入(应发工资-养老保险-失业保险-住房公积金-医疗保险-通讯补贴-年金):" +
             dangyueshouru +
             "小于个人所得税税基(" +
             gerensuodeshuishuiji +
@@ -1230,33 +1231,33 @@ SalaryCalculation.calculateYicixingjiangjinTax = function(emps, configDoc) {
         yingshuigongzi = yingshuigongzi < 0 ? 0 : yingshuigongzi;
         let tax = 0;
         let taxComments = "";
-        if (yingshuigongzi <= 1500) {
+        if (yingshuigongzi <= 3000) {
           tax = yicixingjiangjin * 0.03;
           taxComments = comments + "一次性奖金(" + yicixingjiangjin + ") * 3%";
-        } else if (yingshuigongzi <= 4500) {
-          tax = yicixingjiangjin * 0.1 - 105;
+        } else if (yingshuigongzi <= 12000) {
+          tax = yicixingjiangjin * 0.1 - 210;
           taxComments =
-            comments + "一次性奖金(" + yicixingjiangjin + ") * 10%-105";
-        } else if (yingshuigongzi <= 9000) {
-          tax = yicixingjiangjin * 0.2 - 555;
+            comments + "一次性奖金(" + yicixingjiangjin + ") * 10%-210";
+        } else if (yingshuigongzi <= 25000) {
+          tax = yicixingjiangjin * 0.2 - 1410;
           taxComments =
-            comments + "一次性奖金(" + yicixingjiangjin + ") * 20%-555";
+            comments + "一次性奖金(" + yicixingjiangjin + ") * 20%-1410";
         } else if (yingshuigongzi <= 35000) {
-          tax = yicixingjiangjin * 0.25 - 1005;
+          tax = yicixingjiangjin * 0.25 - 2660;
           taxComments =
-            comments + "一次性奖金(" + yicixingjiangjin + ") * 25%-1005";
+            comments + "一次性奖金(" + yicixingjiangjin + ") * 25%-2660";
         } else if (yingshuigongzi <= 55000) {
-          tax = yicixingjiangjin * 0.3 - 2755;
+          tax = yicixingjiangjin * 0.3 - 4410;
           taxComments =
-            comments + "一次性奖金(" + yicixingjiangjin + ") * 30%-2755";
+            comments + "一次性奖金(" + yicixingjiangjin + ") * 30%-4410";
         } else if (yingshuigongzi <= 80000) {
-          tax = yicixingjiangjin * 0.35 - 5505;
+          tax = yicixingjiangjin * 0.35 - 7160;
           taxComments =
-            comments + "一次性奖金(" + yicixingjiangjin + ") * 35%-5505";
+            comments + "一次性奖金(" + yicixingjiangjin + ") * 35%-7160";
         } else if (yingshuigongzi > 80000) {
-          tax = yicixingjiangjin * 0.45 - 13505;
+          tax = yicixingjiangjin * 0.45 - 15160;
           taxComments =
-            comments + "一次性奖金(" + yicixingjiangjin + ") * 45%-13505";
+            comments + "一次性奖金(" + yicixingjiangjin + ") * 45%-15160";
         }
 
         emp.yicixingjiangjinTax = "" + keepTwoDecimalFull(tax);
