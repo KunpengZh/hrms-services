@@ -1102,14 +1102,15 @@ SalaryCalculation.calculateYicixingjiangjinTax = function(emps, configDoc) {
           parseFloat(emp.zhufanggongjijin) -
           parseFloat(emp.yiliaobaoxian) -
           parseFloat(emp.nianjin) -
-          parseFloat(emp.tongxunButie);
+          parseFloat(emp.tongxunButie) -
+          parseFloat(emp.personalIncomeTaxDeduction);
 
         if (dangyueshouru < gerensuodeshuishuiji) {
           let newyicixingjiangjin = yicixingjiangjin - (gerensuodeshuishuiji - dangyueshouru);
           newyicixingjiangjin = newyicixingjiangjin > 0 ? newyicixingjiangjin : 0;
 
           comments =
-            "当月收入(应发工资-养老保险-失业保险-住房公积金-医疗保险-通讯补贴-年金):" +
+            "当月收入(应发工资-养老保险-失业保险-住房公积金-医疗保险-通讯补贴-年金-个人所得税专项抵扣):" +
             dangyueshouru +
             "小于个人所得税税基(" +
             gerensuodeshuishuiji +
