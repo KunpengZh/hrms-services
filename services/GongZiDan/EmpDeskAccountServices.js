@@ -377,8 +377,8 @@ EmpDeskAccount.getEmpDeskAccountByYear = function(calendarYear) {
               newemp[samonth + "Jiangjin"] = keepTwoDecimalFull(
                 parseFloat(saldata[i].yingfagongzi) - parseFloat(saldata[i].jibengongzi) + yicixingjiangjin
               );
-              empaccount[k][samonth + "Xiaoji"] = keepTwoDecimalFull(
-                parseFloat(empaccount[k][samonth + "Gongzi"]) + parseFloat(empaccount[k][samonth + "Jiangjin"])
+              newemp[samonth + "Xiaoji"] = keepTwoDecimalFull(
+                parseFloat(newemp[samonth + "Gongzi"]) + parseFloat(newemp[samonth + "Jiangjin"])
               );
 
               newemp.JANTODECXiaoji = saldata[i].yingfagongzi;
